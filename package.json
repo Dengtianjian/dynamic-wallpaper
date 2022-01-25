@@ -1,7 +1,7 @@
 {
   "name": "dynamic-wallpaper",
-  "version": "0.0.0",
-  "main": "main.js",
+  "version": "0.0.1",
+  "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
     "dev:vite": "vite --open",
