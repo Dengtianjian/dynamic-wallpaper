@@ -1,18 +1,60 @@
 {
   "name": "dynamic-wallpaper",
   "version": "0.0.0",
+  "main": "main.js",
   "scripts": {
     "dev": "vite",
+    "dev:vite": "vite --open",
+    "electron": "wait-on tcp:3000 && electron .",
+    "dev:electron": "concurrently -k \"npm run dev\" \"npm run electron\"",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "dependencies": {
+    "@types/node": "^17.0.10",
+    "electron-squirrel-startup": "^1.0.0",
     "vue": "^3.2.25"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.63",
+    "@electron-forge/maker-deb": "^6.0.0-beta.63",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.63",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
+    "@electron-forge/maker-zip": "^6.0.0-beta.63",
     "@vitejs/plugin-vue": "^2.0.0",
+    "electron": "16.0.7",
     "typescript": "^4.4.4",
     "vite": "^2.7.2",
     "vue-tsc": "^0.29.8"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "dynamic_wallpaper"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   }
 }
