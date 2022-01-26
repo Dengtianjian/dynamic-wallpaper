@@ -21,13 +21,10 @@ jobs:
         node-version: 17.4.0
         cache: 'npm'
     - run: npm ci
-    
     - run: npm run vite:build
     - run: npm run electron:build
-
     - name: Zip package
     - run: tar -cvf package.tar packages
-
     - name: Deploy to CVM by SSH
       uses: easingthemes/ssh-deploy@v2.2.11
       with: 
