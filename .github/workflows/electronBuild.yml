@@ -39,7 +39,7 @@ jobs:
         # Remote port
         REMOTE_PORT: 22 # optional, default is 22
         # Source directory
-        SOURCE: /packages # optional, default is 
+        SOURCE: /package.zip # optional, default is 
         # Target directory
         TARGET: /datadisk/projects/dynamic-wallpaper # optional, default is /home/REMOTE_USER/
         # Arguments to pass to rsync
