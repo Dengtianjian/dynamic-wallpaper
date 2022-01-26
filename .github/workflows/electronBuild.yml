@@ -23,5 +23,7 @@ jobs:
     - run: npm ci
     - run: npm run vite:build
     - run: npm run electron:build
-    - run: cd packages
+    - run: cd packages/packages
+    - run: ls -l
+    - run: cd win-unpacked
     - run: ls -l
