@@ -5,42 +5,38 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 17.4.0
-      uses: actions/setup-node@v2
-      with:
-        node-version: 17.4.0
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run vite:build
-    - run: npm run electron:build
-    - name: Zip package result files by action-zip
-      uses: montudor/action-zip@v1.0.0
-      with:
-        args: zip -qq -r package.zip packages
-    - name: Deploy to CVM by SSH
-      uses: easingthemes/ssh-deploy@v2.2.11
-      with: 
-        # Private Key
-        SSH_PRIVATE_KEY: ${{ secrets.DEPLOYSSHKEY }}
-        # Remote host
-        REMOTE_HOST: cooocc.com
-        # Remote user
-        REMOTE_USER: root
-        # Remote port
-        REMOTE_PORT: 22 # optional, default is 22
-        # Source directory
-        SOURCE: /package.zip # optional, default is 
-        # Target directory
-        TARGET: /datadisk/projects/dynamic-wallpaper # optional, default is /home/REMOTE_USER/
-        # Arguments to pass to rsync
-        ARGS: -rltgoDzvO # optional, default is -rltgoDzvO
-        # An array of folder to exclude
-        #EXCLUDE: # optional, default is 
+      - uses: actions/checkout@v2
+      - name: Use Node.js 17.4.0
+        uses: actions/setup-node@v2
+        with:
+          node-version: 17.4.0
+          cache: "npm"
+      - run: npm ci
+      - run: npm run vite:build
+      - run: npm run electron:build
+      - name: Deploy to CVM by SSH
+        uses: easingthemes/ssh-deploy@v2.2.11
+        with:
+          # Private Key
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOYSSHKEY }}
+          # Remote host
+          REMOTE_HOST: cooocc.com
+          # Remote user
+          REMOTE_USER: root
+          # Remote port
+          REMOTE_PORT: 22 # optional, default is 22
+          # Source directory
+          SOURCE: /package.zip # optional, default is
+          # Target directory
+          TARGET: /datadisk/projects/dynamic-wallpaper # optional, default is /home/REMOTE_USER/
+          # Arguments to pass to rsync
+          ARGS: -rltgoDzvO # optional, default is -rltgoDzvO
+          # An array of folder to exclude
+          #EXCLUDE: # optional, default is
