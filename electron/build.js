@@ -1,11 +1,10 @@
 const builder = require("electron-builder");
 
 const config = {
-  x64: true,
   directories: {
     output: "packages"
   },
-  asar: false,
+  asar: true,
   files: [
     {
       from: "dist",
