@@ -1,6 +1,7 @@
 const builder = require("electron-builder");
 
-const options = {
+const config = {
+  x64: true,
   directories: {
     output: "packages"
   },
@@ -12,11 +13,16 @@ const options = {
     },
     "electron",
     "package.json"
-  ]
+  ],
+  win: {
+    target: [{
+      target: "nsis"
+    }]
+  }
 }
 
 builder.build({
-  config: options
+  config
 }).then((res) => {
   console.log(res);
 }).catch(err => {
