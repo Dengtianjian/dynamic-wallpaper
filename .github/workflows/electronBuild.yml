@@ -23,7 +23,22 @@ jobs:
     - run: npm ci
     - run: npm run vite:build
     - run: npm run electron:build
-    - run: cd packages/packages
-    - run: ls -l
-    - run: cd win-unpacked
-    - run: ls -l
+    - name: Deploy to CVM by SSH
+        uses: easingthemes/ssh-deploy@v2.2.11
+        with: 
+          # Private Key
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOYSSHKEY }}
+          # Remote host
+          REMOTE_HOST: cooocc.com
+          # Remote user
+          REMOTE_USER: root
+          # Remote port
+          REMOTE_PORT: 22 # optional, default is 22
+          # Source directory
+          SOURCE: /packages # optional, default is 
+          # Target directory
+          TARGET: /datadisk/projects/dynamic-wallpaper # optional, default is /home/REMOTE_USER/
+          # Arguments to pass to rsync
+          ARGS: -rltgoDzvO # optional, default is -rltgoDzvO
+          # An array of folder to exclude
+          #EXCLUDE: # optional, default is 
