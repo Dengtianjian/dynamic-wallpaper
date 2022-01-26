@@ -17,6 +17,9 @@ const config = {
     target: [{
       target: "nsis"
     }]
+  },
+  nsis: {
+    deleteAppDataOnUninstall: true
   }
 }
 
