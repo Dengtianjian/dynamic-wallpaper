@@ -31,6 +31,4 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Vite build & Electron build
-        run: |
-          npm run vite:build &&
-          npm run electron:build
+        run: npm run vite:build && npm run electron:build
