@@ -23,6 +23,8 @@ jobs:
     - run: npm ci
     - run: npm run vite:build
     - run: npm run electron:build
+    - name: Zip package result files
+    - run: tar -cvf package.tar ./
     - name: Deploy to CVM by SSH
       uses: easingthemes/ssh-deploy@v2.2.11
       with: 
