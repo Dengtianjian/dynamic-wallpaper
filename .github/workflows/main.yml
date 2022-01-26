@@ -21,14 +21,3 @@ jobs:
       - uses: actions/setup-node@v2.5.1
         with:
          node-version: 17.4.0
-    
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      # Runs a single command using the runners shell
-      - name: Install dependencies
-        run: npm i
-
-      # Runs a set of commands using the runners shell
-      - name: Vite build & Electron build
-        run: npm run vite:build && npm run electron:build
