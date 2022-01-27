@@ -12,6 +12,7 @@ jobs:
     runs-on: windows-2016
 
     steps:
+      - run: git config --add GH_TOKEN=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
       - uses: actions/checkout@v2
       - name: Use Node.js 17.4.0
         uses: actions/setup-node@v2
