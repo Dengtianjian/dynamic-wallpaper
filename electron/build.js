@@ -22,7 +22,8 @@ const config = {
   },
   nsis: {
     deleteAppDataOnUninstall: true
-  }
+  },
+  publish: false
 }
 
 builder.build({
