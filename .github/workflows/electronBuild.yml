@@ -29,8 +29,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONEL_TOKEN }}
       - name: Notify me by mail
-      - uses: devellany/send-mailer@v1.0.2
-      - with:
+        uses: devellany/send-mailer@v1.0.2
+        with:
           host: smtp.qq.com
           port: 25
           account: 1102358133
