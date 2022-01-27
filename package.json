@@ -13,7 +13,7 @@
     "vite:preview": "vite preview",
     "electron:dev": "wait-on tcp:3000 && electron .",
     "electron": "concurrently -k \"npm run dev\" \"npm run dev:electron\"",
-    "electron:build": "node electron/build.js"
+    "electron:build": "npm run vite:build && node electron/build.js"
   },
   "devDependencies": {
     "@types/node": "^17.0.10",
@@ -21,10 +21,12 @@
     "concurrently": "^7.0.0",
     "electron": "16.0.7",
     "electron-builder": "^22.14.5",
+    "naive-ui": "^2.24.6",
     "typescript": "^4.4.4",
     "vite": "^2.7.2",
     "vue": "^3.2.25",
     "vue-tsc": "^0.29.8",
-    "wait-on": "^6.0.0"
+    "wait-on": "^6.0.0",
+    "zip-a-folder": "^1.1.3"
   }
 }
