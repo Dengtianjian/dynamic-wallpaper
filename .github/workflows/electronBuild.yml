@@ -28,22 +28,10 @@ jobs:
       - run: npm run electron:build
         env:
           GH_TOKEN: ${{ secrets.PERSONEL_TOKEN }}
-      - name: Deploy to CVM by SSH
-        uses: easingthemes/ssh-deploy@v2.2.11
+
+      - name: Release to Github
+        uses: softprops/action-gh-release@v1
         with:
-          # Private Key
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOYSSHKEY }}
-          # Remote host
-          REMOTE_HOST: cooocc.com
-          # Remote user
-          REMOTE_USER: root
-          # Remote port
-          REMOTE_PORT: 22 # optional, default is 22
-          # Source directory
-          SOURCE: /package.zip # optional, default is
-          # Target directory
-          TARGET: /datadisk/projects/dynamic-wallpaper # optional, default is /home/REMOTE_USER/
-          # Arguments to pass to rsync
-          ARGS: -rltgoDzvO # optional, default is -rltgoDzvO
-          # An array of folder to exclude
-          #EXCLUDE: # optional, default is
+          files: "package.zip"
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONEL_TOKEN }}
