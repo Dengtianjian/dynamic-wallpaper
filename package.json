@@ -13,7 +13,7 @@
     "vite:preview": "vite preview",
     "electron:dev": "wait-on tcp:3000 && electron .",
     "electron": "concurrently -k \"npm run dev\" \"npm run dev:electron\"",
-    "electron:build": "node electron/build.js"
+    "electron:build": "npm run vite:build && node electron/build.js"
   },
   "devDependencies": {
     "@types/node": "^17.0.10",
