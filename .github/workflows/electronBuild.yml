@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: git config --add GH_TOKEN=${{ secrets.PERSONEL_TOKEN }}
+      - run: git config GH_TOKEN ${{ secrets.PERSONEL_TOKEN }}
       - name: Use Node.js 17.4.0
         uses: actions/setup-node@v2
         with:
