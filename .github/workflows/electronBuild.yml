@@ -32,15 +32,15 @@ jobs:
       - uses: devellany/send-mailer@v1.0.2
       - with:
           host: smtp.qq.com
-            port: 25
-            account: 1102358133
-            password: uizozunypahfidfc
-            sender: Github actions
-            from: 1102358133@qq.com
-            to: mail@isdtj.com
-            subject: 动态壁纸构建好啦
-            body: Github actions
-            contentType: text/plain
+          port: 25
+          account: 1102358133
+          password: uizozunypahfidfc
+          sender: Github actions
+          from: 1102358133@qq.com
+          to: mail@isdtj.com
+          subject: 动态壁纸构建好啦
+          body: Github actions
+          contentType: text/plain
       - name: Release to Github
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
