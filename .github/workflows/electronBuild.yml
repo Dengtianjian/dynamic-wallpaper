@@ -5,7 +5,8 @@ name: Node.js CI
 
 on:
   push:
-    branches: [main]
+    targs: 
+      - "v.*.*.*"
 
 jobs:
   build:
@@ -31,6 +32,7 @@ jobs:
 
       - name: Release to Github
         uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: "package.zip"
         env:
