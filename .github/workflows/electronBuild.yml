@@ -27,7 +27,7 @@ jobs:
       - run: npm run vite:build
       - run: npm run electron:build
         env:
-          GH_TOKEN: ${{ PERSONEL_TOKEN }}
+          GH_TOKEN: ${{ secrets.PERSONEL_TOKEN }}
       - name: Deploy to CVM by SSH
         uses: easingthemes/ssh-deploy@v2.2.11
         with:
