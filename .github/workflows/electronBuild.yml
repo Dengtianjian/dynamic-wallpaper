@@ -9,7 +9,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest]
 
     steps:
       - uses: actions/checkout@v2
@@ -22,6 +26,8 @@ jobs:
       - run: npm ci
       - run: npm run vite:build
       - run: npm run electron:build
+        env:
+          GH_TOKEN: ${{ PERSONEL_TOKEN }}
       - name: Deploy to CVM by SSH
         uses: easingthemes/ssh-deploy@v2.2.11
         with:
