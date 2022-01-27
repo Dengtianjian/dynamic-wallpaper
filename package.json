@@ -7,8 +7,8 @@
   },
   "description": "dynamic wallpaper",
   "scripts": {
-    "start": "vite",
-    "vite:dev": "vite --open",
+    "start": "vite --host",
+    "vite:dev": "vite --open --host",
     "vite:build": "vue-tsc --noEmit && vite build",
     "vite:preview": "vite preview",
     "electron:dev": "wait-on tcp:3000 && electron .",
