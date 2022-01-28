@@ -1,10 +1,16 @@
 <template>
   <header class="page-header">
-    <n-menu
-      v-model:value="menuActiveKey"
-      mode="horizontal"
-      :options="menuOptions"
-    />
+    <ul class="sources" @click="switchSource">
+      <li
+        class="source-item"
+        :class="{ 'source-item_active': wallpaperSourceKey === sourceItem.key }"
+        v-for="sourceItem in sources"
+        :key="sourceItem.key"
+        :data-key="sourceItem.key"
+      >
+        {{ sourceItem.label }}
+      </li>
+    </ul>
     <section class="page-header_user">
       <i class="shoutao st-settings"></i>
     </section>
@@ -51,8 +57,15 @@ import { NMenu, MenuOption, useMessage } from "naive-ui";
 import { onMounted, ref } from "vue";
 import pexelsApi from "../api/pexelsApi";
 const NMessage = useMessage();
-const menuActiveKey = ref<string>("wallpaper");
-const menuOptions: MenuOption[] = [
+const wallpaperSourceKey = ref<string>("pexels");
+const sources: {
+  label: string;
+  key: string;
+}[] = [
+  {
+    label: "全部",
+    key: "All",
+  },
   {
     label: "Unsplash",
     key: "unsplash",
@@ -105,12 +118,19 @@ function getCurated(
   });
 }
 
-async function getWallapers() {
+async function getWallpapersBySource(): Promise<TWallpaperItem[]> {
+  switch (wallpaperSourceKey.value) {
+    case "pexels":
+    default:
+      return getCurated(wallpaperPage, wallpaperLoadLimit);
+  }
+}
+function getWallapers(): void {
   if (wallpaperListLoading.value || wallpaperLoadFinished) {
     return;
   }
   wallpaperListLoading.value = true;
-  await getCurated(wallpaperPage, wallpaperLoadLimit)
+  getWallpapersBySource()
     .then((images) => {
       if (images.length < wallpaperLoadLimit) {
         wallpaperLoadFinished = true;
@@ -180,6 +200,18 @@ function wallpaperListScrolling(payload: UIEvent) {
   }, 150);
 }
 
+function switchSource(payload: MouseEvent) {
+  if (!(payload.target as HTMLElement).dataset) {
+    return;
+  }
+  let key: string | undefined = (payload.target as HTMLElement).dataset.key;
+  if (!key) return;
+
+  wallpaperSourceKey.value = key;
+
+  getWallapers();
+}
+
 onMounted(() => {
   getWallapers();
 });
@@ -198,6 +230,22 @@ onMounted(() => {
 .page-header_user {
   padding-right: 10px;
   justify-self: flex-end;
+}
+
+/** 来源 */
+.sources {
+  display: flex;
+  align-items: center;
+  gap: 0 20px;
+  font-size: 14px;
+}
+.source-item {
+  padding: 10px 18px;
+  cursor: pointer;
+}
+.source-item:hover,
+.source-item_active {
+  color: var(--primary-color);
 }
 
 .page-main {
