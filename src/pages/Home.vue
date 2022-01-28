@@ -33,10 +33,17 @@
                 :src="wallpaperItem.authorAvatar"
                 :alt="wallpaperItem.author"
                 class="wallpaper-author_avatar"
+                v-if="wallpaperItem.authorAvatar"
               />
               {{ wallpaperItem.author }}
             </div>
             <ul class="wallpaper-operations">
+              <li>
+                <i
+                  class="shoutao st-check"
+                  @click.stop="setWallpaper(wallpaperItem)"
+                ></i>
+              </li>
               <li>
                 <i
                   class="shoutao st-down"
@@ -125,7 +132,7 @@ function getPexelsCurated(): Promise<TWallpaperItem[]> {
           cover: photoItem.src.large,
           title: photoItem.alt,
           original: photoItem.src.original,
-          authorAvatar: photoItem.photographer_url,
+          authorAvatar: "",
           author: photoItem.photographer,
           source: "Pexel",
         };
@@ -234,7 +241,11 @@ function wallpaperListScrolling(payload: UIEvent) {
 }
 
 function switchSource(payload: MouseEvent) {
-  if (wallpaperListLoading.value || !(payload.target as HTMLElement).dataset) {
+  if (
+    wallpaperListLoading.value ||
+    wallpaperSetting ||
+    !(payload.target as HTMLElement).dataset
+  ) {
     return;
   }
   let key: string | undefined = (payload.target as HTMLElement).dataset.key;
@@ -334,6 +345,13 @@ onMounted(() => {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  gap: 0 3px;
+}
+.wallpaper-operations li {
+  padding: 0 5px;
+}
+.wallpaper-operations li i {
+  font-size: 18px;
 }
 .wallpaper-operations li:hover {
   color: var(--primary-color);
