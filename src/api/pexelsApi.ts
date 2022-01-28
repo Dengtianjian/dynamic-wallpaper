@@ -29,11 +29,11 @@ type TPhoto = {
   }
 }
 
-function request() {
+function request(action: keyof TActions) {
+  let url = `${config.pexels.url}/${action}`;
   return {
-    get<T>(action: keyof TActions, query: Record<string, any> = {}, headers: Record<string, any> = {}): Promise<T> {
+    get<T>(query: Record<string, any> = {}, headers: Record<string, any> = {}): Promise<T> {
       headers['Authorization'] = config.pexels.key;
-      let url = `${config.pexels.url}/${action}`;
       return http.get<T>(url, query, headers).then(res => res.data);
     }
   }
@@ -49,7 +49,7 @@ type TCuratedResponse = {
 }
 function curated(page: number,
   per_page: number): Promise<TCuratedResponse> {
-  return request().get<TCuratedResponse>("curated", {
+  return request("curated").get<TCuratedResponse>({
     page,
     per_page
   });

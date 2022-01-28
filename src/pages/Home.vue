@@ -25,8 +25,17 @@
           @click="setWallpaper(wallpaperItem)"
         >
           <img :src="wallpaperItem.cover" alt="" class="wallpaper-cover" />
-          <section class="wallpaper-info">
+          <section class="wallpaper-info" @click.stop>
             <div class="wallpaper-title">{{ wallpaperItem.title }}</div>
+            <div class="wallpaper-author">
+              来自 {{ wallpaperItem.source }} 的
+              <img
+                :src="wallpaperItem.authorAvatar"
+                :alt="wallpaperItem.author"
+                class="wallpaper-author_avatar"
+              />
+              {{ wallpaperItem.author }}
+            </div>
             <ul class="wallpaper-operations">
               <li>
                 <i
@@ -56,8 +65,9 @@
 import { NMenu, MenuOption, useMessage } from "naive-ui";
 import { onMounted, ref } from "vue";
 import pexelsApi from "../api/pexelsApi";
+import pixabayApi from "../api/pixabayApi";
 const NMessage = useMessage();
-const wallpaperSourceKey = ref<string>("pexels");
+const wallpaperSourceKey = ref<string>("pixabay");
 const sources: {
   label: string;
   key: string;
@@ -98,31 +108,54 @@ type TWallpaperItem = {
   cover: string;
   title: string;
   original: string;
+  author: string;
+  authorAvatar: string;
+  source: string;
   downloading?: boolean;
 };
 const wallpapers = ref<TWallpaperItem[]>([]);
 const wallpapersDownloadList = ref<TWallpaperItem[]>([]);
 
-function getCurated(
-  page: number = 1,
-  limit: number = 12
-): Promise<TWallpaperItem[]> {
-  return pexelsApi.curated(page, limit).then(({ photos }) => {
-    return photos.map((photoItem) => {
-      return {
-        cover: photoItem.src.large,
-        title: photoItem.alt,
-        original: photoItem.src.original,
-      };
+function getPexelsCurated(): Promise<TWallpaperItem[]> {
+  return pexelsApi
+    .curated(wallpaperPage, wallpaperLoadLimit)
+    .then(({ photos }) => {
+      return photos.map((photoItem) => {
+        return {
+          cover: photoItem.src.large,
+          title: photoItem.alt,
+          original: photoItem.src.original,
+          authorAvatar: photoItem.photographer_url,
+          author: photoItem.photographer,
+          source: "Pexel",
+        };
+      });
     });
-  });
+}
+function getPixabayImages(): Promise<TWallpaperItem[]> {
+  return pixabayApi
+    .saerchImages("", wallpaperPage, wallpaperLoadLimit)
+    .then(({ hits }) => {
+      return hits.map((imageItem) => {
+        return {
+          cover: imageItem.webformatURL,
+          title: imageItem.tags,
+          original: imageItem.fullHDURL,
+          author: imageItem.user,
+          authorAvatar: imageItem.userImageURL,
+          source: "Pixabay",
+        };
+      });
+    });
 }
 
 async function getWallpapersBySource(): Promise<TWallpaperItem[]> {
   switch (wallpaperSourceKey.value) {
+    case "pixabay":
+      return getPixabayImages();
     case "pexels":
     default:
-      return getCurated(wallpaperPage, wallpaperLoadLimit);
+      return getPexelsCurated();
   }
 }
 function getWallapers(): void {
@@ -201,13 +234,17 @@ function wallpaperListScrolling(payload: UIEvent) {
 }
 
 function switchSource(payload: MouseEvent) {
-  if (!(payload.target as HTMLElement).dataset) {
+  if (wallpaperListLoading.value || !(payload.target as HTMLElement).dataset) {
     return;
   }
   let key: string | undefined = (payload.target as HTMLElement).dataset.key;
   if (!key) return;
 
   wallpaperSourceKey.value = key;
+  wallpaperListLoading.value = false;
+  wallpaperPage = 1;
+  wallpaperLoadFinished = false;
+  wallpapers.value = [];
 
   getWallapers();
 }
@@ -292,12 +329,11 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/** 图片操作 */
 .wallpaper-operations {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-top: 3px;
-  text-align: right;
 }
 .wallpaper-operations li:hover {
   color: var(--primary-color);
@@ -310,6 +346,20 @@ onMounted(() => {
 }
 .wallpaper-item:hover .wallpaper-cover {
   transform: scale(1.05);
+}
+/** 图片作者 */
+.wallpaper-author {
+  display: flex;
+  align-items: center;
+  gap: 0 5px;
+  margin: 5px 0;
+  font-size: 12px;
+}
+.wallpaper-author_avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 /** 壁纸下载栏 */
