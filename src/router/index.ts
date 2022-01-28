@@ -1,4 +1,4 @@
-import { RouteRecordRaw, createWebHistory, createRouter } from "vue-router";
+import { RouteRecordRaw, createWebHistory, createRouter, createWebHashHistory } from "vue-router";
 
 import Home from "PAGES/Home.vue";
 
@@ -8,6 +8,6 @@ const routes: RouteRecordRaw[] = [
 
 
 export default createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 });

@@ -1,10 +1,15 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { NMessageProvider } from "naive-ui";
+</script>
 
 <template>
-  <router-view></router-view>
+  <n-message-provider>
+    <router-view></router-view>
+  </n-message-provider>
 </template>
 
 <style>
+@import url("./assets/css/reset.css");
 @import url("./assets/common.css");
 @import url("./assets/iconfont/iconfont.css");
 </style>

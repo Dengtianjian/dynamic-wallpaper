@@ -1,0 +1,1 @@
+const DB = window.indexedDB.open("", "0.1.1");
