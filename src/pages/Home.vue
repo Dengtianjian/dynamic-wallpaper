@@ -40,6 +40,12 @@
             <ul class="wallpaper-operations">
               <li>
                 <i
+                  class="shoutao st-link"
+                  @click.stop="openLink(wallpaperItem.sourceLink)"
+                ></i>
+              </li>
+              <li>
+                <i
                   class="shoutao st-check"
                   @click.stop="setWallpaper(wallpaperItem)"
                 ></i>
@@ -74,7 +80,7 @@ import { onMounted, ref } from "vue";
 import pexelsApi from "../api/pexelsApi";
 import pixabayApi from "../api/pixabayApi";
 const NMessage = useMessage();
-const wallpaperSourceKey = ref<string>("pixabay");
+const wallpaperSourceKey = ref<string>("pexels");
 const sources: {
   label: string;
   key: string;
@@ -118,6 +124,7 @@ type TWallpaperItem = {
   author: string;
   authorAvatar: string;
   source: string;
+  sourceLink: string;
   downloading?: boolean;
 };
 const wallpapers = ref<TWallpaperItem[]>([]);
@@ -135,6 +142,7 @@ function getPexelsCurated(): Promise<TWallpaperItem[]> {
           authorAvatar: "",
           author: photoItem.photographer,
           source: "Pexel",
+          sourceLink: photoItem.url,
         };
       });
     });
@@ -151,6 +159,7 @@ function getPixabayImages(): Promise<TWallpaperItem[]> {
           author: imageItem.user,
           authorAvatar: imageItem.userImageURL,
           source: "Pixabay",
+          sourceLink: imageItem.pageURL,
         };
       });
     });
@@ -258,6 +267,9 @@ function switchSource(payload: MouseEvent) {
   wallpapers.value = [];
 
   getWallapers();
+}
+function openLink(link: string) {
+  window.link.openLink(link);
 }
 
 onMounted(() => {

@@ -1,4 +1,4 @@
-const { contextBridge } = require("electron");
+const { contextBridge, shell } = require("electron");
 const { set } = require("wallpaper");
 const Path = require('path');
 const HTTPS = require("https");
@@ -61,5 +61,10 @@ contextBridge.exposeInMainWorld("wallpaper", {
   },
   download(wallpaperImageUrl) {
     return downloadImageToLocal(wallpaperImageUrl);
+  }
+});
+contextBridge.exposeInMainWorld("link", {
+  openLink: (linkURL) => {
+    shell.openExternal(linkURL);
   }
 });
