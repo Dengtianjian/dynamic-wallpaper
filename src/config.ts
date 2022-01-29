@@ -6,5 +6,10 @@ export default {
   pixabay: {
     key: "25384241-6c8a6d0f88af2ead173957365",
     url: "https://pixabay.com/api/"
+  },
+  unsplash: {
+    key: "WdyQKrlpN53SYlvEVhNIAHbvnSj7nVc9fLZmK6daoOg",
+    url: "https://api.unsplash.com/",
+    version: "v1"
   }
 }

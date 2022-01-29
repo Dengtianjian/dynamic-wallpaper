@@ -82,8 +82,9 @@ import { NMenu, MenuOption, useMessage } from "naive-ui";
 import { onMounted, ref } from "vue";
 import pexelsApi from "../api/pexelsApi";
 import pixabayApi from "../api/pixabayApi";
+import unsplashApi from "../api/unsplashApi";
 const NMessage = useMessage();
-const wallpaperSourceKey = ref<string>("pexels");
+const wallpaperSourceKey = ref<string>("unsplash");
 const sources: {
   label: string;
   key: string;
@@ -117,7 +118,7 @@ const pageMainEl = ref<HTMLElement | null>(null);
 const wallpaperListLoading = ref<boolean>(false);
 let wallpaperSetting = false;
 let wallpaperPage = 1;
-let wallpaperLoadLimit = 36;
+let wallpaperLoadLimit = 28;
 let wallpaperLoadFinished = false;
 
 type TWallpaperItem = {
@@ -167,11 +168,31 @@ function getPixabayImages(): Promise<TWallpaperItem[]> {
       });
     });
 }
+function getUnsplashPhotos(): Promise<TWallpaperItem[]> {
+  return unsplashApi
+    .listPhotos(wallpaperPage, wallpaperLoadLimit)
+    .then((photos) => {
+      return photos.map((photoItem) => {
+        return {
+          cover: photoItem.urls.small,
+          title: photoItem.description,
+          original: photoItem.urls.raw,
+          author: photoItem.user.name,
+          authorAvatar: photoItem.user.profile_image.small,
+          source: "unsplash",
+          sourceLink: photoItem.links.html,
+          downloading: false,
+        };
+      });
+    });
+}
 
 async function getWallpapersBySource(): Promise<TWallpaperItem[]> {
   switch (wallpaperSourceKey.value) {
     case "pixabay":
       return getPixabayImages();
+    case "unsplash":
+      return getUnsplashPhotos();
     case "pexels":
     default:
       return getPexelsCurated();
