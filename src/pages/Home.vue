@@ -12,6 +12,9 @@
       </li>
     </ul>
     <section class="page-header_user">
+      <n-button size="small">下载</n-button>
+      <n-button size="small">设置</n-button>
+      <i class="shoutao st-down"></i>
       <i class="shoutao st-settings"></i>
     </section>
   </header>
@@ -155,7 +158,7 @@ function getPixabayImages(): Promise<TWallpaperItem[]> {
         return {
           cover: imageItem.webformatURL,
           title: imageItem.tags,
-          original: imageItem.fullHDURL,
+          original: imageItem.largeImageURL,
           author: imageItem.user,
           authorAvatar: imageItem.userImageURL,
           source: "Pixabay",
@@ -216,10 +219,14 @@ function setWallpaper(wallpaperItem: TWallpaperItem) {
     });
 }
 function downloadWallpaper(wallpaperItem: TWallpaperItem) {
+  console.log(wallpaperItem.original);
+
   wallpaperItem.downloading = true;
   wallpapersDownloadList.value.push(wallpaperItem);
   window.wallpaper
-    .download(wallpaperItem.original)
+    .download(wallpaperItem.original, (total, downloadedSize, progress) => {
+      console.log(total, downloadedSize, progress);
+    })
     .then((res) => {
       NMessage.success("下载完成");
     })
@@ -319,12 +326,23 @@ onMounted(() => {
   display: grid;
   grid-template-columns: repeat(4, calc(25% - 15px));
   gap: 20px;
-  padding: 0 20px;
+  margin: 0 20px;
   box-sizing: border-box;
+}
+@media screen and (min-width: 1400px) {
+  .wallpaper-list {
+    grid-template-columns: repeat(5, calc(20% - 15px));
+  }
+}
+@media screen and (min-width: 2000px) {
+  .wallpaper-list {
+    grid-template-columns: repeat(6, calc(16.6% - 15px));
+  }
 }
 .wallpaper-item {
   position: relative;
-  height: 264px;
+  height: 26vh;
+  /* width: 212px; */
   overflow: hidden;
 }
 .wallpaper-cover {

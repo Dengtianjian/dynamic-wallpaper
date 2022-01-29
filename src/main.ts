@@ -1,9 +1,9 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from "./router";
-import { create, NSpin } from "naive-ui";
+import { create, NSpin, NButton } from "naive-ui";
 const naive = create({
-  components: [NSpin]
+  components: [NSpin, NButton]
 })
 
 const app = createApp(App)

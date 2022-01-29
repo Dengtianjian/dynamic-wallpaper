@@ -44,7 +44,9 @@ function saerchImages(keyword: string = "", page: number = 1, per_page: number =
   return request<TSearchImagesResponse>("").get({
     q: keyword,
     page,
-    per_page
+    per_page,
+    lang: "zh",
+    min_width: 1920
   }).then((res) => res.data);
 }
 
