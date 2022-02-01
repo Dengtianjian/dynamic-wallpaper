@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { NMessageProvider } from "naive-ui";
+import "./foundation/database";
 </script>
 
 <template>

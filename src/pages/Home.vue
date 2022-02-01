@@ -1,17 +1,20 @@
 <template>
   <header class="page-header">
-    <ul class="sources" @click="switchSource">
+    <ul class="categorites" @click="switchSource">
       <li
-        class="source-item"
-        :class="{ 'source-item_active': wallpaperSourceKey === sourceItem.key }"
-        v-for="sourceItem in sources"
-        :key="sourceItem.key"
-        :data-key="sourceItem.key"
+        class="category-item"
+        :class="{
+          'category-item_active': currentShowCategoriteKey === category.key,
+        }"
+        v-for="category in categorites"
+        :key="category.key"
+        :data-key="category.key"
       >
-        {{ sourceItem.label }}
+        {{ category.label }}
       </li>
     </ul>
     <section class="page-header_user">
+      <n-button size="small">本地</n-button>
       <n-button size="small">下载</n-button>
       <n-button size="small">设置</n-button>
       <i class="shoutao st-down"></i>
@@ -84,34 +87,14 @@ import pexelsApi from "../api/pexelsApi";
 import pixabayApi from "../api/pixabayApi";
 import unsplashApi from "../api/unsplashApi";
 const NMessage = useMessage();
-const wallpaperSourceKey = ref<string>("unsplash");
-const sources: {
+const currentShowCategoriteKey = ref<string>("all");
+const categorites: {
   label: string;
   key: string;
 }[] = [
   {
     label: "全部",
-    key: "All",
-  },
-  {
-    label: "Unsplash",
-    key: "unsplash",
-  },
-  {
-    label: "Pixabay",
-    key: "pixabay",
-  },
-  {
-    label: "Pexels",
-    key: "pexels",
-  },
-  {
-    label: "Bing",
-    key: "bing",
-  },
-  {
-    label: "本地",
-    key: "local",
+    key: "all",
   },
 ];
 const pageMainEl = ref<HTMLElement | null>(null);
@@ -240,8 +223,6 @@ function setWallpaper(wallpaperItem: TWallpaperItem) {
     });
 }
 function downloadWallpaper(wallpaperItem: TWallpaperItem) {
-  console.log(wallpaperItem.original);
-
   wallpaperItem.downloading = true;
   wallpapersDownloadList.value.push(wallpaperItem);
   window.wallpaper
@@ -301,7 +282,7 @@ function openLink(link: string) {
 }
 
 onMounted(() => {
-  getWallapers();
+  // getWallapers();
 });
 </script>
 
@@ -321,18 +302,18 @@ onMounted(() => {
 }
 
 /** 来源 */
-.sources {
+.categorites {
   display: flex;
   align-items: center;
   gap: 0 20px;
   font-size: 14px;
 }
-.source-item {
+.category-item {
   padding: 10px 18px;
   cursor: pointer;
 }
-.source-item:hover,
-.source-item_active {
+.category-item:hover,
+.category-item_active {
   color: var(--primary-color);
 }
 
