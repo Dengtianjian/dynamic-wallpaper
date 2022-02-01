@@ -13,13 +13,15 @@
         {{ category.label }}
       </li>
     </ul>
-    <section class="page-header_user">
-      <n-button size="small">本地</n-button>
-      <n-button size="small">下载</n-button>
-      <n-button size="small">设置</n-button>
-      <i class="shoutao st-down"></i>
-      <i class="shoutao st-settings"></i>
-    </section>
+    <ul class="page-header_user-menu">
+      <li
+        class="page-header_user-menu-item"
+        v-for="menuItem in userMenu"
+        :key="menuItem.key"
+      >
+        {{ menuItem.label }}
+      </li>
+    </ul>
   </header>
   <main class="page-main" @scroll="wallpaperListScrolling" ref="pageMainEl">
     <n-spin :show="wallpaperListLoading">
@@ -81,11 +83,8 @@
 </template>
 
 <script lang="ts" setup>
-import { NMenu, MenuOption, useMessage } from "naive-ui";
+import { useMessage } from "naive-ui";
 import { onMounted, ref } from "vue";
-import pexelsApi from "../api/pexelsApi";
-import pixabayApi from "../api/pixabayApi";
-import unsplashApi from "../api/unsplashApi";
 const NMessage = useMessage();
 const currentShowCategoriteKey = ref<string>("all");
 const categorites: {
@@ -95,6 +94,27 @@ const categorites: {
   {
     label: "全部",
     key: "all",
+  },
+];
+const userMenu: Array<{
+  label: string;
+  key: string;
+}> = [
+  {
+    label: "下载列表",
+    key: "downloadList",
+  },
+  {
+    label: "上传",
+    key: "upload",
+  },
+  {
+    label: "设置",
+    key: "setting",
+  },
+  {
+    label: "本地",
+    key: "local",
   },
 ];
 const pageMainEl = ref<HTMLElement | null>(null);
@@ -117,90 +137,26 @@ type TWallpaperItem = {
 const wallpapers = ref<TWallpaperItem[]>([]);
 const wallpapersDownloadList = ref<TWallpaperItem[]>([]);
 
-function getPexelsCurated(): Promise<TWallpaperItem[]> {
-  return pexelsApi
-    .curated(wallpaperPage, wallpaperLoadLimit)
-    .then(({ photos }) => {
-      return photos.map((photoItem) => {
-        return {
-          cover: photoItem.src.large,
-          title: photoItem.alt,
-          original: photoItem.src.original,
-          authorAvatar: "",
-          author: photoItem.photographer,
-          source: "Pexel",
-          sourceLink: photoItem.url,
-        };
-      });
-    });
-}
-function getPixabayImages(): Promise<TWallpaperItem[]> {
-  return pixabayApi
-    .saerchImages("", wallpaperPage, wallpaperLoadLimit)
-    .then(({ hits }) => {
-      return hits.map((imageItem) => {
-        return {
-          cover: imageItem.webformatURL,
-          title: imageItem.tags,
-          original: imageItem.largeImageURL,
-          author: imageItem.user,
-          authorAvatar: imageItem.userImageURL,
-          source: "Pixabay",
-          sourceLink: imageItem.pageURL,
-        };
-      });
-    });
-}
-function getUnsplashPhotos(): Promise<TWallpaperItem[]> {
-  return unsplashApi
-    .listPhotos(wallpaperPage, wallpaperLoadLimit)
-    .then((photos) => {
-      return photos.map((photoItem) => {
-        return {
-          cover: photoItem.urls.small,
-          title: photoItem.description,
-          original: photoItem.urls.raw,
-          author: photoItem.user.name,
-          authorAvatar: photoItem.user.profile_image.small,
-          source: "unsplash",
-          sourceLink: photoItem.links.html,
-          downloading: false,
-        };
-      });
-    });
-}
-
-async function getWallpapersBySource(): Promise<TWallpaperItem[]> {
-  switch (wallpaperSourceKey.value) {
-    case "pixabay":
-      return getPixabayImages();
-    case "unsplash":
-      return getUnsplashPhotos();
-    case "pexels":
-    default:
-      return getPexelsCurated();
-  }
-}
 function getWallapers(): void {
   if (wallpaperListLoading.value || wallpaperLoadFinished) {
     return;
   }
   wallpaperListLoading.value = true;
-  getWallpapersBySource()
-    .then((images) => {
-      if (images.length < wallpaperLoadLimit) {
-        wallpaperLoadFinished = true;
-        if (images.length === 0) return;
-      }
-      wallpaperPage++;
-      images.forEach((imageItem) => {
-        imageItem.downloading = false;
-      });
-      wallpapers.value.push(...images);
-    })
-    .finally(() => {
-      wallpaperListLoading.value = false;
-    });
+  // getWallpapersBySource()
+  //   .then((images) => {
+  //     if (images.length < wallpaperLoadLimit) {
+  //       wallpaperLoadFinished = true;
+  //       if (images.length === 0) return;
+  //     }
+  //     wallpaperPage++;
+  //     images.forEach((imageItem) => {
+  //       imageItem.downloading = false;
+  //     });
+  //     wallpapers.value.push(...images);
+  //   })
+  //   .finally(() => {
+  //     wallpaperListLoading.value = false;
+  //   });
 }
 
 function setWallpaper(wallpaperItem: TWallpaperItem) {
@@ -269,7 +225,7 @@ function switchSource(payload: MouseEvent) {
   let key: string | undefined = (payload.target as HTMLElement).dataset.key;
   if (!key) return;
 
-  wallpaperSourceKey.value = key;
+  currentShowCategoriteKey.value = key;
   wallpaperListLoading.value = false;
   wallpaperPage = 1;
   wallpaperLoadFinished = false;
@@ -289,7 +245,7 @@ onMounted(() => {
 <style scoped>
 .page-header {
   display: grid;
-  grid-template-columns: calc(80vw - 30px) 20vw;
+  grid-template-columns: calc(76vw - 30px) 24vw;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
@@ -429,5 +385,24 @@ onMounted(() => {
   height: 30px;
   width: 100%;
   box-sizing: border-box;
+}
+
+/** 头部用户菜单 */
+.page-header_user-menu {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  font-size: 12px;
+  color: #666;
+  overflow: auto hidden;
+}
+.page-header_user-menu-item {
+  padding: 0 15px;
+}
+.page-header_user-menu-item:hover {
+  color: Var(--primary-color);
+  cursor: pointer;
 }
 </style>
