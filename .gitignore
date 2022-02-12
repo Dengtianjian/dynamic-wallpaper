@@ -3,3 +3,9 @@ node_modules
 dist
 dist-ssr
 *.local
+
+out/
+packages/
+package.zip
+electron/local
+electron/temp
