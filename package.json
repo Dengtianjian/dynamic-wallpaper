@@ -1,19 +1,42 @@
 {
   "name": "dynamic-wallpaper",
-  "version": "0.0.0",
-  "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+  "version": "0.0.2",
+  "main": "electron/main.js",
+  "author": {
+    "name": "DTJ"
   },
+<<<<<<< HEAD
   "dependencies": {
     "electron": "^16.0.7",
     "vue": "^3.2.25"
+=======
+  "description": "dynamic wallpaper",
+  "scripts": {
+    "start": "vite --host",
+    "vite:dev": "vite --open --host",
+    "vite:build": "vue-tsc --noEmit && vite build",
+    "vite:preview": "vite preview",
+    "electron:dev": "wait-on tcp:3000 && electron .",
+    "electron": "concurrently -k \"npm start\" \"npm run electron:dev\"",
+    "electron:build": "npm run vite:build && node electron/build.js"
+>>>>>>> 61e008db0e57799e955928f6c547f25a90377730
   },
   "devDependencies": {
+    "@types/node": "^17.0.10",
     "@vitejs/plugin-vue": "^2.0.0",
+    "concurrently": "^7.0.0",
+    "electron": "16.0.7",
+    "electron-builder": "^22.14.5",
+    "naive-ui": "^2.24.6",
     "typescript": "^4.4.4",
     "vite": "^2.7.2",
-    "vue-tsc": "^0.29.8"
+    "vue": "^3.2.29",
+    "vue-router": "^4.0.12",
+    "vue-tsc": "^0.29.8",
+    "wait-on": "^6.0.0",
+    "zip-a-folder": "^1.1.3"
+  },
+  "dependencies": {
+    "wallpaper": "^4.2.0"
   }
 }
