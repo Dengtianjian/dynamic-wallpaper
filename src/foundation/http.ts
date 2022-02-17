@@ -31,7 +31,8 @@ function request<T>(url: string, method: keyof TMethods = "GET", query: Record<s
   const options: RequestInit = { method, headers };
 
   if (method !== "GET") {
-    if (body instanceof Blob === false && body instanceof ArrayBuffer === false && body instanceof FormData && body instanceof URLSearchParams && typeof body !== "string" && body instanceof ReadableStream === false) {
+    if (Object.prototype.toString.call(body).includes("Object")) {
+      headers.append("Content-type", "application/json;charset=UTF-8");
       options['body'] = JSON.stringify(body);
     } else {
       // @ts-ignore：已经跳过了Object类型
@@ -56,7 +57,7 @@ function request<T>(url: string, method: keyof TMethods = "GET", query: Record<s
 function get<T>(url: string, query: Record<string, any> = {}, headers: Record<string, any> = {}) {
   return request<T>(url, "GET", query, {}, headers);
 }
-function post<T>(url: string, query: Record<string, any> = {}, body: BodyInit & Record<string, any>, headers: Record<string, any> = {}) {
+function post<T>(url: string, query: Record<string, any> = {}, body: BodyInit | Record<string, any>, headers: Record<string, any> = {}) {
   return request<T>(url, "POST", query, body, headers);
 }
 function patch<T>(url: string, query: Record<string, any> = {}, body: BodyInit & Record<string, any>, headers: Record<string, any> = {}) {
