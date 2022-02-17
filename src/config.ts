@@ -11,5 +11,8 @@ export default {
     key: "WdyQKrlpN53SYlvEVhNIAHbvnSj7nVc9fLZmK6daoOg",
     url: "https://api.unsplash.com/",
     version: "v1"
+  },
+  api:{
+    url:"http://wallpaper.isdtj.com"
   }
 }
