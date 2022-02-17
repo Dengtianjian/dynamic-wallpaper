@@ -5,11 +5,6 @@
   "author": {
     "name": "DTJ"
   },
-<<<<<<< HEAD
-  "dependencies": {
-    "electron": "^16.0.7",
-    "vue": "^3.2.25"
-=======
   "description": "dynamic wallpaper",
   "scripts": {
     "start": "vite --host",
@@ -19,7 +14,6 @@
     "electron:dev": "wait-on tcp:3000 && electron .",
     "electron": "concurrently -k \"npm start\" \"npm run electron:dev\"",
     "electron:build": "npm run vite:build && node electron/build.js"
->>>>>>> 61e008db0e57799e955928f6c547f25a90377730
   },
   "devDependencies": {
     "@types/node": "^17.0.10",

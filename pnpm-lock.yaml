@@ -2980,7 +2980,7 @@ packages:
       resolve: 1.22.0
       rollup: 2.66.1
     optionalDependencies:
-      fsevents: registry.npmmirror.com/fsevents/2.3.2
+      fsevents: 2.3.2
     dev: true
 
   /void-elements/3.1.0:
@@ -3076,7 +3076,7 @@ packages:
     resolution: {integrity: sha512-eecDqHk4WjEvy6VHQ6teHczppQ9yJO2wExCy7yu7WiFj35qbw0h4G6Erv46MvP3ClL8FggFzD7s1qM6vdqJUfw==}
     dependencies:
       '@volar/shared': 0.29.8
-      semver: registry.nlark.com/semver/7.3.5
+      semver: 7.3.5
       upath: 2.0.1
       vscode-languageserver: 8.0.0-next.6
       vscode-languageserver-textdocument: 1.0.3
