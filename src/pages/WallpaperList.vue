@@ -52,6 +52,7 @@
 import { useMessage } from "naive-ui";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import wallpaperApi from "../api/wallpaperApi";
 import { TWallpaperItem } from "../types/wallpaperTypes";
 const Router = useRouter();
 const NMessage = useMessage();
@@ -81,6 +82,14 @@ function getWallapers(): void {
     return;
   }
   wallpaperListLoading.value = true;
+  wallpaperApi
+    .getWallpapers()
+    .then((res) => {
+      console.log(res);
+    })
+    .finally(() => {
+      wallpaperListLoading.value = false;
+    });
   // getWallpapersBySource()
   //   .then((images) => {
   //     if (images.length < wallpaperLoadLimit) {
@@ -177,7 +186,7 @@ function openLink(link: string) {
 }
 
 onMounted(() => {
-  // getWallapers();
+  getWallapers();
 });
 </script>
 
