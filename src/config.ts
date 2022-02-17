@@ -13,6 +13,6 @@ export default {
     version: "v1"
   },
   api:{
-    url:"http://wallpaper.isdtj.com"
+    url:"https://wallpaper.isdtj.com"
   }
 }
