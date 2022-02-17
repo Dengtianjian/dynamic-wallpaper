@@ -5,27 +5,27 @@
         <li
           class="wallpaper-item"
           v-for="wallpaperItem in wallpapers"
-          :key="wallpaperItem.cover"
+          :key="wallpaperItem.id"
           @click="setWallpaper(wallpaperItem)"
         >
-          <img :src="wallpaperItem.cover" alt="" class="wallpaper-cover" />
+          <img :src="wallpaperItem.fileUrl" alt="" class="wallpaper-cover" />
           <section class="wallpaper-info" @click.stop>
-            <div class="wallpaper-title">{{ wallpaperItem.title }}</div>
+            <div class="wallpaper-title">{{ wallpaperItem.description }}</div>
             <div class="wallpaper-author">
               来自 {{ wallpaperItem.source }} 的
-              <img
+              <!-- <img
                 :src="wallpaperItem.authorAvatar"
                 :alt="wallpaperItem.author"
                 class="wallpaper-author_avatar"
                 v-if="wallpaperItem.authorAvatar"
-              />
+              /> -->
               {{ wallpaperItem.author }}
             </div>
             <ul class="wallpaper-operations">
               <li>
                 <i
                   class="shoutao st-link"
-                  @click.stop="openLink(wallpaperItem.sourceLink)"
+                  @click.stop="openLink(wallpaperItem.fileUrl)"
                 ></i>
               </li>
               <li>
@@ -53,6 +53,7 @@ import { useMessage } from "naive-ui";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import wallpaperApi from "../api/wallpaperApi";
+import attachment from "../foundation/attachment";
 import { TWallpaperItem } from "../types/wallpaperTypes";
 const Router = useRouter();
 const NMessage = useMessage();
@@ -84,27 +85,21 @@ function getWallapers(): void {
   wallpaperListLoading.value = true;
   wallpaperApi
     .getWallpapers()
-    .then((res) => {
-      console.log(res);
+    .then(({ pagination, wallpapers: data }) => {
+      if (data.length < wallpaperLoadLimit) {
+        wallpaperLoadFinished = true;
+        if (data.length === 0) return;
+      }
+      wallpaperPage++;
+      data.forEach((dataItem) => {
+        dataItem.fileUrl = attachment.genDownloadUrl(dataItem.fileid);
+        dataItem.downloading = false;
+      });
+      wallpapers.value.push(...data);
     })
     .finally(() => {
       wallpaperListLoading.value = false;
     });
-  // getWallpapersBySource()
-  //   .then((images) => {
-  //     if (images.length < wallpaperLoadLimit) {
-  //       wallpaperLoadFinished = true;
-  //       if (images.length === 0) return;
-  //     }
-  //     wallpaperPage++;
-  //     images.forEach((imageItem) => {
-  //       imageItem.downloading = false;
-  //     });
-  //     wallpapers.value.push(...images);
-  //   })
-  //   .finally(() => {
-  //     wallpaperListLoading.value = false;
-  //   });
 }
 
 function setWallpaper(wallpaperItem: TWallpaperItem) {
@@ -114,11 +109,12 @@ function setWallpaper(wallpaperItem: TWallpaperItem) {
   wallpaperSetting = true;
   wallpaperListLoading.value = true;
   window.wallpaper
-    .set(wallpaperItem.original)
+    .set(wallpaperItem.fileUrl)
     .then((res: any) => {
       NMessage.success("设置成功");
     })
     .catch((err: any) => {
+      console.log(err);
       NMessage.error("设置失败");
     })
     .finally(() => {
@@ -130,11 +126,15 @@ function downloadWallpaper(wallpaperItem: TWallpaperItem) {
   wallpaperItem.downloading = true;
   wallpapersDownloadList.value.push(wallpaperItem);
   window.wallpaper
-    .download(wallpaperItem.original, (total, downloadedSize, progress) => {
+    .download(wallpaperItem.fileUrl, (total, downloadedSize, progress) => {
       console.log(total, downloadedSize, progress);
     })
     .then((res) => {
       NMessage.success("下载完成");
+    })
+    .catch((err) => {
+      console.log(err);
+      NMessage.error("下载失败");
     })
     .finally(() => {
       let index: number = wallpapersDownloadList.value.indexOf(wallpaperItem);

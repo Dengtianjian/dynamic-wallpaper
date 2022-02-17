@@ -1,10 +1,14 @@
 export type TWallpaperItem = {
-  cover: string;
-  title: string;
-  original: string;
-  author: string;
-  authorAvatar: string;
-  source: string;
-  sourceLink: string;
-  downloading?: boolean;
+  author: string
+  createdAt: string,
+  deletedAt: string,
+  description: string,
+  fileid: string,
+  fileUrl: string,
+  id: string,
+  source: string,
+  tags: string,
+  updatedAt: string,
+  uploadedBy: string,
+  downloading:boolean
 };

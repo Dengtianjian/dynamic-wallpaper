@@ -3,10 +3,14 @@ const { set } = require("wallpaper");
 const Path = require('path');
 const HTTPS = require("https");
 const FS = require("fs");
+const log = require("./log");
 
-function saveFile(fileBinaryData, savePath, overwrite = true) {
+function saveFile(fileBinaryData, savePath, fileName, overwrite = true) {
   return new Promise((resolve, reject) => {
-
+    if (!FS.existsSync(savePath)) {
+      FS.mkdirSync(savePath);
+    }
+    savePath += `/${fileName}`;
     if (FS.existsSync(savePath)) {
       if (overwrite) {
         FS.rmSync(savePath);
@@ -61,12 +65,9 @@ function downloadImageToTemp(imageUrl, callback = null) {
   return new Promise((resolve, reject) => {
     downloadFile(imageUrl, callback).then(imageData => {
       const extensionName = Path.extname(imageUrl);
-      const dirPath = Path.join(__dirname, "temp");
-      if (!FS.existsSync(dirPath)) {
-        FS.mkdirSync(dirPath);
-      }
-      const fileSavePath = Path.join(dirPath, `wallpaper.${extensionName}`);
-      saveFile(imageData, fileSavePath).then(() => { resolve(fileSavePath) }).catch(reject);
+      const fileDirPath = Path.join(__dirname, "temp");
+      const fileName = `${Date.now()}.${extensionName}`;
+      saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
     });
   });
 }
@@ -74,12 +75,9 @@ function downloadImageToLocal(imageUrl, callback = null) {
   return new Promise((resolve, reject) => {
     downloadFile(imageUrl, callback).then(imageData => {
       const extensionName = Path.extname(imageUrl);
-      const dirPath = Path.join(__dirname, "local");
-      if (!FS.existsSync(dirPath)) {
-        FS.mkdirSync(dirPath);
-      }
-      const fileSavePath = Path.join(dirPath, `${Date.now()}.${extensionName}`);
-      saveFile(imageData, fileSavePath).then(() => { resolve(fileSavePath) }).catch(reject);
+      const fileDirPath = Path.join(__dirname, "local");
+      const fileName = `${Date.now()}.${extensionName}`;
+      saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
     });
   })
 }
