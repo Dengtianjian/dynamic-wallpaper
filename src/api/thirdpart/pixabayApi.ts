@@ -1,5 +1,5 @@
-import config from "../config";
-import http from "../foundation/http";
+import config from "../../config";
+import http from "../../foundation/http";
 
 type TSearchImagesResponse = {
   total: number,
