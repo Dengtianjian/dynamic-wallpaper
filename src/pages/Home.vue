@@ -68,6 +68,8 @@ const navigators: Array<{
   /* background: red; */
   border-top: 1px solid #eee;
   box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: var(--radius-angle) var(--radius-angle) 0 0;
 }
 .navigator-item {
   padding: 0 10px;
