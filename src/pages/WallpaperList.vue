@@ -69,6 +69,7 @@ import wallpaperApi from "../api/wallpaperApi";
 import attachment from "../foundation/attachment";
 import { TWallpaperItem } from "../types/wallpaperTypes";
 import DWallpaperItem from "../components/DWallpaperItem.vue";
+import download from "../foundation/download";
 const Router = useRouter();
 const NMessage = useMessage();
 
@@ -90,7 +91,7 @@ let wallpaperLoadLimit = 28;
 let wallpaperLoadFinished = false;
 
 const wallpapers = ref<TWallpaperItem[]>([]);
-const wallpapersDownloadList = ref<TWallpaperItem[]>([]);
+// const wallpapersDownloadList = ref<TWallpaperItem[]>([]);
 
 function getWallapers(): void {
   if (wallpaperListLoading.value || wallpaperLoadFinished) {
@@ -137,10 +138,11 @@ function setWallpaper(wallpaperItem: TWallpaperItem) {
     });
 }
 function downloadWallpaper(wallpaperItem: TWallpaperItem) {
+  // download.add(wallpaperItem);
   wallpaperItem.downloading = true;
-  wallpapersDownloadList.value.push(wallpaperItem);
   window.wallpaper
     .download(wallpaperItem.fileUrl, (total, downloadedSize, progress) => {
+      download.updateProgress(wallpaperItem.id, progress);
       console.log(total, downloadedSize, progress);
     })
     .then((res) => {
@@ -152,11 +154,6 @@ function downloadWallpaper(wallpaperItem: TWallpaperItem) {
       NMessage.error("下载失败");
     })
     .finally(() => {
-      let index: number = wallpapersDownloadList.value.indexOf(wallpaperItem);
-      if (index > -1) {
-        wallpapersDownloadList.value.splice(index, 1);
-      }
-
       wallpaperItem.downloading = false;
     });
 }

@@ -1,17 +1,19 @@
 <template>
   <ul class="download-list">
-    <li class="download-item" v-for="index in 220" :key="index">
-      <img
-        src="https://t7.baidu.com/it/u=2621658848,3952322712&fm=193&f=GIF"
-        alt=""
-        class="download_wallpaper-cover"
-      />
-      <div class="download-progress">55.5%</div>
-    </li>
+    <d-wallpaper-item
+      :data="downloadItem[1]"
+      v-for="downloadItem in download.getAll()"
+    >
+      <div class="download-progress">{{ downloadItem[1].download.progress }}%</div>
+    </d-wallpaper-item>
   </ul>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { onMounted } from "vue";
+import DWallpaperItem from "../components/DWallpaperItem.vue";
+import download from "../foundation/download";
+</script>
 
 <style scoped>
 .download-list {
@@ -19,15 +21,6 @@
   grid-template-columns: repeat(4, calc(25% - 8.75px));
   justify-content: space-between;
   gap: 10px;
-}
-.download-item {
-  position: relative;
-}
-.download_wallpaper-cover {
-  display: block;
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
 }
 .download-progress {
   position: absolute;

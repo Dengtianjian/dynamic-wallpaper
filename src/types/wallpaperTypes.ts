@@ -1,4 +1,5 @@
 export type TWallpaperItem = {
+  [key: string]: any,
   author: string
   createdAt: string,
   deletedAt: string,
@@ -10,5 +11,12 @@ export type TWallpaperItem = {
   tags: string,
   updatedAt: string,
   uploadedBy: string,
-  downloading:boolean
+  downloading: boolean
 };
+
+export type TWallpaperDownloadItem = {
+  download: {
+    progress: number,
+    downloading: boolean
+  }
+} & TWallpaperItem;

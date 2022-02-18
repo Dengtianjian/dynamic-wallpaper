@@ -21,11 +21,14 @@
 
 <script lang="ts" setup>
 import { PropType } from "vue";
-import { TWallpaperItem } from "../types/wallpaperTypes";
+import {
+  TWallpaperDownloadItem,
+  TWallpaperItem,
+} from "../types/wallpaperTypes";
 
 defineProps({
   data: {
-    type: Object as PropType<TWallpaperItem>,
+    type: Object as PropType<TWallpaperItem | TWallpaperDownloadItem>,
     default: null,
   },
 });
