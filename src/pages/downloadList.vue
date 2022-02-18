@@ -1,10 +1,13 @@
 <template>
+  ~开发中
   <ul class="download-list">
     <d-wallpaper-item
       :data="downloadItem[1]"
       v-for="downloadItem in download.getAll()"
     >
-      <div class="download-progress">{{ downloadItem[1].download.progress }}%</div>
+      <div class="download-progress">
+        {{ downloadItem[1].download.progress }}%
+      </div>
     </d-wallpaper-item>
   </ul>
 </template>

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, Tray } = require("electron");
+const { app, BrowserWindow, Menu, Tray, ipcMain } = require("electron");
 const path = require("path");
 
 let mainWindow = null;
@@ -27,6 +27,14 @@ function createMainWindow() {
 
 app.whenReady().then(() => {
   createMainWindow();
+
+  ipcMain.on("fixedTray", (event, checked) => {
+    if (checked) {
+      fixedTray();
+    } else {
+      cancelFixedTray();
+    }
+  })
 });
 
 app.on("window-all-closed", () => {

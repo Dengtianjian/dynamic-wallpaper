@@ -4,7 +4,7 @@
       <n-checkbox></n-checkbox>
     </n-form-item>
     <n-form-item label="固定在任务栏">
-      <n-checkbox></n-checkbox>
+      <n-checkbox @update:checked="fixedOnTray"></n-checkbox>
     </n-form-item>
     <n-form-item label="自动切换桌面壁纸">
       <n-checkbox></n-checkbox>
@@ -69,6 +69,10 @@ const durationUnitOptions: SelectOption[] = [
     value: "random",
   },
 ];
+
+function fixedOnTray(checked: boolean) {
+  window.system.ipcRenderer.send("fixedTray", checked);
+}
 </script>
 
 <style scoped>

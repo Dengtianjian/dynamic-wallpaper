@@ -1,4 +1,4 @@
-const { contextBridge, shell } = require("electron");
+const { contextBridge, shell, ipcRenderer } = require("electron");
 const { set } = require("wallpaper");
 const Path = require('path');
 const HTTPS = require("https");
@@ -81,6 +81,7 @@ function downloadImageToLocal(imageUrl, callback = null) {
     });
   })
 }
+
 contextBridge.exposeInMainWorld("wallpaper", {
   set: (wallpaperImageUrl, callback = null) => {
     return downloadImageToTemp(wallpaperImageUrl, callback).then(res => {
@@ -95,4 +96,7 @@ contextBridge.exposeInMainWorld("link", {
   openLink: (linkURL) => {
     shell.openExternal(linkURL);
   }
+});
+contextBridge.exposeInMainWorld("system", {
+  ipcRenderer
 });

@@ -1,0 +1,11 @@
+{
+  "tray": {
+    "fixed": true
+  },
+  "autoStart": true,
+  "autoSwitch": {
+    "auto": true,
+    "unit": 0,
+    "interval": -1
+  }
+}

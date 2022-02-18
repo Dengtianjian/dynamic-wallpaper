@@ -7,5 +7,8 @@ interface Window {
   },
   link: {
     openLink: (linkURL: string) => void
-  }
+  },
+  system: {
+    ipcRenderer: any
+  },
 }
