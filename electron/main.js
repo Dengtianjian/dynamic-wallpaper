@@ -1,40 +1,15 @@
-const { app, BrowserWindow, Menu, Tray, ipcMain } = require("electron");
-const path = require("path");
-
-let mainWindow = null;
-function createMainWindow() {
-  const { screen } = require("electron");
-  const primaryDisplay = screen.getPrimaryDisplay();
-  const { width, height } = primaryDisplay.workAreaSize;
-  mainWindow = new BrowserWindow({
-    width: Math.ceil(width * 0.8),
-    height: Math.ceil(height * 0.8),
-    // resizable: false,
-    maximizable: true,
-    minHeight: Math.ceil(height * 0.6),
-    minWidth: Math.ceil(width * 0.6),
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js")
-    }
-  });
-
-  if (app.isPackaged) {
-    mainWindow.loadFile("index.html");
-  } else {
-    mainWindow.loadURL("http://localhost:3000");
-  }
-}
+const { app } = require("electron");
+const Path = require("path");
+const window = require("./foundation/window");
+const tray = require("./foundation/tray");
+const setting = require("./foundation/setting");
+const log = require("./foundation/log");
 
 app.whenReady().then(() => {
-  createMainWindow();
-
-  ipcMain.on("fixedTray", (event, checked) => {
-    if (checked) {
-      fixedTray();
-    } else {
-      cancelFixedTray();
-    }
-  })
+  setting.set("basePath", Path.join(__dirname));
+  setting.init();
+  window.createMainWindow();
+  tray.initTray();
 });
 
 app.on("window-all-closed", () => {

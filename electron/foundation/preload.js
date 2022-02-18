@@ -3,7 +3,6 @@ const { set } = require("wallpaper");
 const Path = require('path');
 const HTTPS = require("https");
 const FS = require("fs");
-const log = require("./log");
 
 function saveFile(fileBinaryData, savePath, fileName, overwrite = true) {
   return new Promise((resolve, reject) => {

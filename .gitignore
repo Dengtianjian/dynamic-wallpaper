@@ -9,3 +9,4 @@ packages/
 package.zip
 electron/local
 electron/temp
+electron/logs
