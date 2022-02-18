@@ -1,8 +1,10 @@
 <template>
   <li class="wallpaper-item">
-    <img :src="data.cover" alt="" class="wallpaper-cover" />
+    <img :src="data.fileUrl" alt="" class="wallpaper-cover" />
+
     <section class="wallpaper-info" @click.stop>
-      <div class="wallpaper-title">{{ data.title }}</div>
+      <slot />
+      <!-- <div class="wallpaper-title">{{ data.description }}</div>
       <div class="wallpaper-author">
         来自 {{ data.source }} 的
         <img
@@ -12,8 +14,7 @@
           v-if="data.authorAvatar"
         />
         {{ data.author }}
-      </div>
-      <slot />
+      </div> -->
     </section>
   </li>
 </template>
@@ -52,9 +53,12 @@ defineProps({
   width: 100%;
   /* height: 40px; */
   color: white;
-  background: rgba(0, 0, 0, 0.4);
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.6));
   box-sizing: border-box;
   transition: bottom 0.15s ease-in-out;
+}
+.wallpaper-item:hover .wallpaper-info {
+  bottom: 0;
 }
 .wallpaper-title {
   width: 100%;

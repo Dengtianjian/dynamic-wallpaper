@@ -2,14 +2,12 @@
   <main class="page-main" @scroll="wallpaperListScrolling" ref="pageMainEl">
     <n-spin :show="wallpaperListLoading">
       <ul class="wallpaper-list">
-        <li
-          class="wallpaper-item"
+        <d-wallpaper-item
+          :data="wallpaperItem"
           v-for="wallpaperItem in wallpapers"
           :key="wallpaperItem.id"
-          @click="setWallpaper(wallpaperItem)"
         >
-          <img :src="wallpaperItem.fileUrl" alt="" class="wallpaper-cover" />
-          <section class="wallpaper-info" @click.stop>
+          <section @click.stop>
             <div class="wallpaper-title">{{ wallpaperItem.description }}</div>
             <div class="wallpaper-author">
               来自 {{ wallpaperItem.source }} 的
@@ -23,38 +21,54 @@
             </div>
             <ul class="wallpaper-operations">
               <li>
-                <i
-                  class="shoutao st-link"
-                  @click.stop="openLink(wallpaperItem.fileUrl)"
-                ></i>
+                <n-tooltip>
+                  <template #trigger>
+                    <i
+                      class="shoutao st-link"
+                      @click.stop="openLink(wallpaperItem.fileUrl)"
+                    ></i>
+                  </template>
+                  浏览器打开
+                </n-tooltip>
               </li>
               <li>
-                <i
-                  class="shoutao st-check"
-                  @click.stop="setWallpaper(wallpaperItem)"
-                ></i>
+                <n-tooltip>
+                  <template #trigger>
+                    <i
+                      class="shoutao st-check"
+                      @click.stop="setWallpaper(wallpaperItem)"
+                    ></i>
+                  </template>
+                  设置为桌面壁纸
+                </n-tooltip>
               </li>
               <li>
-                <i
-                  class="shoutao st-down"
-                  @click.stop="downloadWallpaper(wallpaperItem)"
-                ></i>
+                <n-tooltip>
+                  <template #trigger>
+                    <i
+                      class="shoutao st-down"
+                      @click.stop="downloadWallpaper(wallpaperItem)"
+                    ></i>
+                  </template>
+                  下载到本地
+                </n-tooltip>
               </li>
             </ul>
           </section>
-        </li>
+        </d-wallpaper-item>
       </ul>
     </n-spin>
   </main>
 </template>
 
 <script lang="ts" setup>
-import { useMessage } from "naive-ui";
+import { useMessage, NTooltip } from "naive-ui";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import wallpaperApi from "../api/wallpaperApi";
 import attachment from "../foundation/attachment";
 import { TWallpaperItem } from "../types/wallpaperTypes";
+import DWallpaperItem from "../components/DWallpaperItem.vue";
 const Router = useRouter();
 const NMessage = useMessage();
 
@@ -131,6 +145,7 @@ function downloadWallpaper(wallpaperItem: TWallpaperItem) {
     })
     .then((res) => {
       NMessage.success("下载完成");
+      new Notification("壁纸下载完成");
     })
     .catch((err) => {
       console.log(err);
@@ -215,33 +230,9 @@ onMounted(() => {
     grid-template-columns: repeat(6, calc(16.6% - 15px));
   }
 }
-.wallpaper-item {
-  position: relative;
-  height: 26vh;
-  /* width: 212px; */
-  overflow: hidden;
-}
-.wallpaper-cover {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  vertical-align: bottom;
-  transition: transform 0.15s ease-in-out;
-}
-.wallpaper-info {
-  position: absolute;
-  bottom: -100%;
-  left: 0;
-  padding: 5px 10px;
-  width: 100%;
-  /* height: 40px; */
-  color: white;
-  background: rgba(0, 0, 0, 0.4);
-  box-sizing: border-box;
-  transition: bottom 0.15s ease-in-out;
-}
 .wallpaper-title {
   width: 100%;
+  line-height: 20px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -255,6 +246,7 @@ onMounted(() => {
 }
 .wallpaper-operations li {
   padding: 0 5px;
+  cursor: pointer;
 }
 .wallpaper-operations li i {
   font-size: 18px;
@@ -262,21 +254,12 @@ onMounted(() => {
 .wallpaper-operations li:hover {
   color: var(--primary-color);
 }
-.wallpaper-item:hover {
-  cursor: pointer;
-}
-.wallpaper-item:hover .wallpaper-info {
-  bottom: 0;
-}
-.wallpaper-item:hover .wallpaper-cover {
-  transform: scale(1.05);
-}
 /** 图片作者 */
 .wallpaper-author {
   display: flex;
   align-items: center;
   gap: 0 5px;
-  margin: 5px 0;
+  /* margin: 5px 0; */
   font-size: 12px;
 }
 .wallpaper-author_avatar {
