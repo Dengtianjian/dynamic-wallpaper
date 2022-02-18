@@ -194,7 +194,7 @@ function switchSource(payload: MouseEvent) {
   getWallapers();
 }
 function openLink(link: string) {
-  window.link.openLink(link);
+  window.wallpaper.openLink(link);
 }
 
 onMounted(() => {
