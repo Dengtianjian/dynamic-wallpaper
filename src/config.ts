@@ -12,7 +12,10 @@ export default {
     url: "https://api.unsplash.com/",
     version: "v1"
   },
-  api:{
-    url:"https://wallpaper.isdtj.com"
+  bing: {
+    url: "https://cn.bing.com/"
+  },
+  api: {
+    url: "https://wallpaper.isdtj.com"
   }
 }
