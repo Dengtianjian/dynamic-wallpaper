@@ -16,6 +16,6 @@ export default {
     url: "https://cn.bing.com/"
   },
   api: {
-    url: "https://wallpaper.isdtj.com"
+    url: "http://127.0.0.6"
   }
 }
