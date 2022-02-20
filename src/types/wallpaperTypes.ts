@@ -6,6 +6,7 @@ export type TWallpaperItem = {
   description: string,
   fileid: string,
   fileUrl: string,
+  thumbUrl: string,
   id: string,
   source: string,
   tags: string,

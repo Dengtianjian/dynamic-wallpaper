@@ -108,6 +108,11 @@ function getWallapers(): void {
       wallpaperPage++;
       data.forEach((dataItem) => {
         dataItem.fileUrl = attachment.genDownloadUrl(dataItem.fileid);
+        dataItem.thumbUrl = attachment.genImageThumbUrl(
+          dataItem.fileid,
+          480,
+          295
+        );
         dataItem.downloading = false;
       });
       wallpapers.value.push(...data);
