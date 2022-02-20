@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { NMessageProvider } from "naive-ui";
-import "./foundation/database";
+import { onMounted } from "vue";
+import systemService from "./service/systemService";
+
+onMounted(() => {
+  systemService.init();
+});
 </script>
 
 <template>

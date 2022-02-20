@@ -60,7 +60,7 @@ function get<T>(url: string, query: Record<string, any> = {}, headers: Record<st
 function post<T>(url: string, query: Record<string, any> = {}, body: BodyInit | Record<string, any>, headers: Record<string, any> = {}) {
   return request<T>(url, "POST", query, body, headers);
 }
-function patch<T>(url: string, query: Record<string, any> = {}, body: BodyInit & Record<string, any>, headers: Record<string, any> = {}) {
+function patch<T>(url: string, query: Record<string, any> = {}, body: BodyInit | Record<string, any>, headers: Record<string, any> = {}) {
   return request<T>(url, "PATCH", query, body, headers);
 }
 function put<T>(url: string, query: Record<string, any> = {}, body: BodyInit & Record<string, any>, headers: Record<string, any> = {}) {

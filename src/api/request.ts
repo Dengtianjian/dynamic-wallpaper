@@ -17,7 +17,7 @@ export default {
       data: T
     }>(url, query, body, headers).then(({ data }) => data.data);
   },
-  patch<T>(uri: string, query: Record<string, any> | undefined, body: BodyInit & Record<string, any>, headers: Record<string, any> = {}) {
+  patch<T>(uri: string, body: BodyInit | Record<string, any>, query?: Record<string, any> | undefined, headers: Record<string, any> = {}) {
     const url = `${config.api.url}/${uri}`;
     headers['X-Ajax'] = 1;
     return http.patch<{
