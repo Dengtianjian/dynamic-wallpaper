@@ -7,6 +7,7 @@ interface Window {
     openLink: (linkURL: string) => void
   },
   system: {
-    ipcRenderer: any
+    ipcRenderer: any,
+    settings: Record<string, any>
   },
 }

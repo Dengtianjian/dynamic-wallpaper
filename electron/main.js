@@ -2,14 +2,16 @@ const { app } = require("electron");
 const Path = require("path");
 const window = require("./foundation/window");
 const tray = require("./foundation/tray");
-const setting = require("./foundation/setting");
-const log = require("./foundation/log");
+const wallpaperService = require("./service/wallpaperService");
+
+global.app = {
+  basePath: Path.join(__dirname)
+};
 
 app.whenReady().then(() => {
-  setting.set("basePath", Path.join(__dirname));
-  setting.init();
   window.createMainWindow();
   tray.initTray();
+  wallpaperService.init();
 });
 
 app.on("window-all-closed", () => {
