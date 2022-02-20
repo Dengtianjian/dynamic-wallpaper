@@ -36,7 +36,23 @@
       ></n-input>
     </n-form-item>
     <n-form-item label="分类">
-      <n-select :options="categorites" placeholder="请选择所属分类"></n-select>
+      <n-select
+        :options="categorites"
+        placeholder="请选择所属分类"
+        disabled
+      ></n-select>
+    </n-form-item>
+    <n-form-item label="原作者">
+      <n-input
+        placeholder="如果是转载内容，请先获取到原作者同意转载后再发布，并且必须填写原作者"
+        v-model:value="wallpaperForm.author"
+      ></n-input>
+    </n-form-item>
+    <n-form-item label="来源">
+      <n-input
+        placeholder="请输入来源"
+        v-model:value="wallpaperForm.source"
+      ></n-input>
     </n-form-item>
     <n-form-item :show-label="false">
       <n-button block type="primary" @click="publishWallpaper" :loading="saving"
@@ -70,11 +86,15 @@ const wallpaperForm = reactive<{
   fileid: string;
   fileUrl: string;
   tags: string;
+  source: string;
+  author: string;
 }>({
   description: "",
   fileid: "",
   fileUrl: "",
   tags: "",
+  source: "",
+  author: "",
 });
 
 const fileUploading = ref<boolean>(false);
@@ -140,12 +160,13 @@ function publishWallpaper() {
   left: 0;
   width: 100vw;
   height: 100vh;
+  object-fit: cover;
 }
 .publish-form {
   position: relative;
   z-index: 1;
   padding: 10px;
-  margin: 20px auto 0;
+  margin: 20px auto;
   width: 50vw;
   background-color: rgba(255, 255, 255, 0.95);
   border-radius: var(--radius-angle);
