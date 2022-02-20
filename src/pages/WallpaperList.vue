@@ -126,21 +126,25 @@ function setWallpaper(wallpaperItem: TWallpaperItem) {
   if (wallpaperSetting) {
     return NMessage.warning("已经有壁纸设置中，请勿重复点击");
   }
-  wallpaperSetting = true;
-  wallpaperListLoading.value = true;
-  window.wallpaper
-    .set(wallpaperItem.fileUrl)
-    .then((res: any) => {
-      NMessage.success("设置成功");
-    })
-    .catch((err: any) => {
-      console.log(err);
-      NMessage.error("设置失败");
-    })
-    .finally(() => {
-      wallpaperSetting = false;
-      wallpaperListLoading.value = false;
-    });
+  console.log(window.system.ipcRenderer.send("setWallpaper",{
+    wallpaperImageUrl:wallpaperItem.fileUrl
+  }));
+  
+  // wallpaperSetting = true;
+  // wallpaperListLoading.value = true;
+  // window.wallpaper
+  //   .set(wallpaperItem.fileUrl)
+  //   .then((res: any) => {
+  //     NMessage.success("设置成功");
+  //   })
+  //   .catch((err: any) => {
+  //     console.log(err);
+  //     NMessage.error("设置失败");
+  //   })
+  //   .finally(() => {
+  //     wallpaperSetting = false;
+  //     wallpaperListLoading.value = false;
+  //   });
 }
 function downloadWallpaper(wallpaperItem: TWallpaperItem) {
   // download.add(wallpaperItem);

@@ -1,12 +1,11 @@
 const { ipcMain, Tray } = require("electron");
 const { mainWindow } = require("./window");
 const Path = require("path");
-const setting = require("./setting");
 
 let applicationTray = null;
 function fixedTray() {
   if (!applicationTray) {
-    applicationTray = new Tray(Path.join(setting.get("basePath"), "assets", "icon.png"));
+    applicationTray = new Tray(Path.join(global.app.basePath, "assets", "icon.png"));
     applicationTray.setToolTip("wallpaper");
     applicationTray.on("click", () => {
       if (mainWindow) {
@@ -28,9 +27,6 @@ function cancelFixedTray() {
   }
 }
 function initTray() {
-  if (setting.get("tray").fixed) {
-    fixedTray();
-  }
   ipcMain.on("fixedTray", (event, checked) => {
     if (checked) {
       fixedTray();

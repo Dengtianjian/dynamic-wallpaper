@@ -1,6 +1,6 @@
 const Path = require("path");
-const { app, BrowserWindow } = require("electron");
-const setting = require("./setting")
+const { app, BrowserWindow,ipcRenderer } = require("electron");
+const wallpaperService = require("../service/wallpaperService");
 
 let mainWindow = null;
 
@@ -16,7 +16,7 @@ function createMainWindow() {
     minHeight: Math.ceil(height * 0.6),
     minWidth: Math.ceil(width * 0.6),
     webPreferences: {
-      preload: Path.join(setting.get("basePath"), "foundation", "preload.js")
+      preload: Path.join(global.app.basePath, "foundation", "preload.js")
     }
   });
 
