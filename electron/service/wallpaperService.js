@@ -4,11 +4,14 @@ const HTTPS = require("https");
 const FS = require("fs");
 const context = require('../foundation/context');
 const setting = require("../foundation/setting");
+const { set } = require("wallpaper");
 
 function saveFile(fileBinaryData, savePath, fileName, overwrite = true) {
   return new Promise((resolve, reject) => {
     if (!FS.existsSync(savePath)) {
-      FS.mkdirSync(savePath);
+      FS.mkdirSync(savePath, {
+        recursive: true
+      });
     }
     savePath += `/${fileName}`;
     if (FS.existsSync(savePath)) {
@@ -65,8 +68,8 @@ function downloadImageToTemp(imageUrl, callback = null) {
   return new Promise((resolve, reject) => {
     downloadFile(imageUrl, callback).then(imageData => {
       const extensionName = Path.extname(imageUrl);
-      const fileDirPath = Path.join(setting.get("basePath"), "attachments", "electron", "temp");
-      const fileName = `${Date.now()}.${extensionName}`;
+      const fileDirPath = Path.join(setting.get("basePath"), "electron", "attachments", "temp");
+      const fileName = `wallpaper.${extensionName}`;
       saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
     });
   });
@@ -75,7 +78,7 @@ function downloadImageToLocal(imageUrl, callback = null) {
   return new Promise((resolve, reject) => {
     downloadFile(imageUrl, callback).then(imageData => {
       const extensionName = Path.extname(imageUrl);
-      const fileDirPath = Path.join(setting.get("basePath"), "attachments", "electron", "local");
+      const fileDirPath = Path.join(setting.get("basePath"), "electron", "attachments", "local");
       const fileName = `${Date.now()}.${extensionName}`;
       saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
     });
