@@ -1,9 +1,8 @@
-const { shell, ipcMain } = require("electron");
+const { shell } = require("electron");
 const Path = require('path');
 const HTTPS = require("https");
 const HTTP = require("http");
 const FS = require("fs");
-const context = require('../foundation/context');
 const { set } = require("wallpaper");
 
 function saveFile(fileBinaryData, savePath, fileName, overwrite = true) {
@@ -72,8 +71,7 @@ function downloadImageToTemp(imageUrl, callback = null) {
   return new Promise((resolve, reject) => {
     downloadFile(imageUrl, callback).then(imageData => {
       const extensionName = Path.extname(imageUrl);
-      console.log(global.app.basePath);
-      const fileDirPath = Path.join(global.app.basePath, "electron", "attachments", "temp");
+      const fileDirPath = Path.join(global.app.basePath, "attachments", "temp");
       const fileName = `wallpaper.${extensionName}`;
       saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
     });
@@ -83,33 +81,22 @@ function downloadImageToLocal(imageUrl, callback = null) {
   return new Promise((resolve, reject) => {
     downloadFile(imageUrl, callback).then(imageData => {
       const extensionName = Path.extname(imageUrl);
-      const fileDirPath = Path.join(global.app.basePath, "electron", "attachments", "local");
+      const fileDirPath = Path.join(global.app.basePath, "attachments", "local");
       const fileName = `${Date.now()}.${extensionName}`;
       saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
     });
   })
 }
 function setWallpaper(wallpaperImageUrl, callback = null) {
-
+  return downloadImageToTemp(wallpaperImageUrl, callback).then(res => {
+    return set(res);
+  });
 }
 function download(wallpaperImageUrl, callback = null) {
   return downloadImageToLocal(wallpaperImageUrl, callback);
 }
 function openLink(linkURL) {
   shell.openExternal(linkURL);
-}
-function exportContext() {
-  context.add("wallpaper", "download", download);
-  context.add("wallpaper", "openLink", openLink);
-}
-
-
-function init() {
-  ipcMain.on("setWallpaper", (event, { wallpaperImageUrl, callback }) => {
-    return downloadImageToTemp(wallpaperImageUrl, callback).then(res => {
-      return set(res);
-    });
-  });
 }
 
 module.exports = {
@@ -118,6 +105,7 @@ module.exports = {
   downloadFile,
   downloadImageToTemp,
   downloadImageToLocal,
-  exportContext,
-  init
+  setWallpaper,
+  download,
+  openLink
 }
