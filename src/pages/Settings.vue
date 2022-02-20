@@ -3,7 +3,7 @@
     <n-form-item label="开机自启动">
       <n-checkbox
         v-model:checked="globalStore.settings.autoStart"
-        @update-checked="updateSetting('autoStart', $event)"
+        @update-checked="autoStartProgram"
       ></n-checkbox>
     </n-form-item>
     <n-form-item label="固定在任务栏">
@@ -101,6 +101,11 @@ function updateSetting(key: string, value: any) {
       return err;
     })
     .finally(loading.destroy);
+}
+function autoStartProgram(checked: boolean) {
+  updateSetting("autoStart", checked).then(res=>{
+
+  });
 }
 </script>
 
