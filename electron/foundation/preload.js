@@ -4,7 +4,8 @@ const context = require("./context");
 const wallpaperAction = require("../action/wallpaperAction");
 
 global.app = {
-  basePath: Path.join(__dirname, "../")
+  basePath: Path.join(__dirname, "../"),
+  rootPath: process.cwd()
 }
 
 wallpaperAction.exportContext();

@@ -5,6 +5,7 @@ const tray = require("./foundation/tray");
 const settingAction = require("./action/settingAction");
 
 global.app = {
+  rootPath: process.cwd(),
   basePath: Path.join(__dirname)
 };
 
