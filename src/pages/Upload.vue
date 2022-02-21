@@ -54,6 +54,12 @@
         v-model:value="wallpaperForm.source"
       ></n-input>
     </n-form-item>
+    <n-form-item label="可见性">
+      <n-select
+        placeholder="请输入选择可见性"
+        v-model:value="wallpaperForm.privacy"
+      ></n-select>
+    </n-form-item>
     <n-form-item :show-label="false">
       <n-button block type="primary" @click="publishWallpaper" :loading="saving"
         >发布</n-button
@@ -88,6 +94,7 @@ const wallpaperForm = reactive<{
   tags: string;
   source: string;
   author: string;
+  privacy: string;
 }>({
   description: "",
   fileid: "",
@@ -95,6 +102,7 @@ const wallpaperForm = reactive<{
   tags: "",
   source: "",
   author: "",
+  privacy: "",
 });
 
 const fileUploading = ref<boolean>(false);
