@@ -51,7 +51,12 @@ function request<T>(url: string, method: keyof TMethods = "GET", query: Record<s
       headers,
       data
     }
-  });
+  }).then((res) => {
+    if (res.status > 299) {
+      return Promise.reject(res)
+    }
+    return res;
+  })
 }
 
 function get<T>(url: string, query: Record<string, any> = {}, headers: Record<string, any> = {}) {
