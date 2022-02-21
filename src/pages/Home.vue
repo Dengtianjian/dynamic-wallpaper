@@ -31,9 +31,9 @@ const navigators: Array<{
     uri: "downloadList",
   },
   {
-    label: "上传",
-    key: "upload",
-    uri: "upload",
+    label: "发布",
+    key: "publish",
+    uri: "publish",
   },
   {
     label: "设置",

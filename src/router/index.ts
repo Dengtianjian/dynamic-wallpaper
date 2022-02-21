@@ -12,7 +12,7 @@ const routes: RouteRecordRaw[] = [
         path: "/downloadList", component: () => import("PAGES/DownloadList.vue")
       },
       {
-        path: "/upload", component: () => import("PAGES/Upload.vue")
+        path: "/publish", component: () => import("PAGES/Publish.vue")
       },
       {
         path: "/settings", component: () => import("PAGES/Settings.vue")

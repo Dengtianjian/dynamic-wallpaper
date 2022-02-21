@@ -58,6 +58,7 @@
       <n-select
         placeholder="请输入选择可见性"
         v-model:value="wallpaperForm.privacy"
+        :options="privacyOptions"
       ></n-select>
     </n-form-item>
     <n-form-item :show-label="false">
@@ -86,6 +87,16 @@ import attachment from "../foundation/attachment";
 const NMessage = useMessage();
 
 const categorites: SelectOption[] = [];
+const privacyOptions: SelectOption[] = [
+  {
+    value: "public",
+    label: "互联网可见",
+  },
+  {
+    value: "private",
+    label: "仅自己可见",
+  },
+];
 
 const wallpaperForm = reactive<{
   description: string;
@@ -102,7 +113,7 @@ const wallpaperForm = reactive<{
   tags: "",
   source: "",
   author: "",
-  privacy: "",
+  privacy: "public",
 });
 
 const fileUploading = ref<boolean>(false);
