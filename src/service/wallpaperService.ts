@@ -19,29 +19,76 @@ function genRandomTime(): number {
 
 let setWallpaperPromise: null | Promise<any> = null;
 
-export default {
-  pushQueue(wallpaperItem: TWallpaperItem) {
-    wallpaperStore.autoSwitchQueue.push(wallpaperItem);
-    return wallpaperStore.autoSwitchQueue;
-  },
-  resetCycle() {
+function pushQueue(wallpaperItem: TWallpaperItem) {
+  wallpaperStore.autoSwitchQueue.push(wallpaperItem);
+  return wallpaperStore.autoSwitchQueue;
+}
+function resetCycle() {
+  clearTimeout(autoSwtichHandler as NodeJS.Timeout);
+  autoSwtichHandler = null;
+  localStorage.setItem("lastTimeSwtiched", Date.now().toString());
+  switchWallpaper();
+}
+function switchWallpaper(enforce: boolean = false) {
+  if (wallpaperStore.wallpaperSetting) {
+    return waitSet().then(() => {
+      switchWallpaper(enforce);
+    })
+  }
+  if (enforce) return autoSwitchWallpaper(enforce);
+
+  let nextTime: number = 0;
+  const lastTimeSwtiched: number = localStorage.getItem("lastTimeSwtiched") ? Number(localStorage.getItem("lastTimeSwtiched")) : -1;
+  switch (globalStore.settings.autoSwtichUnit) {
+    case "day":
+      if (lastTimeSwtiched > 0) {
+        const nextSwitchTime: number = lastTimeSwtiched + (globalStore.settings.autoSwtichInterval * 86400000);
+        nextTime = globalStore.settings.autoSwtichInterval * 86400000;
+        if (nextSwitchTime > Date.now()) {
+          nextTime = nextSwitchTime - Date.now();
+        }
+      } else {
+        nextTime = globalStore.settings.autoSwtichInterval * 86400000;
+      }
+      break;
+    case "hour":
+      nextTime = (lastTimeSwtiched + minuteToMilliseconds(globalStore.settings.autoSwtichInterval * 60)) - Date.now();
+      break;
+    case "minute":
+      nextTime = (lastTimeSwtiched + minuteToMilliseconds(globalStore.settings.autoSwtichInterval)) - Date.now();
+      break;
+    case "random":
+      nextTime = genRandomTime();
+      break;
+  }
+  if (nextTime < 1) {
+    nextTime = 0;
+  }
+
+  setTimeout(autoSwitchWallpaper, nextTime);
+}
+function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaperItem | null> {
+  if (wallpaperStore.wallpaperSetting) {
+    return waitSet().then(() => {
+      return autoSwitchWallpaper(enforce);
+    });
+  }
+  if (enforce) {
     clearTimeout(autoSwtichHandler as NodeJS.Timeout);
     autoSwtichHandler = null;
-    localStorage.setItem("lastTimeSwtiched", Date.now().toString());
-    this.switchWallpaper();
-  },
-  switchWallpaper(enforce: boolean = false) {
-    if (wallpaperStore.wallpaperSetting) {
-      return this.waitSet().then(() => {
-        this.switchWallpaper(enforce);
-      })
-    }
-    if (enforce) return this.autoSwitchWallpaper(enforce);
+  };
+  if (globalStore.settings.autoSwitch === false || autoSwtichHandler || wallpaperStore.autoSwitchQueue.length === 0) return Promise.resolve(null);
 
-    let nextTime: number = 0;
-    const lastTimeSwtiched: number = localStorage.getItem("lastTimeSwtiched") ? Number(localStorage.getItem("lastTimeSwtiched")) : -1;
+  const first: TWallpaperItem = wallpaperStore.autoSwitchQueue[0];
+
+  return setWallpaper(first.fileUrl).then(() => {
+    wallpaperStore.autoSwitchQueue.shift();
+    localStorage.setItem("lastTimeSwtiched", Date.now().toString());
+
+    let nextTime: number = 50000;
     switch (globalStore.settings.autoSwtichUnit) {
       case "day":
+        const lastTimeSwtiched: number = localStorage.getItem("lastTimeSwtiched") ? Number(localStorage.getItem("lastTimeSwtiched")) : -1;
         if (lastTimeSwtiched > 0) {
           const nextSwitchTime: number = lastTimeSwtiched + (globalStore.settings.autoSwtichInterval * 86400000);
           nextTime = globalStore.settings.autoSwtichInterval * 86400000;
@@ -53,88 +100,49 @@ export default {
         }
         break;
       case "hour":
-        nextTime = (lastTimeSwtiched + minuteToMilliseconds(globalStore.settings.autoSwtichInterval * 60)) - Date.now();
+        nextTime = minuteToMilliseconds(globalStore.settings.autoSwtichInterval * 60);
         break;
       case "minute":
-        nextTime = (lastTimeSwtiched + minuteToMilliseconds(globalStore.settings.autoSwtichInterval)) - Date.now();
+        nextTime = minuteToMilliseconds(globalStore.settings.autoSwtichInterval);
         break;
       case "random":
         nextTime = genRandomTime();
         break;
     }
-    if (nextTime < 1) {
-      nextTime = 0;
-    }
 
-    setTimeout(this.autoSwitchWallpaper, nextTime);
-  },
-  autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaperItem | null> {
-    if (wallpaperStore.wallpaperSetting) {
-      return this.waitSet().then(() => {
-        return this.autoSwitchWallpaper(enforce);
-      });
-    }
-    if (enforce) {
+    autoSwtichHandler = setTimeout(() => {
       clearTimeout(autoSwtichHandler as NodeJS.Timeout);
       autoSwtichHandler = null;
-    };
-    if (globalStore.settings.autoSwitch === false || autoSwtichHandler || wallpaperStore.autoSwitchQueue.length === 0) return Promise.resolve(null);
+      autoSwitchWallpaper();
+    }, nextTime);
+    return first;
+  }).catch(err => {
+    return null;
+  })
+}
+function cancelAutoSwitchWallpaper() {
+  clearTimeout(autoSwtichHandler as NodeJS.Timeout);
+  autoSwtichHandler = null;
+}
+function waitSet(): Promise<void> {
+  if (setWallpaperPromise) return setWallpaperPromise;
+  return Promise.resolve();
+}
+function setWallpaper(fileUrl: string): Promise<void> {
+  setWallpaperPromise = window.wallpaper
+    .set(fileUrl)
+    .finally(() => {
+      wallpaperStore.wallpaperSetting = false;
+    });
+  return setWallpaperPromise;
+}
 
-    const first: TWallpaperItem = wallpaperStore.autoSwitchQueue[0];
-
-    return this.setWallpaper(first.fileUrl).then(() => {
-      wallpaperStore.autoSwitchQueue.shift();
-      localStorage.setItem("lastTimeSwtiched", Date.now().toString());
-
-      let nextTime: number = 50000;
-      switch (globalStore.settings.autoSwtichUnit) {
-        case "day":
-          const lastTimeSwtiched: number = localStorage.getItem("lastTimeSwtiched") ? Number(localStorage.getItem("lastTimeSwtiched")) : -1;
-          if (lastTimeSwtiched > 0) {
-            const nextSwitchTime: number = lastTimeSwtiched + (globalStore.settings.autoSwtichInterval * 86400000);
-            nextTime = globalStore.settings.autoSwtichInterval * 86400000;
-            if (nextSwitchTime > Date.now()) {
-              nextTime = nextSwitchTime - Date.now();
-            }
-          } else {
-            nextTime = globalStore.settings.autoSwtichInterval * 86400000;
-          }
-          break;
-        case "hour":
-          nextTime = minuteToMilliseconds(globalStore.settings.autoSwtichInterval * 60);
-          break;
-        case "minute":
-          nextTime = minuteToMilliseconds(globalStore.settings.autoSwtichInterval);
-          break;
-        case "random":
-          nextTime = genRandomTime();
-          break;
-      }
-
-      autoSwtichHandler = setTimeout(() => {
-        clearTimeout(autoSwtichHandler as NodeJS.Timeout);
-        autoSwtichHandler = null;
-        this.autoSwitchWallpaper();
-      }, nextTime);
-      return first;
-    }).catch(err => {
-      return null;
-    })
-  },
-  cancelAutoSwitchWallpaper() {
-    clearTimeout(autoSwtichHandler as NodeJS.Timeout);
-    autoSwtichHandler = null;
-  },
-  waitSet(): Promise<void> {
-    if (setWallpaperPromise) return setWallpaperPromise;
-    return Promise.resolve();
-  },
-  setWallpaper(fileUrl: string): Promise<void> {
-    setWallpaperPromise = window.wallpaper
-      .set(fileUrl)
-      .finally(() => {
-        wallpaperStore.wallpaperSetting = false;
-      });
-    return setWallpaperPromise;
-  }
+export default {
+  pushQueue,
+  resetCycle,
+  switchWallpaper,
+  autoSwitchWallpaper,
+  setWallpaper,
+  cancelAutoSwitchWallpaper,
+  waitSet,
 }
