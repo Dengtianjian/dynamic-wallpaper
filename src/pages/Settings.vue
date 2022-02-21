@@ -9,18 +9,20 @@
     <n-form-item label="固定在任务栏">
       <n-checkbox
         @update:checked="fixedOnTray"
-        v-model:check="globalStore.settings.fixedTray"
+        v-model:checked="globalStore.settings.fixedTray"
       ></n-checkbox>
     </n-form-item>
     <n-form-item label="自动切换桌面壁纸">
       <n-checkbox
         v-model:checked="globalStore.settings.autoSwitch"
+        @update:checked="autoSwitchWallpaper"
       ></n-checkbox>
     </n-form-item>
     <n-form-item label="自动切换壁纸间隔时长单位">
       <n-select
         v-model:value="globalStore.settings.autoSwtichUnit"
         :options="durationUnitOptions"
+        @update:value="updateAutoSwitchUnit"
       />
     </n-form-item>
     <n-form-item label="自动切换壁纸间隔时长">
@@ -29,6 +31,7 @@
         min="1"
         v-if="globalStore.settings.autoSwtichUnit !== 'random'"
         v-model:value="globalStore.settings.autoSwtichInterval"
+        @update:value="updateAutoSwitchInterval"
       >
       </n-input-number
       ><span style="margin-left: 10px; font-size: 14px">{{
@@ -51,6 +54,7 @@ import {
 import { computed } from "vue";
 import globalStore from "../store/globalStore";
 import systemApi from "../api/settingApi";
+import wallpaperService from "../service/wallpaperService";
 const NMessage = useMessage();
 
 const durationUnits: Record<string, string> = {
@@ -82,10 +86,6 @@ const durationUnitOptions: SelectOption[] = [
   },
 ];
 
-function fixedOnTray(checked: boolean) {
-  window.system.ipcRenderer.send("fixedTray", checked);
-}
-
 function updateSetting(key: string, value: any) {
   const loading = NMessage.loading("");
   return systemApi
@@ -103,9 +103,45 @@ function updateSetting(key: string, value: any) {
     .finally(loading.destroy);
 }
 function autoStartProgram(checked: boolean) {
-  updateSetting("autoStart", checked).then(res=>{
-
+  updateSetting("autoStart", checked).then((res) => {});
+}
+function autoSwitchWallpaper(checked: boolean) {
+  updateSetting("autoSwitch", checked).then((res) => {
+    if (checked) {
+      wallpaperService.autoSwitchWallpaper();
+    } else {
+      wallpaperService.cancelAutoSwitchWallpaper();
+    }
   });
+}
+function fixedOnTray(checked: boolean) {
+  updateSetting("fixedTray", checked)
+    .then((res) => {
+      window.system.ipcRenderer.send("fixedTray", checked);
+    })
+    .catch(() => {
+      globalStore.settings.fixedTray = !globalStore.settings.fixedTray;
+    });
+}
+function updateAutoSwitchUnit(unit: string) {
+  let oldV: string = globalStore.settings.autoSwtichUnit;
+  updateSetting("autoSwtichUnit", unit)
+    .then((res) => {
+      globalStore.settings.autoSwtichUnit = unit;
+    })
+    .catch(() => {
+      globalStore.settings.autoSwtichUnit = oldV;
+    });
+}
+function updateAutoSwitchInterval(interval: any) {
+  let oldV: number = globalStore.settings.autoSwtichInterval;
+  updateSetting("autoSwtichInterval", interval)
+    .then((res) => {
+      globalStore.settings.autoSwtichInterval = interval;
+    })
+    .catch(() => {
+      globalStore.settings.autoSwtichInterval = oldV;
+    });
 }
 </script>
 

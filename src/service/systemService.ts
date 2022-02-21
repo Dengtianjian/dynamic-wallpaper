@@ -15,6 +15,9 @@ export default {
           globalStore.settings.autoSwtichInterval = Number(res.autoSwtichInterval);
           globalStore.settings.autoSwtichUnit = String(res.autoSwtichUnit);
           globalStore.settings.fixedTray = Boolean(res.fixedTray);
+          if (globalStore.settings?.fixedTray) {
+            window.system.ipcRenderer.send("fixedTray", true);
+          }
 
           return true;
         }).then(res).catch(rej);
