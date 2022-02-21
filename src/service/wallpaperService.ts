@@ -82,7 +82,7 @@ export default {
 
     const first: TWallpaperItem = wallpaperStore.autoSwitchQueue[0];
 
-    return window.wallpaper.set(first.fileUrl).then(() => {
+    return this.setWallpaper(first.fileUrl).then(() => {
       wallpaperStore.autoSwitchQueue.shift();
       localStorage.setItem("lastTimeSwtiched", Date.now().toString());
 
