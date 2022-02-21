@@ -37,7 +37,7 @@ defineProps({
 <style scoped>
 .wallpaper-item {
   position: relative;
-  height: 26vh;
+  height: 20.9vh;
   /* width: 212px; */
   overflow: hidden;
 }

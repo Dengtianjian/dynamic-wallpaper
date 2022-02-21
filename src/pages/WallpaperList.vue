@@ -101,7 +101,7 @@ function getWallapers(): void {
   }
   wallpaperListLoading.value = true;
   wallpaperApi
-    .getWallpapers()
+    .getWallpapers(wallpaperPage, wallpaperLoadLimit)
     .then(({ pagination, wallpapers: data }) => {
       if (data.length < wallpaperLoadLimit) {
         wallpaperLoadFinished = true;
@@ -238,7 +238,7 @@ onMounted(() => {
 }
 @media screen and (min-width: 2000px) {
   .wallpaper-list {
-    grid-template-columns: repeat(6, calc(16.6% - 15px));
+    grid-template-columns: repeat(6, calc(20.2vw - 15px));
   }
 }
 .wallpaper-title {

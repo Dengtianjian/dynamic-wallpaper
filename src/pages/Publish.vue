@@ -153,7 +153,8 @@ function publishWallpaper() {
       wallpaperForm.fileid,
       wallpaperForm.tags,
       "current",
-      "admin"
+      "admin",
+      wallpaperForm.privacy
     )
     .then((res) => {
       NMessage.success("发布成功");

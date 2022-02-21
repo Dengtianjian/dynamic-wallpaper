@@ -23,13 +23,14 @@ export default {
       fileName: string
     }>("attachment", undefined, file);
   },
-  saveWallpaper(description: string, fileid: string, tags: string, source: string, author: string) {
+  saveWallpaper(description: string, fileid: string, tags: string, source: string, author: string, privacy: string = "public") {
     return request.post("wallpaper/publish", {
       description,
       fileid,
       tags,
       source,
-      author
+      author,
+      privacy
     });
   }
 }
