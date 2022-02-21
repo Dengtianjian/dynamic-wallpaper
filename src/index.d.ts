@@ -8,6 +8,6 @@ interface Window {
   },
   system: {
     ipcRenderer: any,
-    settings: Record<string, any>
+    autoStart: (yes: boolean) => void
   },
 }

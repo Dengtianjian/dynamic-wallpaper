@@ -2,6 +2,7 @@ const { app } = require("electron");
 const Path = require("path");
 const window = require("./foundation/window");
 const tray = require("./foundation/tray");
+const settingAction = require("./action/settingAction");
 
 global.app = {
   basePath: Path.join(__dirname)
@@ -10,6 +11,8 @@ global.app = {
 app.whenReady().then(() => {
   window.createMainWindow();
   tray.initTray();
+
+  settingAction.main();
 });
 
 app.on("window-all-closed", () => {

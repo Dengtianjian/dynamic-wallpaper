@@ -1,6 +1,7 @@
 const builder = require("electron-builder");
 const { zip } = require('zip-a-folder');
 const path = require("path");
+const FS = require("fs");
 
 const config = {
   directories: {
@@ -29,5 +30,5 @@ const config = {
 builder.build({
   config
 }).then(() => {
-  return zip(path.join(__dirname, "../packages"), path.join(__dirname, "../package.zip"));
+  return zip(path.join(__dirname, "../../packages"), path.join(__dirname, "../../package.zip"));
 });

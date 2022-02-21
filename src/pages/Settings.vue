@@ -103,7 +103,9 @@ function updateSetting(key: string, value: any) {
     .finally(loading.destroy);
 }
 function autoStartProgram(checked: boolean) {
-  updateSetting("autoStart", checked).then((res) => {});
+  updateSetting("autoStart", checked).then((res) => {
+    window.system.autoStart(checked);
+  });
 }
 function autoSwitchWallpaper(checked: boolean) {
   updateSetting("autoSwitch", checked).then((res) => {

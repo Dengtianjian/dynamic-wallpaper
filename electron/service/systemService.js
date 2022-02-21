@@ -4,8 +4,8 @@ module.exports = {
   autoStartProgram(yes = true) {
     const options = {
       openAtLogin: true,
-      path=process.execPath,
-      args: []
+      args: [],
+      openAsHidden: true
     }
     if (yes === false) {
       options.openAtLogin = false;
