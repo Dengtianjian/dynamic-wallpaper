@@ -71,7 +71,7 @@ function downloadImageToTemp(imageUrl, callback = null) {
   return new Promise((resolve, reject) => {
     downloadFile(imageUrl, callback).then(imageData => {
       const extensionName = Path.extname(imageUrl);
-      const fileDirPath = Path.join(global.app.basePath, "attachments", "temp");
+      const fileDirPath = Path.join(global.app.rootPath, "attachments", "temp");
       const fileName = `wallpaper.${extensionName}`;
       saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
     });
@@ -81,7 +81,7 @@ function downloadImageToLocal(imageUrl, callback = null) {
   return new Promise((resolve, reject) => {
     downloadFile(imageUrl, callback).then(imageData => {
       const extensionName = Path.extname(imageUrl);
-      const fileDirPath = Path.join(global.app.basePath, "attachments", "local");
+      const fileDirPath = Path.join(global.app.rootPath, "attachments", "local");
       const fileName = `${Date.now()}.${extensionName}`;
       saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
     });
