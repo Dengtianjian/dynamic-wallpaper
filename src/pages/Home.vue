@@ -21,9 +21,14 @@ const navigators: Array<{
   uri: string;
 }> = [
   {
+    label: "故事",
+    key: "story",
+    uri: "/",
+  },
+  {
     label: "壁纸",
     key: "wallpapers",
-    uri: "/",
+    uri: "/list",
   },
   {
     label: "下载列表",
