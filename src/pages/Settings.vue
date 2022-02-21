@@ -110,7 +110,7 @@ function autoStartProgram(checked: boolean) {
 function autoSwitchWallpaper(checked: boolean) {
   updateSetting("autoSwitch", checked).then((res) => {
     if (checked) {
-      wallpaperService.autoSwitchWallpaper();
+      wallpaperService.autoSwitchWallpaper(true);
     } else {
       wallpaperService.cancelAutoSwitchWallpaper();
     }

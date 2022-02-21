@@ -70,6 +70,8 @@ import attachment from "../foundation/attachment";
 import { TWallpaperItem } from "../types/wallpaperTypes";
 import DWallpaperItem from "../components/DWallpaperItem.vue";
 import download from "../foundation/download";
+import wallpaperService from "../service/wallpaperService";
+import wallpaperStore from "../store/wallpaperStore";
 const Router = useRouter();
 const NMessage = useMessage();
 
@@ -114,8 +116,11 @@ function getWallapers(): void {
           295
         );
         dataItem.downloading = false;
+        wallpaperService.pushQueue(dataItem);
       });
       wallpapers.value.push(...data);
+
+      wallpaperService.switchWallpaper();
     })
     .finally(() => {
       wallpaperListLoading.value = false;
@@ -126,13 +131,14 @@ function setWallpaper(wallpaperItem: TWallpaperItem) {
   if (wallpaperSetting) {
     return NMessage.warning("已经有壁纸设置中，请勿重复点击");
   }
-  
+
   wallpaperSetting = true;
   wallpaperListLoading.value = true;
   window.wallpaper
     .set(wallpaperItem.fileUrl)
     .then((res: any) => {
       NMessage.success("设置成功");
+      wallpaperService.resetCycle();
     })
     .catch((err: any) => {
       console.log(err);

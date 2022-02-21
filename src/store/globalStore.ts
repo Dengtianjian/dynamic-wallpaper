@@ -13,7 +13,7 @@ export default reactive<{
     autoStart: true,
     autoSwitch: false,
     autoSwtichInterval: 0,
-    autoSwtichUnit: "hour",
+    autoSwtichUnit: "random",
     fixedTray: true
   }
 })
