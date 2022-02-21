@@ -1,7 +1,6 @@
 const builder = require("electron-builder");
 const { zip } = require('zip-a-folder');
 const path = require("path");
-const FS = require("fs");
 
 const config = {
   directories: {
@@ -13,7 +12,11 @@ const config = {
       from: "dist",
       to: ""
     },
-    "electron",
+    {
+      from: "electron",
+      to: "electron",
+      filter: ["!attachments","!logs"]
+    },
     "package.json"
   ],
   win: {
