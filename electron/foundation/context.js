@@ -1,11 +1,9 @@
 const { ipcRenderer } = require("electron");
-const systemService = require("../service/systemService");
 
 const exportContext = {
   system: {
     ipcRenderer,
     autoStart: (...args) => {
-      console.log(args);
       ipcRenderer.send("autoStartProgram",...args);
     }
   }
