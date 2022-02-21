@@ -162,6 +162,9 @@ function publishWallpaper() {
       wallpaperForm.tags = "";
       // wallpaperForm.fileUrl = "";
       wallpaperForm.fileid = "";
+      wallpaperForm.source = "";
+      wallpaperForm.author = "";
+      wallpaperForm.privacy = "public";
     })
     .catch((err) => {
       NMessage.error("发布失败");
