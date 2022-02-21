@@ -17,6 +17,8 @@ function genRandomTime(): number {
   return minuteToMilliseconds(genRandomNumber(5, 10));//* 以分钟为基准单位
 }
 
+let setWallpaperPromise: null | Promise<any> = null;
+
 export default {
   pushQueue(wallpaperItem: TWallpaperItem) {
     wallpaperStore.autoSwitchQueue.push(wallpaperItem);
@@ -29,6 +31,11 @@ export default {
     this.switchWallpaper();
   },
   switchWallpaper(enforce: boolean = false) {
+    if (wallpaperStore.wallpaperSetting) {
+      return this.waitSet().then(() => {
+        this.switchWallpaper(enforce);
+      })
+    }
     if (enforce) return this.autoSwitchWallpaper(enforce);
 
     let nextTime: number = 0;
@@ -58,11 +65,15 @@ export default {
     if (nextTime < 1) {
       nextTime = 0;
     }
-    console.log(nextTime);
 
     setTimeout(this.autoSwitchWallpaper, nextTime);
   },
   autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaperItem | null> {
+    if (wallpaperStore.wallpaperSetting) {
+      return this.waitSet().then(() => {
+        return this.autoSwitchWallpaper(enforce);
+      });
+    }
     if (enforce) {
       clearTimeout(autoSwtichHandler as NodeJS.Timeout);
       autoSwtichHandler = null;
@@ -100,9 +111,6 @@ export default {
           break;
       }
 
-      console.log(nextTime);
-
-
       autoSwtichHandler = setTimeout(() => {
         clearTimeout(autoSwtichHandler as NodeJS.Timeout);
         autoSwtichHandler = null;
@@ -116,5 +124,17 @@ export default {
   cancelAutoSwitchWallpaper() {
     clearTimeout(autoSwtichHandler as NodeJS.Timeout);
     autoSwtichHandler = null;
+  },
+  waitSet(): Promise<void> {
+    if (setWallpaperPromise) return setWallpaperPromise;
+    return Promise.resolve();
+  },
+  setWallpaper(fileUrl: string): Promise<void> {
+    setWallpaperPromise = window.wallpaper
+      .set(fileUrl)
+      .finally(() => {
+        wallpaperStore.wallpaperSetting = false;
+      });
+    return setWallpaperPromise;
   }
 }

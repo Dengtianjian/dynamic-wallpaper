@@ -134,8 +134,9 @@ function setWallpaper(wallpaperItem: TWallpaperItem) {
 
   wallpaperSetting = true;
   wallpaperListLoading.value = true;
-  window.wallpaper
-    .set(wallpaperItem.fileUrl)
+
+  wallpaperService
+    .setWallpaper(wallpaperItem.fileUrl)
     .then((res: any) => {
       NMessage.success("设置成功");
       wallpaperService.resetCycle();
@@ -145,6 +146,7 @@ function setWallpaper(wallpaperItem: TWallpaperItem) {
       NMessage.error("设置失败");
     })
     .finally(() => {
+      wallpaperStore.wallpaperSetting = false;
       wallpaperSetting = false;
       wallpaperListLoading.value = false;
     });

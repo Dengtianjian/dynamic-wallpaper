@@ -1,7 +1,9 @@
 import { TWallpaperItem } from "../types/wallpaperTypes";
 
 export default {
-  autoSwitchQueue: []
+  autoSwitchQueue: [],
+  wallpaperSetting: false
 } as {
-  autoSwitchQueue: TWallpaperItem[]
+  autoSwitchQueue: TWallpaperItem[],
+  wallpaperSetting: boolean
 }
