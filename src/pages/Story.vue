@@ -26,7 +26,7 @@
 
 <script lang="ts" setup>
 import { NPopover } from "naive-ui";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import wallpaperApi from "../api/wallpaperApi";
 import attachment from "../foundation/attachment";
 import { TWallpaperItem } from "../types/wallpaperTypes";
@@ -35,6 +35,7 @@ const currentWallpaper = ref<TWallpaperItem>();
 const loading = ref<boolean>(false);
 const imageLoading = ref<boolean>(false);
 let total: number = 0;
+let switchHandler: NodeJS.Timer | null = null;
 
 function getWallpaper() {
   if (loading.value || imageLoading.value) return;
@@ -43,6 +44,12 @@ function getWallpaper() {
     .getWallpapers(page, 1)
     .then(({ pagination, wallpapers }) => {
       total = pagination.total;
+      if (wallpapers.length === 0) {
+        page = genRandomPage();
+        return;
+      }
+
+      page++;
       currentWallpaper.value = wallpapers[0];
       currentWallpaper.value.fileUrl = attachment.genDownloadUrl(
         wallpapers[0].fileid
@@ -75,7 +82,14 @@ function imageLoaded() {
   imageLoading.value = false;
 }
 
-onMounted(getWallpaper);
+onMounted(() => {
+  if (switchHandler) clearInterval(switchHandler);
+  getWallpaper();
+  switchHandler = setInterval(getWallpaper, 50000);
+});
+onUnmounted(() => {
+  if (switchHandler) clearInterval(switchHandler);
+});
 </script>
 
 <style scoped>
