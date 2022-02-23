@@ -10,11 +10,11 @@ export default {
     } else {
       initPromise = new Promise((res, rej) => {
         settingApi.getSettings().then((res) => {
-          globalStore.settings.autoStart = Boolean(res.autoStart);
-          globalStore.settings.autoSwitch = Boolean(res.autoSwitch);
-          globalStore.settings.autoSwtichInterval = Number(res.autoSwtichInterval);
+          globalStore.settings.autoStart = Boolean(Number(res.autoStart));
+          globalStore.settings.autoSwitch = Boolean(Number(res.autoSwitch));
+          globalStore.settings.autoSwtichInterval = Number(Number(res.autoSwtichInterval));
           globalStore.settings.autoSwtichUnit = String(res.autoSwtichUnit);
-          globalStore.settings.fixedTray = Boolean(res.fixedTray);
+          globalStore.settings.fixedTray = Boolean(Number(res.fixedTray));
           if (globalStore.settings?.fixedTray) {
             window.system.ipcRenderer.send("fixedTray", true);
           }

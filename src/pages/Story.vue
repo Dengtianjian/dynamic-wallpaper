@@ -20,10 +20,10 @@
             v-show="stopSwitch"
           ></li>
           <li class="shoutao st-down" @click="downloadToLocal"></li>
-          <li class="qianniu qianniu-flag" @click="setScreenWallpaper"></li>
-          <li>详情</li>
-          <li @click="previous">上一个</li>
-          <li @click="next">下一个</li>
+          <li class="qianniu qianniu-setup" @click="setScreenWallpaper"></li>
+          <li class="qianniu qianniu-browse"></li>
+          <li class="qianniu qianniu-return" @click="previous"></li>
+          <li class="qianniu qianniu-enter" @click="next"></li>
         </ul>
       </template>
       <div class="wallpaper-details">
