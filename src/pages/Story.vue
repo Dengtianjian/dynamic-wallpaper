@@ -9,6 +9,18 @@
       <template #trigger>
         <ul class="wallpaper-operations">
           <li v-show="imageLoading || loading"><n-spin :size="14" /></li>
+          <li
+            class="qianniu qianniu-suspend"
+            @click="stopPlay"
+            v-show="!stopSwitch"
+          ></li>
+          <li
+            class="qianniu qianniu-play"
+            @click="continuePlay"
+            v-show="stopSwitch"
+          ></li>
+          <li class="shoutao st-down" @click="downloadToLocal"></li>
+          <li class="qianniu qianniu-flag" @click="setScreenWallpaper"></li>
           <li>详情</li>
           <li @click="previous">上一个</li>
           <li @click="next">下一个</li>
@@ -25,17 +37,20 @@
 </template>
 
 <script lang="ts" setup>
-import { NPopover } from "naive-ui";
+import { NPopover, useMessage } from "naive-ui";
 import { onMounted, onUnmounted, ref } from "vue";
 import wallpaperApi from "../api/wallpaperApi";
 import attachment from "../foundation/attachment";
+import wallpaperService from "../service/wallpaperService";
 import { TWallpaperItem } from "../types/wallpaperTypes";
+const NMessage = useMessage();
 let page: number = 1;
 const currentWallpaper = ref<TWallpaperItem>();
 const loading = ref<boolean>(false);
 const imageLoading = ref<boolean>(false);
 let total: number = 0;
 let switchHandler: NodeJS.Timer | null = null;
+const stopSwitch = ref<boolean>(false);
 
 function getWallpaper() {
   if (loading.value || imageLoading.value) return;
@@ -65,6 +80,7 @@ function genRandomPage(): number {
   return 1 + Math.round(Math.random() * total);
 }
 function previous() {
+  if (loading.value || imageLoading.value) return;
   page--;
   if (page <= 0) {
     page = genRandomPage();
@@ -72,6 +88,7 @@ function previous() {
   getWallpaper();
 }
 function next() {
+  if (loading.value || imageLoading.value) return;
   page++;
   if (page > total) {
     page = genRandomPage();
@@ -82,13 +99,62 @@ function imageLoaded() {
   imageLoading.value = false;
 }
 
-onMounted(() => {
+function stopPlay() {
+  if (switchHandler) clearInterval(switchHandler);
+  stopSwitch.value = true;
+}
+function continuePlay() {
   if (switchHandler) clearInterval(switchHandler);
   getWallpaper();
   switchHandler = setInterval(getWallpaper, 50000);
+  stopSwitch.value = false;
+}
+
+function setScreenWallpaper() {
+  if (loading.value || imageLoading.value || !currentWallpaper.value) {
+    return;
+  }
+  imageLoading.value = true;
+  wallpaperService
+    .setWallpaper(currentWallpaper.value.fileUrl)
+    .then(() => {
+      NMessage.success("设置成功");
+    })
+    .catch(() => {
+      NMessage.success("设置失败");
+    })
+    .finally(() => {
+      imageLoading.value = false;
+    });
+}
+function downloadToLocal() {
+  if (!currentWallpaper.value || loading.value || imageLoading.value) {
+    return;
+  }
+  imageLoading.value = true;
+  window.wallpaper
+    .download(
+      currentWallpaper.value.fileUrl,
+      (total, downloadedSize, progress) => {}
+    )
+    .then((res) => {
+      NMessage.success("下载完成");
+      new Notification("壁纸下载完成");
+    })
+    .catch((err) => {
+      console.log(err);
+      NMessage.error("下载失败");
+    })
+    .finally(() => {
+      imageLoading.value = false;
+    });
+}
+
+onMounted(() => {
+  continuePlay();
 });
 onUnmounted(() => {
-  if (switchHandler) clearInterval(switchHandler);
+  stopPlay();
 });
 </script>
 
