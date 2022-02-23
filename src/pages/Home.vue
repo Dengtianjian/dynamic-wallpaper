@@ -1,6 +1,13 @@
 <template>
   <section class="router-view">
-    <router-view></router-view>
+    <router-view v-slot="{ Component, route }">
+      <keep-alive>
+        <component
+          :is="Component"
+          :key="route.meta.keepAlive ? route.path : undefined"
+        />
+      </keep-alive>
+    </router-view>
   </section>
   <nav class="navigator">
     <router-link
