@@ -32,5 +32,8 @@ export default {
       author,
       privacy
     });
+  },
+  removeToTrash(wallpaperId: string) {
+    return request.patch("wallpaper/" + wallpaperId, {});
   }
 }

@@ -4,7 +4,7 @@
       <ul class="wallpaper-list">
         <d-wallpaper-item
           :data="wallpaperItem"
-          v-for="wallpaperItem in wallpapers"
+          v-for="(wallpaperItem, itemIndex) in wallpapers"
           :key="wallpaperItem.id"
         >
           <section @click.stop>
@@ -53,6 +53,17 @@
                   下载到本地
                 </n-tooltip>
               </li>
+              <li>
+                <n-tooltip>
+                  <template #trigger>
+                    <i
+                      class="qianniu qianniu-trash"
+                      @click.stop="moveToTrash(wallpaperItem, itemIndex)"
+                    ></i>
+                  </template>
+                  移至回收站
+                </n-tooltip>
+              </li>
             </ul>
           </section>
         </d-wallpaper-item>
@@ -93,7 +104,6 @@ let wallpaperLoadLimit = 28;
 let wallpaperLoadFinished = false;
 
 const wallpapers = ref<TWallpaperItem[]>([]);
-// const wallpapersDownloadList = ref<TWallpaperItem[]>([]);
 
 function getWallapers(): void {
   if (wallpaperListLoading.value || wallpaperLoadFinished) {
@@ -209,6 +219,18 @@ function switchSource(payload: MouseEvent) {
 }
 function openLink(link: string) {
   window.wallpaper.openLink(link);
+}
+
+function moveToTrash(wallpaperItem: TWallpaperItem, itemIndex: number) {
+  wallpaperApi
+    .removeToTrash(wallpaperItem.id)
+    .then((res) => {
+      wallpapers.value.splice(itemIndex, 1);
+      NMessage.success("移除成功");
+    })
+    .catch(() => {
+      NMessage.error("移除失败，请稍后重试");
+    });
 }
 
 onMounted(() => {
