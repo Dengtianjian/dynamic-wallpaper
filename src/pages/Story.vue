@@ -54,17 +54,16 @@ const stopSwitch = ref<boolean>(false);
 
 function getWallpaper() {
   if (loading.value || imageLoading.value) return;
+  page = genRandomPage();
   loading.value = true;
   wallpaperApi
     .getWallpapers(page, 1)
     .then(({ pagination, wallpapers }) => {
       total = pagination.total;
       if (wallpapers.length === 0) {
-        page = genRandomPage();
         return;
       }
 
-      page++;
       currentWallpaper.value = wallpapers[0];
       currentWallpaper.value.fileUrl = attachment.genDownloadUrl(
         wallpapers[0].fileid

@@ -35,5 +35,10 @@ export default {
   },
   removeToTrash(wallpaperId: string) {
     return request.patch("wallpaper/" + wallpaperId, {});
+  },
+  randomGetWallpapers(count: number) {
+    return request.get("wallpaper/random", {
+      count
+    });
   }
 }
