@@ -129,8 +129,6 @@ function getWallapers(): void {
         wallpaperService.pushQueue(dataItem);
       });
       wallpapers.value.push(...data);
-
-      wallpaperService.switchWallpaper();
     })
     .finally(() => {
       wallpaperListLoading.value = false;

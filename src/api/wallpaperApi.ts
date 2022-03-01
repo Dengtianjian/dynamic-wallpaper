@@ -37,7 +37,7 @@ export default {
     return request.patch("wallpaper/" + wallpaperId, {});
   },
   randomGetWallpapers(count: number) {
-    return request.get("wallpaper/random", {
+    return request.get<TWallpaperItem[]>("wallpaper/random", {
       count
     });
   }

@@ -1,3 +1,5 @@
+import wallpaperApi from "../api/wallpaperApi";
+import attachment from "../foundation/attachment";
 import globalStore from "../store/globalStore";
 import wallpaperStore from "../store/wallpaperStore";
 import { TWallpaperItem } from "../types/wallpaperTypes";
@@ -67,7 +69,7 @@ function switchWallpaper(enforce: boolean = false) {
 
   setTimeout(autoSwitchWallpaper, nextTime);
 }
-function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaperItem | null> {
+async function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaperItem | null> {
   if (wallpaperStore.wallpaperSetting) {
     return waitSet().then(() => {
       return autoSwitchWallpaper(enforce);
@@ -77,9 +79,19 @@ function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaperItem |
     clearTimeout(autoSwtichHandler as NodeJS.Timeout);
     autoSwtichHandler = null;
   };
-  if (globalStore.settings.autoSwitch === false || autoSwtichHandler || wallpaperStore.autoSwitchQueue.length === 0) return Promise.resolve(null);
+  if (globalStore.settings.autoSwitch === false || autoSwtichHandler) return Promise.resolve(null);
+  if (wallpaperStore.autoSwitchQueue.length === 0) {
+    const getResult: boolean = await wallpaperApi.randomGetWallpapers(1).then(res => {
+      wallpaperStore.autoSwitchQueue.push(...res);
+
+      return true;
+    }).catch(() => false);
+    if (getResult === false) return Promise.reject();
+  }
 
   const first: TWallpaperItem = wallpaperStore.autoSwitchQueue[0];
+  first.fileUrl = attachment.genDownloadUrl(first.fileid);
+  if (!first) return autoSwitchWallpaper(enforce);
 
   return setWallpaper(first.fileUrl).then(() => {
     wallpaperStore.autoSwitchQueue.shift();

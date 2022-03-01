@@ -2,9 +2,12 @@
 import { NMessageProvider } from "naive-ui";
 import { onMounted } from "vue";
 import systemService from "./service/systemService";
+import wallpaperService from "./service/wallpaperService";
 
 onMounted(() => {
-  systemService.init();
+  systemService.init().then(() => {
+    wallpaperService.autoSwitchWallpaper(true);
+  });
 });
 </script>
 
