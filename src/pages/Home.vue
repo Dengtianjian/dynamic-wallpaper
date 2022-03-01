@@ -38,6 +38,11 @@ const navigators: Array<{
     uri: "/list",
   },
   {
+    label: "来源",
+    key: "source",
+    uri: "/source",
+  },
+  {
     label: "下载列表",
     key: "downloadList",
     uri: "downloadList",

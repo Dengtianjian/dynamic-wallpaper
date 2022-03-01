@@ -40,6 +40,12 @@ const routes: RouteRecordRaw[] = [
         meta: {
           keepAlive: true
         }
+      },
+      {
+        path: "/source", component: () => import("PAGES/Source.vue"),
+        meta: {
+          keepAlive: true
+        }
       }
     ]
   }
