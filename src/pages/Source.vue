@@ -66,11 +66,22 @@
                 <n-tooltip>
                   <template #trigger>
                     <i
-                      class="shoutao st-check"
-                      @click.stop="setWallpaper(wallpaperItem)"
+                      class="qianniu qianniu-add"
+                      @click.stop="collect(wallpaperItem)"
                     ></i>
                   </template>
                   收集
+                </n-tooltip>
+              </li>
+              <li>
+                <n-tooltip>
+                  <template #trigger>
+                    <i
+                      class="qianniu qianniu-right"
+                      @click.stop="collectAndSetWallpaper(wallpaperItem)"
+                    ></i>
+                  </template>
+                  收集并且设置为壁纸
                 </n-tooltip>
               </li>
             </ul>
@@ -182,7 +193,12 @@ function getWallapers(): void {
     });
 }
 
-function setWallpaper(wallpaperItem: TWallpaperItem) {
+function collect(wallpaperItem: TWallpaperItem): Promise<void> {
+  console.log(wallpaperItem);
+
+  return Promise.resolve();
+}
+function collectAndSetWallpaper(wallpaperItem: TWallpaperItem) {
   if (wallpaperSetting) {
     return NMessage.warning("已经有壁纸设置中，请勿重复点击");
   }
