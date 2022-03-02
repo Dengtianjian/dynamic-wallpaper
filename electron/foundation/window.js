@@ -1,8 +1,7 @@
 const Path = require("path");
-const { app, BrowserWindow, ipcRenderer } = require("electron");
-const wallpaperService = require("../service/wallpaperService");
-
+const { app, BrowserWindow } = require("electron");
 let mainWindow = null;
+let isQuitApp = false;
 
 function createMainWindow() {
   if (mainWindow) return;
@@ -22,8 +21,10 @@ function createMainWindow() {
   });
 
   mainWindow.on("close", (e) => {
-    e.preventDefault();
-    mainWindow.hide();
+    if (isQuitApp === false) {
+      e.preventDefault();
+      mainWindow.hide();
+    }
   });
 
   if (app.isPackaged) {
@@ -41,9 +42,15 @@ function destroyMainWindow() {
   mainWindow = null;
 }
 
+function quitApp() {
+  isQuitApp = true;
+  app.quit();
+}
+
 module.exports = {
   mainWindow,
   createMainWindow,
   getMainWindow,
-  destroyMainWindow
+  destroyMainWindow,
+  quitApp
 }

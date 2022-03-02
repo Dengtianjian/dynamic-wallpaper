@@ -1,8 +1,6 @@
 const { ipcMain, Tray, Menu } = require("electron");
-const { createMainWindow, getMainWindow } = require("./window");
+const { createMainWindow, getMainWindow, quitApp } = require("./window");
 const Path = require("path");
-const { app } = require("electron");
-const Main = require("electron/main");
 
 let applicationTray = null;
 function fixedTray() {
@@ -12,9 +10,7 @@ function fixedTray() {
       {
         label: "退出",
         type: "normal",
-        click() {
-          app.quit();
-        }
+        click: quitApp
       }
     ]);
     applicationTray.setContextMenu(contextMenu);
