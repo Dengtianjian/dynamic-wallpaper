@@ -1,7 +1,7 @@
 {
   "name": "dynamic-wallpaper",
   "version": "0.0.2",
-  "main": "electron/main.js",
+  "main": "desktop/main.js",
   "author": {
     "name": "DTJ"
   },

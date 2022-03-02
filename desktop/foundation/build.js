@@ -13,8 +13,8 @@ const config = {
       to: ""
     },
     {
-      from: "electron",
-      to: "electron",
+      from: "desktop",
+      to: "desktop",
       filter: ["!attachments","!logs"]
     },
     "package.json"
