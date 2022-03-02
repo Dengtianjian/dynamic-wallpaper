@@ -2,6 +2,7 @@ const { ipcMain, Tray, Menu } = require("electron");
 const { createMainWindow, getMainWindow } = require("./window");
 const Path = require("path");
 const { app } = require("electron");
+const Main = require("electron/main");
 
 let applicationTray = null;
 function fixedTray() {
@@ -21,10 +22,8 @@ function fixedTray() {
     applicationTray.on("click", () => {
       if (getMainWindow()) {
         const mainWindow = getMainWindow();
-        if (mainWindow.isFocused() || !mainWindow.isMinimized()) {
-          mainWindow.minimize();
-        } else {
-          mainWindow.focus();
+        if (mainWindow.isFocused() === false || mainWindow.isMinimized() || mainWindow.isNormal() === false || mainWindow.isVisible() === false) {
+          mainWindow.show();
         }
       } else {
         createMainWindow();

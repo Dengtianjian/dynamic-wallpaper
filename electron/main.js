@@ -15,10 +15,3 @@ app.whenReady().then(() => {
 
   settingAction.main();
 });
-
-app.on("window-all-closed", () => {
-  window.destroyMainWindow();
-  // if (process.platform !== 'darwin') {
-  //   app.quit()
-  // }
-});

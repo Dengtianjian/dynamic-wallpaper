@@ -21,6 +21,11 @@ function createMainWindow() {
     }
   });
 
+  mainWindow.on("close", (e) => {
+    e.preventDefault();
+    mainWindow.hide();
+  });
+
   if (app.isPackaged) {
     mainWindow.loadFile("index.html");
   } else {
