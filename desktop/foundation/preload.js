@@ -1,15 +1,9 @@
 const Path = require("path");
-const { contextBridge } = require("electron");
+const { contextBridge, ipcRenderer } = require("electron");
 const context = require("./context");
 const wallpaperAction = require("../action/wallpaperAction");
+const { App } = require("./app");
 
-global.app = {
-  basePath: Path.join(__dirname, "../"),
-  rootPath: process.cwd()
-}
-
-wallpaperAction.exportContext();
-
-for (const key in context.exports) {
-  contextBridge.exposeInMainWorld(key, context.exports[key]);
-}
+new App()
+  .expose("ipcRenderer", ipcRenderer)
+  .render();
