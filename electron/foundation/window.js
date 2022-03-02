@@ -1,10 +1,11 @@
 const Path = require("path");
-const { app, BrowserWindow,ipcRenderer } = require("electron");
+const { app, BrowserWindow, ipcRenderer } = require("electron");
 const wallpaperService = require("../service/wallpaperService");
 
 let mainWindow = null;
 
 function createMainWindow() {
+  if (mainWindow) return;
   const { screen } = require("electron");
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
@@ -27,7 +28,17 @@ function createMainWindow() {
   }
 }
 
+function getMainWindow() {
+  return mainWindow;
+}
+
+function destroyMainWindow() {
+  mainWindow = null;
+}
+
 module.exports = {
   mainWindow,
-  createMainWindow
+  createMainWindow,
+  getMainWindow,
+  destroyMainWindow
 }

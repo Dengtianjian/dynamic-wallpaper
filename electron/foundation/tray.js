@@ -1,14 +1,26 @@
-const { ipcMain, Tray } = require("electron");
-const { mainWindow } = require("./window");
+const { ipcMain, Tray, Menu } = require("electron");
+const { createMainWindow, getMainWindow } = require("./window");
 const Path = require("path");
+const { app } = require("electron");
 
 let applicationTray = null;
 function fixedTray() {
   if (!applicationTray) {
     applicationTray = new Tray(Path.join(global.app.basePath, "assets", "icon.png"));
+    const contextMenu = Menu.buildFromTemplate([
+      {
+        label: "退出",
+        type: "normal",
+        click() {
+          app.quit();
+        }
+      }
+    ]);
+    applicationTray.setContextMenu(contextMenu);
     applicationTray.setToolTip("wallpaper");
     applicationTray.on("click", () => {
-      if (mainWindow) {
+      if (getMainWindow()) {
+        const mainWindow = getMainWindow();
         if (mainWindow.isFocused() || !mainWindow.isMinimized()) {
           mainWindow.minimize();
         } else {
