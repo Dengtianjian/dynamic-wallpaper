@@ -15,6 +15,12 @@ export type TWallpaperItem = {
   downloading: boolean
 };
 
+export type TExternalWallpaper = {
+  sourceId: string,
+  sourceUrl: string,
+  collecting: boolean
+} & TWallpaperItem;
+
 export type TWallpaperDownloadItem = {
   download: {
     progress: number,

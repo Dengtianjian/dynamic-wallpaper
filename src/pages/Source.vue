@@ -65,10 +65,28 @@
               <li>
                 <n-tooltip>
                   <template #trigger>
-                    <i
-                      class="qianniu qianniu-add"
-                      @click.stop="collect(wallpaperItem)"
-                    ></i>
+                    <div>
+                      <i
+                        class="qianniu qianniu-add"
+                        @click.stop="collect(wallpaperItem)"
+                        v-show="
+                          !wallpaperItem.collecting &&
+                          !wallpaperItem.downloading
+                        "
+                      ></i>
+                      <n-spin
+                        v-show="
+                          wallpaperItem.collecting || wallpaperItem.downloading
+                        "
+                        :size="14"
+                      >
+                        <i
+                          class="qianniu qianniu-add"
+                          @click.stop="collect(wallpaperItem)"
+                          v-show="!wallpaperItem.collecting"
+                        ></i
+                      ></n-spin>
+                    </div>
                   </template>
                   收集
                 </n-tooltip>
@@ -76,10 +94,16 @@
               <li>
                 <n-tooltip>
                   <template #trigger>
-                    <i
-                      class="qianniu qianniu-right"
-                      @click.stop="collectAndSetWallpaper(wallpaperItem)"
-                    ></i>
+                    <div>
+                      <i
+                        class="qianniu qianniu-right"
+                        @click.stop="collectAndSetWallpaper(wallpaperItem)"
+                        v-show="!wallpaperItem.downloading"
+                      ></i>
+                      <n-spin v-show="wallpaperItem.downloading">
+                        <i class="qianniu qianniu-right"></i>
+                      </n-spin>
+                    </div>
                   </template>
                   收集并且设置为壁纸
                 </n-tooltip>
@@ -95,12 +119,14 @@
 <script lang="ts" setup>
 import { useMessage, NTooltip } from "naive-ui";
 import { onMounted, ref } from "vue";
-import { TWallpaperItem } from "../types/wallpaperTypes";
+import { TExternalWallpaper, TWallpaperItem } from "../types/wallpaperTypes";
 import DWallpaperItem from "../components/DWallpaperItem.vue";
 import wallpaperService from "../service/wallpaperService";
 import wallpaperStore from "../store/wallpaperStore";
 import pexelsApi from "../api/thirdpart/pexelsApi";
 import unsplashApi from "../api/thirdpart/unsplashApi";
+import wallpaperApi from "../api/wallpaperApi";
+import attachment from "../foundation/attachment";
 const NMessage = useMessage();
 
 const currentUsedSource = ref<string>("pexels");
@@ -112,7 +138,7 @@ let wallpaperPage = 1;
 let wallpaperLoadLimit = 28;
 let wallpaperLoadFinished = false;
 
-const wallpapers = ref<TWallpaperItem[]>([]);
+const wallpapers = ref<TExternalWallpaper[]>([]);
 
 function getWallapers(): void {
   if (wallpaperListLoading.value || wallpaperLoadFinished) {
@@ -120,13 +146,13 @@ function getWallapers(): void {
   }
 
   wallpaperListLoading.value = true;
-  new Promise<TWallpaperItem[]>((resolve, reject) => {
+  new Promise<TExternalWallpaper[]>((resolve, reject) => {
     switch (currentUsedSource.value) {
       case "pexels":
         pexelsApi
           .curated(wallpaperPage, wallpaperLoadLimit)
           .then(({ photos }) => {
-            return photos.map((photoItem): TWallpaperItem => {
+            return photos.map((photoItem): TExternalWallpaper => {
               return {
                 author: photoItem.photographer,
                 authorAvatar: "",
@@ -143,6 +169,8 @@ function getWallapers(): void {
                 uploadedBy: photoItem.photographer,
                 downloading: false,
                 sourceUrl: photoItem.url,
+                sourceId: photoItem.id.toString(),
+                collecting: false,
               };
             });
           })
@@ -153,7 +181,7 @@ function getWallapers(): void {
         unsplashApi
           .listPhotos(wallpaperPage, wallpaperLoadLimit, "popular")
           .then((photos) => {
-            return photos.map((photoItem): TWallpaperItem => {
+            return photos.map((photoItem): TExternalWallpaper => {
               return {
                 author: photoItem.user.username,
                 authorAvatar: photoItem.user.profile_image.medium,
@@ -170,6 +198,8 @@ function getWallapers(): void {
                 uploadedBy: photoItem.user.name,
                 downloading: false,
                 sourceUrl: photoItem.links.html,
+                sourceId: photoItem.id,
+                collecting: false,
               };
             });
           })
@@ -181,9 +211,9 @@ function getWallapers(): void {
     }
   })
     .then((res) => {
-      if (res.length < wallpaperLoadLimit) {
+      if (res.length === 0) {
         wallpaperLoadFinished = true;
-        if (res.length === 0) return;
+        return;
       }
       wallpaperPage++;
       wallpapers.value.push(...res);
@@ -193,34 +223,58 @@ function getWallapers(): void {
     });
 }
 
-function collect(wallpaperItem: TWallpaperItem): Promise<void> {
-  console.log(wallpaperItem);
-
-  return Promise.resolve();
+function collect(wallpaperItem: TExternalWallpaper): Promise<TWallpaperItem> {
+  if (wallpaperItem.collecting) return Promise.reject(false);
+  wallpaperItem.collecting = true;
+  return wallpaperApi
+    .collect(
+      wallpaperItem.sourceId,
+      wallpaperItem.author,
+      wallpaperItem.description,
+      wallpaperItem.fileUrl,
+      wallpaperItem.source,
+      wallpaperItem.sourceUrl
+    )
+    .then((res) => {
+      NMessage.success("收集成功");
+      return res;
+    })
+    .catch((res) => {
+      NMessage.error("收集失败");
+      return res;
+    })
+    .finally(() => {
+      wallpaperItem.collecting = false;
+    });
 }
-function collectAndSetWallpaper(wallpaperItem: TWallpaperItem) {
+function collectAndSetWallpaper(wallpaperItem: TExternalWallpaper) {
   if (wallpaperSetting) {
     return NMessage.warning("已经有壁纸设置中，请勿重复点击");
   }
 
-  wallpaperSetting = true;
-  wallpaperListLoading.value = true;
+  collect(wallpaperItem).then((wallpaper) => {
+    wallpaper.fileUrl = attachment.genDownloadUrl(wallpaperItem.fileid);
+    wallpaper.downloading = true;
 
-  wallpaperService
-    .setWallpaper(wallpaperItem.fileUrl)
-    .then((res: any) => {
-      NMessage.success("设置成功");
-      wallpaperService.resetCycle();
-    })
-    .catch((err: any) => {
-      console.log(err);
-      NMessage.error("设置失败");
-    })
-    .finally(() => {
-      wallpaperStore.wallpaperSetting = false;
-      wallpaperSetting = false;
-      wallpaperListLoading.value = false;
-    });
+    wallpaperSetting = true;
+    wallpaperListLoading.value = true;
+
+    wallpaperService
+      .setWallpaper(wallpaperItem.fileUrl)
+      .then((res: any) => {
+        NMessage.success("设置成功");
+        wallpaperService.resetCycle();
+      })
+      .catch((err: any) => {
+        NMessage.error("设置失败");
+      })
+      .finally(() => {
+        wallpaperStore.wallpaperSetting = false;
+        wallpaperSetting = false;
+        wallpaperListLoading.value = false;
+        wallpaper.downloading = false;
+      });
+  });
 }
 
 let scrollHandler: any | number = null;

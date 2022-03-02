@@ -40,5 +40,20 @@ export default {
     return request.get<TWallpaperItem[]>("wallpaper/random", {
       count
     });
+  },
+  collect(sourceId: string,
+    author: string,
+    description: string,
+    fileUrl: string,
+    source: string,
+    sourceUrl: string): Promise<TWallpaperItem> {
+    return request.post<TWallpaperItem>("wallpapers/collect", {
+      sourceId,
+      author,
+      description,
+      fileUrl,
+      source,
+      sourceUrl
+    });
   }
 }
