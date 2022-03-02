@@ -91,23 +91,6 @@
                   收集
                 </n-tooltip>
               </li>
-              <li>
-                <n-tooltip>
-                  <template #trigger>
-                    <div>
-                      <i
-                        class="qianniu qianniu-right"
-                        @click.stop="collectAndSetWallpaper(wallpaperItem)"
-                        v-show="!wallpaperItem.downloading"
-                      ></i>
-                      <n-spin v-show="wallpaperItem.downloading">
-                        <i class="qianniu qianniu-right"></i>
-                      </n-spin>
-                    </div>
-                  </template>
-                  收集并且设置为壁纸
-                </n-tooltip>
-              </li>
             </ul>
           </section>
         </d-wallpaper-item>
@@ -133,7 +116,6 @@ const currentUsedSource = ref<string>("pexels");
 
 const pageMainEl = ref<HTMLElement | null>(null);
 const wallpaperListLoading = ref<boolean>(false);
-let wallpaperSetting = false;
 let wallpaperPage = 1;
 let wallpaperLoadLimit = 28;
 let wallpaperLoadFinished = false;
@@ -236,45 +218,16 @@ function collect(wallpaperItem: TExternalWallpaper): Promise<TWallpaperItem> {
       wallpaperItem.sourceUrl
     )
     .then((res) => {
-      NMessage.success("收集成功");
+      NMessage.success("添加到收集队列成功");
       return res;
     })
     .catch((res) => {
-      NMessage.error("收集失败");
+      NMessage.error("添加到收集队列失败");
       return res;
     })
     .finally(() => {
       wallpaperItem.collecting = false;
     });
-}
-function collectAndSetWallpaper(wallpaperItem: TExternalWallpaper) {
-  if (wallpaperSetting) {
-    return NMessage.warning("已经有壁纸设置中，请勿重复点击");
-  }
-
-  collect(wallpaperItem).then((wallpaper) => {
-    wallpaper.fileUrl = attachment.genDownloadUrl(wallpaperItem.fileid);
-    wallpaper.downloading = true;
-
-    wallpaperSetting = true;
-    wallpaperListLoading.value = true;
-
-    wallpaperService
-      .setWallpaper(wallpaperItem.fileUrl)
-      .then((res: any) => {
-        NMessage.success("设置成功");
-        wallpaperService.resetCycle();
-      })
-      .catch((err: any) => {
-        NMessage.error("设置失败");
-      })
-      .finally(() => {
-        wallpaperStore.wallpaperSetting = false;
-        wallpaperSetting = false;
-        wallpaperListLoading.value = false;
-        wallpaper.downloading = false;
-      });
-  });
 }
 
 let scrollHandler: any | number = null;

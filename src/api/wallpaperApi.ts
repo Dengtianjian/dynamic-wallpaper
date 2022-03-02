@@ -47,7 +47,7 @@ export default {
     fileUrl: string,
     source: string,
     sourceUrl: string): Promise<TWallpaperItem> {
-    return request.post<TWallpaperItem>("wallpapers/collect", {
+    return request.post<TWallpaperItem>("wallpapers/recordCollect", {
       sourceId,
       author,
       description,
