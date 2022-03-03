@@ -54,20 +54,20 @@ const stopSwitch = ref<boolean>(false);
 
 function getWallpaper() {
   if (loading.value || imageLoading.value) return;
-  page = genRandomPage();
   loading.value = true;
   wallpaperApi
-    .getWallpapers(page, 1)
-    .then(({ pagination, wallpapers }) => {
-      total = pagination.total;
-      if (wallpapers.length === 0) {
-        return;
-      }
-
-      currentWallpaper.value = wallpapers[0];
-      currentWallpaper.value.fileUrl = attachment.genDownloadUrl(
-        wallpapers[0].fileid
+    .randomGetWallpapers(1)
+    .then((wallpapers) => {
+      if (wallpapers.length === 0) return;
+      const wallpaper = wallpapers[0];
+      wallpaper.fileUrl = attachment.genImageThumbUrl(
+        wallpapers[0].fileid,
+        window.innerWidth,
+        window.innerHeight
       );
+      
+      currentWallpaper.value = wallpaper;
+
       imageLoading.value = true;
     })
     .finally(() => {
@@ -134,7 +134,9 @@ function downloadToLocal() {
   window.wallpaper
     .downloadWallpaper(
       currentWallpaper.value.fileUrl,
-      (total, downloadedSize, progress) => {}
+      (total, downloadedSize, progress) => {
+        console.log(total);
+      }
     )
     .then((res) => {
       NMessage.success("下载完成");
