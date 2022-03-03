@@ -133,17 +133,13 @@ function downloadToLocal() {
   imageLoading.value = true;
   window.wallpaper
     .downloadWallpaper(
-      currentWallpaper.value.fileUrl,
-      (total, downloadedSize, progress) => {
-        console.log(total);
-      }
+      currentWallpaper.value.fileUrl
     )
     .then((res) => {
       NMessage.success("下载完成");
       new Notification("壁纸下载完成");
     })
     .catch((err) => {
-      console.log(err);
       NMessage.error("下载失败");
     })
     .finally(() => {
