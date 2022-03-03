@@ -26,12 +26,16 @@ function fixedTray() {
       {
         label: "退出",
         type: "normal",
-        click: appIns.quitApp
+        click: () => {
+          appIns.quit(true);
+        }
       }
     ]);
     applicationTray.setContextMenu(contextMenu);
     applicationTray.setToolTip("wallpaper");
-    applicationTray.on("click", appIns.showMainWindow);
+    applicationTray.on("click", () => {
+      appIns.showMainWindow();
+    });
   }
 }
 function cancelFixedTray() {

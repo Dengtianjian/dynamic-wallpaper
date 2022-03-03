@@ -4,11 +4,15 @@ const { ipcRenderer, contextBridge } = require("electron");
 const asyncTokenMap = new Map();
 
 ipcRenderer.on("__resolve", (event, token, ...args) => {
-  console.log(token, args);
-})
+  if (asyncTokenMap.has(token)) {
+    asyncTokenMap.get(token).resolve(args);
+  }
+});
 ipcRenderer.on("__reject", (event, token, ...args) => {
-  console.log(token, args);
-})
+  if (asyncTokenMap.has(token)) {
+    asyncTokenMap.get(token).reject(args);
+  }
+});
 
 module.exports.RenderApp = class extends App {
   constructor() {
