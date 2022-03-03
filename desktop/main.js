@@ -22,4 +22,11 @@ new App(true, () => {
   .on("wallpaperSet", wallpaperService.setWallpaper)
   .on("downloadWallpaper", wallpaperService.download)
   .on("openLink", wallpaperService.openLink)
+  .on("pro", () => {
+    return new Promise(res => {
+      setTimeout(() => {
+        res(666);
+      }, 5000);
+    })
+  })
   .start();

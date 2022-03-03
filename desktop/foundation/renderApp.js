@@ -1,6 +1,15 @@
 const { App } = require("./app");
 const { ipcRenderer, contextBridge } = require("electron");
 
+const asyncTokenMap = new Map();
+
+ipcRenderer.on("__resolve", (event, token, ...args) => {
+  console.log(token, args);
+})
+ipcRenderer.on("__reject", (event, token, ...args) => {
+  console.log(token, args);
+})
+
 module.exports.RenderApp = class extends App {
   constructor() {
     super();
@@ -14,7 +23,19 @@ module.exports.RenderApp = class extends App {
           this.#exposes[key] = {};
         }
         this.#exposes[key][name] = (...args) => {
-          ipcRenderer.send(name, args);
+          const token = Date.now();
+          return new Promise((resolve, reject) => {
+            const result = ipcRenderer.send(name, token, ...args);
+            if (result !== undefined) {
+              resolve(result);
+              asyncTokenMap.delete(token);
+            } else {
+              asyncTokenMap.set(token, {
+                resolve,
+                reject
+              });
+            }
+          })
         }
       } else {
         this.#exposes[key] = name;
@@ -22,7 +43,9 @@ module.exports.RenderApp = class extends App {
     } else {
       if (name === null) {
         this.#exposes[key] = (...args) => {
-          ipcRenderer.send(name, args);
+          return new Promise((resolve, reject) => {
+            ipcRenderer.send(name, [resolve, reject, ...args]);
+          })
         }
       } else {
         if (!this.#exposes[key]) {
@@ -36,7 +59,9 @@ module.exports.RenderApp = class extends App {
   }
   start() {
     this.expose("ipcEmit", (channelName, ...args) => {
-      ipcRenderer.send(channelName, args);
+      return new Promise((resolve, reject) => {
+        ipcRenderer.send(channelName, [resolve, reject, ...args]);
+      })
     });
 
     for (const key in this.#exposes) {

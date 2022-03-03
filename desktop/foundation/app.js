@@ -39,8 +39,16 @@ module.exports.App = class {
     }
   }
   on(channel, listener) {
-    ipcMain.on(channel, (event, args) => {
-      listener.call(this, ...args);
+    ipcMain.on(channel, (event, token, ...args) => {
+      if (Object.prototype.toString.call(listener).indexOf("Async") !== -1) {
+        listener.call(this, ...args).then((...args) => {
+          event.reply("__resolve", [token, ...args]);
+        }).catch(() => {
+          event.reply("__reject", [token, ...args]);
+        })
+      } else {
+        event.returnValue = listener.call(this, ...args);
+      }
     });
 
     return this;

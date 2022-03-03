@@ -145,7 +145,7 @@ function setWallpaper(fileUrl: string): Promise<void> {
     .wallpaperSet(fileUrl)
     .finally(() => {
       wallpaperStore.wallpaperSetting = false;
-    });
+    })
   return setWallpaperPromise;
 }
 
