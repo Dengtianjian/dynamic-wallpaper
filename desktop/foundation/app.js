@@ -11,7 +11,7 @@ module.exports.App = class {
   }
   mainWindow = null;
   mainWindowOptionsCallBack = {};
-  
+
   windows = new Map();
   readyWait = null;
 
@@ -24,6 +24,7 @@ module.exports.App = class {
       basePath: Path.join(__dirname, "../")
     };
 
+    global.app = this;
   }
   before(fn) {
     fn(this);
