@@ -163,7 +163,7 @@ function downloadWallpaper(wallpaperItem: TWallpaperItem) {
   // download.add(wallpaperItem);
   wallpaperItem.downloading = true;
   window.wallpaper
-    .download(wallpaperItem.fileUrl, (total, downloadedSize, progress) => {
+    .downloadWallpaper(wallpaperItem.fileUrl, (total, downloadedSize, progress) => {
       download.updateProgress(wallpaperItem.id, progress);
       console.log(total, downloadedSize, progress);
     })

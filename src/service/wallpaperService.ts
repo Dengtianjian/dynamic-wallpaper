@@ -142,7 +142,7 @@ function waitSet(): Promise<void> {
 }
 function setWallpaper(fileUrl: string): Promise<void> {
   setWallpaperPromise = window.wallpaper
-    .set(fileUrl)
+    .wallpaperSet(fileUrl)
     .finally(() => {
       wallpaperStore.wallpaperSetting = false;
     });

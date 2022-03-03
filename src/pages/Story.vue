@@ -132,7 +132,7 @@ function downloadToLocal() {
   }
   imageLoading.value = true;
   window.wallpaper
-    .download(
+    .downloadWallpaper(
       currentWallpaper.value.fileUrl,
       (total, downloadedSize, progress) => {}
     )
