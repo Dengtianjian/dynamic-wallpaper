@@ -33,35 +33,37 @@ module.exports.App = class {
     }
   }
   #exposes = {};
-  expose(key, name, value = undefined) {
-    if (value === undefined) {
-      this.#exposes[key] = name;
-    } else {
-      if (!this.#exposes[key]) {
-        this.#exposes[key] = {};
+  expose(key, name, listener = null) {
+    if (listener === null) {
+      if (typeof name === "string") {
+        if (!this.#exposes[key]) {
+          this.#exposes[key] = {};
+        }
+        this.#exposes[key][name] = (...args) => {
+          ipcRenderer.send(name, args);
+        }
+      } else {
+        this.#exposes[key] = name;
       }
-      this.#exposes[key][name] = value;
-    }
-
-    return this;
-  }
-  listeners(nameOrListeners, listener = null) {
-    if (typeof nameOrListeners === "string") {
-      nameOrListeners = {
-        nameOrListeners: listener
-      };
-    }
-    for (const name in nameOrListeners) {
-      ipcMain.on(name, (event, ...args) => {
-        args.push(event);
-        listener.call(this, args);
-      });
+    } else {
+      if (name === null) {
+        this.#exposes[key] = (...args) => {
+          ipcRenderer.send(name, args);
+        }
+      } else {
+        if (!this.#exposes[key]) {
+          this.#exposes[key] = {};
+        }
+        this.#exposes[key][name] = listener;
+      }
     }
 
     return this;
   }
   on(channel, listener) {
-    this.listeners(channel, listener);
+    ipcMain.on(channel, (event, args) => {
+      listener.call(this, ...args, event);
+    });
 
     return this;
   }

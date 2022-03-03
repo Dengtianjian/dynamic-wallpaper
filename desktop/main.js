@@ -5,5 +5,5 @@ const systemService = require("./service/systemService");
 
 new App()
   .before(tray)
-  .listeners("autoStartProgram", systemService.autoStartProgram)
+  .on("autoStart", systemService.autoStartProgram)
   .start();
