@@ -1,5 +1,4 @@
 const { Tray, Menu } = require("electron");
-const { createMainWindow, getMainWindow, quitApp } = require("../foundation/window");
 const Path = require("path");
 
 let appIns = null;
@@ -27,21 +26,12 @@ function fixedTray() {
       {
         label: "退出",
         type: "normal",
-        click: quitApp
+        click: appIns.quitApp
       }
     ]);
     applicationTray.setContextMenu(contextMenu);
     applicationTray.setToolTip("wallpaper");
-    applicationTray.on("click", () => {
-      if (getMainWindow()) {
-        const mainWindow = getMainWindow();
-        if (mainWindow.isFocused() === false || mainWindow.isMinimized() || mainWindow.isNormal() === false || mainWindow.isVisible() === false) {
-          mainWindow.show();
-        }
-      } else {
-        createMainWindow();
-      }
-    })
+    applicationTray.on("click", appIns.showMainWindow);
   }
 }
 function cancelFixedTray() {

@@ -10,13 +10,14 @@ module.exports.App = class {
     basePath: ""
   }
   mainWindow = null;
-  mainWindowOptions = {};
+  mainWindowOptionsCallBack = {};
+  
   windows = new Map();
   readyWait = null;
 
-  constructor(singleInstance = true, mainWindowOptions = {}) {
+  constructor(singleInstance = true, mainWindowOptionsCallBack = null) {
     this.#singleInstance = singleInstance;
-    this.mainWindowOptions = mainWindowOptions;
+    this.mainWindowOptionsCallBack = mainWindowOptionsCallBack;
 
     this.env = {
       rootPath: Path.join(process.cwd(), "../"),
@@ -55,9 +56,15 @@ module.exports.App = class {
 
     return winIns;
   }
-  #createMainWindow() {
+  async #createMainWindow() {
     if (this.mainWindow) return;
-    this.mainWindow = this.createWindow("main", this.mainWindowOptions);
+
+    const options = {};
+    if (this.mainWindowOptionsCallBack) {
+      Object.assign(options, await this.mainWindowOptionsCallBack());
+    }
+
+    this.mainWindow = this.createWindow("main", options);
 
     this.mainWindow.on("close", (e) => {
       if (this.forceQuit === false) {
@@ -73,6 +80,15 @@ module.exports.App = class {
     }
 
     return this;
+  }
+  showMainWindow() {
+    if (this.mainWindow) {
+      if (this.mainWindow.isFocused() === false || this.mainWindow.isMinimized() || this.mainWindow.isNormal() === false || this.mainWindow.isVisible() === false) {
+        this.mainWindow.show();
+      }
+    } else {
+      this.#createMainWindow();
+    }
   }
   start() {
     if (this.#singleInstance) {
