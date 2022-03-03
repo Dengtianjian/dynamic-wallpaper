@@ -4,6 +4,8 @@ const window = require("./window");
 
 module.exports.App = class {
   #singleInstance = true;
+  render = false;
+
   env = {
     rootPath: "",
     basePath: ""
@@ -19,6 +21,7 @@ module.exports.App = class {
       rootPath: Path.join(process.cwd(), "../"),
       basePath: Path.join(__dirname, "../")
     };
+
   }
   before(fn) {
     fn(this);
@@ -31,34 +34,6 @@ module.exports.App = class {
     } else {
       fn(this);
     }
-  }
-  #exposes = {};
-  expose(key, name, listener = null) {
-    if (listener === null) {
-      if (typeof name === "string") {
-        if (!this.#exposes[key]) {
-          this.#exposes[key] = {};
-        }
-        this.#exposes[key][name] = (...args) => {
-          ipcRenderer.send(name, args);
-        }
-      } else {
-        this.#exposes[key] = name;
-      }
-    } else {
-      if (name === null) {
-        this.#exposes[key] = (...args) => {
-          ipcRenderer.send(name, args);
-        }
-      } else {
-        if (!this.#exposes[key]) {
-          this.#exposes[key] = {};
-        }
-        this.#exposes[key][name] = listener;
-      }
-    }
-
-    return this;
   }
   on(channel, listener) {
     ipcMain.on(channel, (event, args) => {
@@ -100,17 +75,6 @@ module.exports.App = class {
     // }
 
     this.readyWait = app.whenReady().then(this.#createMainWindow.bind(this));
-
-    return this;
-  }
-  render() {
-    this.expose("ipcEmit", (channelName, ...args) => {
-      ipcRenderer.send(channelName, args);
-    });
-
-    for (const key in this.#exposes) {
-      contextBridge.exposeInMainWorld(key, this.#exposes[key]);
-    }
 
     return this;
   }

@@ -6,6 +6,9 @@ interface Window {
     downloadWallpaper: (wallpaperImageUrl: string, callback?: TDownloadCallback) => Promise<boolean>,
     openLink: (linkURL: string) => void
   },
+  tray: {
+    fixedTray: (checked: boolean) => void
+  },
   system: {
     ipcRenderer: any,
     autoStart: (yes: boolean) => void

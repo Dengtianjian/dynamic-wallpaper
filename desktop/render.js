@@ -1,10 +1,12 @@
 const { ipcRenderer } = require("electron");
-const { App } = require("./foundation/app");
+const { RenderApp } = require("./foundation/renderApp");
+const tray = require("./modules/tray");
 
-new App()
+new RenderApp()
+  .before(tray)
   .expose("ipcRenderer", ipcRenderer)
   .expose("system", "autoStart")
   .expose("wallpaper", "wallpaperSet")
   .expose("wallpaper", "downloadWallpaper")
   .expose("wallpaper", "openLink")
-  .render();
+  .start();
