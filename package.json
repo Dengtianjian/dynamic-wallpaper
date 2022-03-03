@@ -14,7 +14,7 @@
     "electron:start": "electron .",
     "electron:dev": "wait-on tcp:3000 && electron .",
     "electron": "concurrently -k \"npm start\" \"npm run electron:dev\"",
-    "electron:build": "npm run vite:build && node electron/foundation/build.js"
+    "electron:build": "npm run vite:build && node desktop/foundation/build.js"
   },
   "devDependencies": {
     "@types/electron": "^1.6.10",
