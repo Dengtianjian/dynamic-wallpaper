@@ -39,7 +39,7 @@ module.exports.App = class {
   }
   on(channel, listener) {
     ipcMain.on(channel, (event, args) => {
-      listener.call(this, ...args, event);
+      listener.call(this, ...args);
     });
 
     return this;
