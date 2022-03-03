@@ -10,11 +10,13 @@ module.exports.App = class {
     basePath: ""
   }
   mainWindow = null;
+  mainWindowOptions = {};
   windows = new Map();
   readyWait = null;
 
-  constructor(singleInstance = true) {
+  constructor(singleInstance = true, mainWindowOptions = {}) {
     this.#singleInstance = singleInstance;
+    this.mainWindowOptions = mainWindowOptions;
 
     this.env = {
       rootPath: Path.join(process.cwd(), "../"),
@@ -55,20 +57,10 @@ module.exports.App = class {
   }
   #createMainWindow() {
     if (this.mainWindow) return;
-    const { screen } = require("electron");
-    const primaryDisplay = screen.getPrimaryDisplay();
-    const { width, height } = primaryDisplay.workAreaSize;
-    this.mainWindow = this.createWindow("main", {
-      width: Math.ceil(width * 0.8),
-      height: Math.ceil(height * 0.8),
-      // resizable: false,
-      maximizable: true,
-      minHeight: Math.ceil(height * 0.6),
-      minWidth: Math.ceil(width * 0.6),
-    });
+    this.mainWindow = this.createWindow("main", this.mainWindowOptions);
 
     this.mainWindow.on("close", (e) => {
-      if (isQuitApp === false) {
+      if (this.forceQuit === false) {
         e.preventDefault();
         this.mainWindow.hide();
       }
@@ -79,6 +71,8 @@ module.exports.App = class {
     } else {
       this.mainWindow.loadURL("http://localhost:3000");
     }
+
+    return this;
   }
   start() {
     if (this.#singleInstance) {
@@ -100,9 +94,9 @@ module.exports.App = class {
 
     return this;
   }
-  needQuitApp = false;
-  quit() {
-    this.needQuitApp = true;
+  forceQuit = false;
+  quit(forceQuit = true) {
+    this.forceQuit = forceQuit;
     app.quit();
   }
 }
