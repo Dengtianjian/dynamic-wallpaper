@@ -1,6 +1,5 @@
 const { app, BrowserWindow, ipcMain, ipcRenderer, contextBridge } = require("electron");
 const Path = require("path");
-const window = require("./window");
 
 module.exports.App = class {
   #singleInstance = true;
@@ -55,27 +54,55 @@ module.exports.App = class {
     return winIns;
   }
   #createMainWindow() {
-    window.createMainWindow(this);
+    if (this.mainWindow) return;
+    const { screen } = require("electron");
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { width, height } = primaryDisplay.workAreaSize;
+    this.mainWindow = this.createWindow("main", {
+      width: Math.ceil(width * 0.8),
+      height: Math.ceil(height * 0.8),
+      // resizable: false,
+      maximizable: true,
+      minHeight: Math.ceil(height * 0.6),
+      minWidth: Math.ceil(width * 0.6),
+    });
+
+    this.mainWindow.on("close", (e) => {
+      if (isQuitApp === false) {
+        e.preventDefault();
+        this.mainWindow.hide();
+      }
+    });
+
+    if (app.isPackaged) {
+      this.mainWindow.loadFile("index.html");
+    } else {
+      this.mainWindow.loadURL("http://localhost:3000");
+    }
   }
   start() {
-    // if (this.#singleInstance) {
-    //   const getTheLock = app.requestSingleInstanceLock();
+    if (this.#singleInstance) {
+      const getTheLock = app.requestSingleInstanceLock();
 
-    //   if (!getTheLock) {
-    //     return app.quit();
-    //   }
+      if (!getTheLock) {
+        return app.quit();
+      }
 
-    //   app.on("second-instance", () => {
-    //     if (window.getMainWindow()) {
-    //       // if(window.getMainWindow().)
-    //       if (window.getMainWindow().isMinimized()) window.getMainWindow().restore();
-    //       window.getMainWindow().focus();
-    //     }
-    //   });
-    // }
+      app.on("second-instance", () => {
+        if (this.mainWindow) {
+          if (this.mainWindow.isMinimized()) this.mainWindow.restore();
+          this.mainWindow.focus();
+        }
+      });
+    }
 
     this.readyWait = app.whenReady().then(this.#createMainWindow.bind(this));
 
     return this;
+  }
+  needQuitApp = false;
+  quit() {
+    this.needQuitApp = true;
+    app.quit();
   }
 }
