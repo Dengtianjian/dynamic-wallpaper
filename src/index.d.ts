@@ -10,4 +10,5 @@ interface Window {
     ipcRenderer: any,
     autoStart: (yes: boolean) => void
   },
+  ipcEmit(channelName: string, ...args: any[]): void
 }

@@ -70,7 +70,7 @@ module.exports.App = class {
   createWindow(windowId, options = {}) {
     Object.assign(options, {
       webPreferences: {
-        preload: Path.join(this.env.basePath, "foundation", "preload.js")
+        preload: Path.join(this.env.basePath, "render.js")
       }
     });
 
