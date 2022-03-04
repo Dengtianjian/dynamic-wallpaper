@@ -168,11 +168,7 @@ function downloadWallpaper(wallpaperItem: TWallpaperItem) {
   wallpaperItem.downloading = true;
   window.wallpaper
     .downloadWallpaper(
-      wallpaperItem.fileUrl,
-      (total, downloadedSize, progress) => {
-        download.updateProgress(wallpaperItem.id, progress);
-        console.log(total, downloadedSize, progress);
-      }
+      wallpaperItem.fileUrl
     )
     .then((res) => {
       NMessage.success("下载完成");

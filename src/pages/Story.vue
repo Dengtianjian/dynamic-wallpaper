@@ -141,7 +141,7 @@ function downloadToLocal() {
   window.wallpaper
     .downloadWallpaper(
       attachment.genImageThumbUrl(
-        currentWallpaper.value.id,
+        currentWallpaper.value.fileid,
         window.screen.width,
         window.screen.height
       )
