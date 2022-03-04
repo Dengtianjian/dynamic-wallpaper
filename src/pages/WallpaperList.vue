@@ -119,7 +119,11 @@ function getWallapers(): void {
       }
       wallpaperPage++;
       data.forEach((dataItem) => {
-        dataItem.fileUrl = attachment.genDownloadUrl(dataItem.fileid);
+        dataItem.fileUrl = attachment.genImageThumbUrl(
+          dataItem.fileid,
+          window.screen.width,
+          window.screen.height
+        );
         dataItem.thumbUrl = attachment.genImageThumbUrl(
           dataItem.fileid,
           480,
@@ -163,10 +167,13 @@ function downloadWallpaper(wallpaperItem: TWallpaperItem) {
   // download.add(wallpaperItem);
   wallpaperItem.downloading = true;
   window.wallpaper
-    .downloadWallpaper(wallpaperItem.fileUrl, (total, downloadedSize, progress) => {
-      download.updateProgress(wallpaperItem.id, progress);
-      console.log(total, downloadedSize, progress);
-    })
+    .downloadWallpaper(
+      wallpaperItem.fileUrl,
+      (total, downloadedSize, progress) => {
+        download.updateProgress(wallpaperItem.id, progress);
+        console.log(total, downloadedSize, progress);
+      }
+    )
     .then((res) => {
       NMessage.success("下载完成");
       new Notification("壁纸下载完成");
