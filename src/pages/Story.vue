@@ -65,7 +65,7 @@ function getWallpaper() {
         window.innerWidth,
         window.innerHeight
       );
-      
+
       currentWallpaper.value = wallpaper;
 
       imageLoading.value = true;
@@ -115,7 +115,13 @@ function setScreenWallpaper() {
   }
   imageLoading.value = true;
   wallpaperService
-    .setWallpaper(currentWallpaper.value.fileUrl)
+    .setWallpaper(
+      attachment.genImageThumbUrl(
+        currentWallpaper.value.fileid,
+        window.screen.width,
+        window.screen.height
+      )
+    )
     .then(() => {
       NMessage.success("设置成功");
     })
@@ -131,9 +137,14 @@ function downloadToLocal() {
     return;
   }
   imageLoading.value = true;
+
   window.wallpaper
     .downloadWallpaper(
-      currentWallpaper.value.fileUrl
+      attachment.genImageThumbUrl(
+        currentWallpaper.value.id,
+        window.screen.width,
+        window.screen.height
+      )
     )
     .then((res) => {
       NMessage.success("下载完成");
