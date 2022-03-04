@@ -70,6 +70,7 @@
       </ul>
     </n-spin>
   </main>
+  <d-fixed-menu :menu="fixedMenuOptions" @click="clickMenu"></d-fixed-menu>
 </template>
 
 <script lang="ts" setup>
@@ -82,8 +83,22 @@ import { TWallpaperItem } from "../types/wallpaperTypes";
 import DWallpaperItem from "../components/DWallpaperItem.vue";
 import wallpaperService from "../service/wallpaperService";
 import wallpaperStore from "../store/wallpaperStore";
+import DFixedMenu from "../components/DFixedMenu.vue";
 const Router = useRouter();
 const NMessage = useMessage();
+
+const fixedMenuOptions = [
+  {
+    key: "refresh",
+    name: "刷新",
+    icon: "qianniu qianniu-refresh",
+  },
+  {
+    key: "toTop",
+    name: "回到顶部",
+    icon: "qianniu qianniu-packup",
+  },
+];
 
 const currentShowCategoriteKey = ref<string>("all");
 const categorites: {
@@ -210,6 +225,21 @@ function moveToTrash(wallpaperItem: TWallpaperItem, itemIndex: number) {
     .catch(() => {
       NMessage.error("移除失败，请稍后重试");
     });
+}
+
+function clickMenu(key: string) {
+  switch (key) {
+    case "refresh":
+      wallpaperListLoading.value = false;
+      wallpaperPage = 1;
+      wallpaperLoadFinished = false;
+      wallpapers.value = [];
+      getWallapers();
+      break;
+    case "toTop":
+      pageMainEl.value?.scrollTo(0, 0);
+      break;
+  }
 }
 
 onMounted(() => {
