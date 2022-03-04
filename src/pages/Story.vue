@@ -62,8 +62,7 @@ function getWallpaper() {
       const wallpaper = wallpapers[0];
       wallpaper.fileUrl = attachment.genImageThumbUrl(
         wallpapers[0].fileid,
-        window.innerWidth,
-        window.innerHeight
+        window.innerWidth
       );
 
       currentWallpaper.value = wallpaper;
@@ -119,8 +118,7 @@ function setScreenWallpaper() {
     .setWallpaper(
       attachment.genImageThumbUrl(
         currentWallpaper.value.fileid,
-        window.screen.width,
-        window.screen.height
+        window.screen.width
       ),
       currentWallpaper.value.id
     )
@@ -145,7 +143,6 @@ function downloadToLocal() {
       attachment.genImageThumbUrl(
         currentWallpaper.value.fileid,
         window.screen.width,
-        window.screen.height
       ),
       currentWallpaper.value.id
     )
