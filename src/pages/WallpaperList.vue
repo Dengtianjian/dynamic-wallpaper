@@ -80,7 +80,6 @@ import wallpaperApi from "../api/wallpaperApi";
 import attachment from "../foundation/attachment";
 import { TWallpaperItem } from "../types/wallpaperTypes";
 import DWallpaperItem from "../components/DWallpaperItem.vue";
-import download from "../foundation/download";
 import wallpaperService from "../service/wallpaperService";
 import wallpaperStore from "../store/wallpaperStore";
 const Router = useRouter();
@@ -197,25 +196,6 @@ function wallpaperListScrolling(payload: UIEvent) {
   }, 150);
 }
 
-function switchSource(payload: MouseEvent) {
-  if (
-    wallpaperListLoading.value ||
-    wallpaperSetting ||
-    !(payload.target as HTMLElement).dataset
-  ) {
-    return;
-  }
-  let key: string | undefined = (payload.target as HTMLElement).dataset.key;
-  if (!key) return;
-
-  currentShowCategoriteKey.value = key;
-  wallpaperListLoading.value = false;
-  wallpaperPage = 1;
-  wallpaperLoadFinished = false;
-  wallpapers.value = [];
-
-  getWallapers();
-}
 function openLink(link: string) {
   window.wallpaper.openLink(link);
 }
