@@ -68,31 +68,23 @@ function downloadFile(fileUrl, callback = null) {
     })
   })
 }
-function downloadImageToTemp(imageUrl, callback = null) {
-  return new Promise((resolve, reject) => {
-    downloadFile(imageUrl, callback).then(({ data, size, extensionName }) => {
-      const fileDirPath = Path.join(global.app.env.rootPath, "attachments", "temp");
-      const fileName = `wallpaper.${extensionName}`;
-      saveFile(data, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
-    });
-  });
-}
-function downloadImageToLocal(imageUrl, callback = null) {
-  return new Promise((resolve, reject) => {
-    downloadFile(imageUrl, callback).then(({ data, size, extensionName }) => {
-      const fileDirPath = Path.join(global.app.env.rootPath, "attachments", "local");
-      const fileName = `${Date.now()}.${extensionName}`;
-      saveFile(data, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
-    });
-  })
-}
-function setWallpaper(wallpaperImageUrl, callback = null) {
-  return downloadImageToTemp(wallpaperImageUrl, callback).then(res => {
+function setWallpaper(wallpaperImageUrl, id, callback = null) {
+  return download(wallpaperImageUrl, id, callback).then(res => {
     return set(res).then(() => true).catch(() => false);
   })
 }
-function download(wallpaperImageUrl, callback = null) {
-  return downloadImageToLocal(wallpaperImageUrl, callback);
+function download(wallpaperImageUrl, id, callback = null) {
+  return new Promise((resolve, reject) => {
+    const fileDirPath = Path.join(global.app.env.rootPath, "attachments", "wallpapers");
+    const fileName = `${id}.webp`;
+    const fullPath = Path.join(fileDirPath, fileName);
+    if (FS.existsSync(fullPath)) {
+      return resolve(fullPath);
+    }
+    downloadFile(wallpaperImageUrl, callback).then(({ data, size, extensionName }) => {
+      saveFile(data, fileDirPath, fileName).then(() => { resolve(fullPath) }).catch(reject);
+    });
+  });
 }
 function openLink(linkURL) {
   shell.openExternal(linkURL);
@@ -102,8 +94,6 @@ module.exports = {
   saveFile,
   bitToMb,
   downloadFile,
-  downloadImageToTemp,
-  downloadImageToLocal,
   setWallpaper,
   download,
   openLink

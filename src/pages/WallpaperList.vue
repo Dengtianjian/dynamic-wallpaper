@@ -148,7 +148,7 @@ function setWallpaper(wallpaperItem: TWallpaperItem) {
   wallpaperListLoading.value = true;
 
   wallpaperService
-    .setWallpaper(wallpaperItem.fileUrl)
+    .setWallpaper(wallpaperItem.fileUrl, wallpaperItem.id)
     .then((res: any) => {
       NMessage.success("设置成功");
       wallpaperService.resetCycle();
@@ -167,9 +167,7 @@ function downloadWallpaper(wallpaperItem: TWallpaperItem) {
   // download.add(wallpaperItem);
   wallpaperItem.downloading = true;
   window.wallpaper
-    .downloadWallpaper(
-      wallpaperItem.fileUrl
-    )
+    .downloadWallpaper(wallpaperItem.fileUrl, wallpaperItem.id)
     .then((res) => {
       NMessage.success("下载完成");
       new Notification("壁纸下载完成");

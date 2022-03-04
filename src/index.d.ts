@@ -2,8 +2,8 @@ type TDownloadCallback = (total: number, downloadedSize: number, progress: numbe
 
 interface Window {
   wallpaper: {
-    wallpaperSet: (wallpaperImageUrl: string, callback?: TDownloadCallback) => Promise<void>,
-    downloadWallpaper: (wallpaperImageUrl: string, callback?: TDownloadCallback) => Promise<boolean>,
+    wallpaperSet: (wallpaperImageUrl: string, id: string, callback?: TDownloadCallback) => Promise<void>,
+    downloadWallpaper: (wallpaperImageUrl: string, id: string, callback?: TDownloadCallback) => Promise<boolean>,
     openLink: (linkURL: string) => void
   },
   tray: {

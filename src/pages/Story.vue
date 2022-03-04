@@ -114,13 +114,15 @@ function setScreenWallpaper() {
     return;
   }
   imageLoading.value = true;
+
   wallpaperService
     .setWallpaper(
       attachment.genImageThumbUrl(
         currentWallpaper.value.fileid,
         window.screen.width,
         window.screen.height
-      )
+      ),
+      currentWallpaper.value.id
     )
     .then(() => {
       NMessage.success("设置成功");
@@ -144,7 +146,8 @@ function downloadToLocal() {
         currentWallpaper.value.fileid,
         window.screen.width,
         window.screen.height
-      )
+      ),
+      currentWallpaper.value.id
     )
     .then((res) => {
       NMessage.success("下载完成");
