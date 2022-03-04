@@ -39,6 +39,7 @@ function downloadFile(fileUrl, callback = null) {
   return new Promise((resolve, reject) => {
     useProtocol.get(fileUrl, (res) => {
       let total = bitToMb(res.headers['content-length']);
+      let extensionName = res.headers['content-type'].split("/")[1];
       let downloadedSize = 0;
       res.setEncoding("binary");
       let fileData = "";
@@ -61,7 +62,7 @@ function downloadFile(fileUrl, callback = null) {
             100,
           );
         }
-        resolve(fileData);
+        resolve({ data: fileData, size: total, extensionName });
       });
       res.on("error", reject)
     })
@@ -69,21 +70,19 @@ function downloadFile(fileUrl, callback = null) {
 }
 function downloadImageToTemp(imageUrl, callback = null) {
   return new Promise((resolve, reject) => {
-    downloadFile(imageUrl, callback).then(imageData => {
-      const extensionName = Path.extname(imageUrl);
+    downloadFile(imageUrl, callback).then(({ data, size, extensionName }) => {
       const fileDirPath = Path.join(global.app.env.rootPath, "attachments", "temp");
       const fileName = `wallpaper.${extensionName}`;
-      saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
+      saveFile(data, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
     });
   });
 }
 function downloadImageToLocal(imageUrl, callback = null) {
   return new Promise((resolve, reject) => {
-    downloadFile(imageUrl, callback).then(imageData => {
-      const extensionName = Path.extname(imageUrl);
+    downloadFile(imageUrl, callback).then(({ data, size, extensionName }) => {
       const fileDirPath = Path.join(global.app.env.rootPath, "attachments", "local");
       const fileName = `${Date.now()}.${extensionName}`;
-      saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
+      saveFile(data, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
     });
   })
 }
