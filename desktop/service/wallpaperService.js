@@ -89,7 +89,7 @@ function downloadImageToLocal(imageUrl, callback = null) {
 }
 function setWallpaper(wallpaperImageUrl, callback = null) {
   return downloadImageToTemp(wallpaperImageUrl, callback).then(res => {
-    return set(res);
+    return set(res).then(() => true).catch(() => false);
   })
 }
 function download(wallpaperImageUrl, callback = null) {

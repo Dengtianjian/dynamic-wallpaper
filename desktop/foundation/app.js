@@ -41,13 +41,22 @@ module.exports.App = class {
   on(channel, listener) {
     ipcMain.on(channel, (event, token, ...args) => {
       if (Object.prototype.toString.call(listener).indexOf("Async") !== -1) {
-        listener.call(this, ...args).then((...args) => {
-          event.reply("__resolve", [token, ...args]);
+        listener.call(this, ...args).then((args) => {
+          this.mainWindow.webContents.send("__resolve", token, args);
         }).catch(() => {
-          event.reply("__reject", [token, ...args]);
+          this.mainWindow.webContents.send("__reject", token, err);
         })
       } else {
-        event.returnValue = listener.call(this, ...args);
+        const result = listener.call(this, ...args);
+        if ((typeof result === "object" || typeof result === "function") && typeof result.then === "function") {
+          result.then((args) => {
+            this.mainWindow.webContents.send("__resolve", token, args);
+          }).catch((err) => {
+            this.mainWindow.webContents.send("__reject", token, err);
+          })
+        } else {
+          event.returnValue = result;
+        }
       }
     });
 

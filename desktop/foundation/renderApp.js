@@ -3,14 +3,14 @@ const { ipcRenderer, contextBridge } = require("electron");
 
 const asyncTokenMap = new Map();
 
-ipcRenderer.on("__resolve", (event, token, ...args) => {
+ipcRenderer.on("__resolve", (event, token, args) => {
   if (asyncTokenMap.has(token)) {
     asyncTokenMap.get(token).resolve(args);
   }
 });
-ipcRenderer.on("__reject", (event, token, ...args) => {
+ipcRenderer.on("__reject", (event, token, err) => {
   if (asyncTokenMap.has(token)) {
-    asyncTokenMap.get(token).reject(args);
+    asyncTokenMap.get(token).reject(err);
   }
 });
 
@@ -47,8 +47,18 @@ module.exports.RenderApp = class extends App {
     } else {
       if (name === null) {
         this.#exposes[key] = (...args) => {
+          const token = Date.now();
           return new Promise((resolve, reject) => {
-            ipcRenderer.send(name, [resolve, reject, ...args]);
+            const result = ipcRenderer.send(name, token, ...args);
+            if (result !== undefined) {
+              resolve(result);
+              asyncTokenMap.delete(token);
+            } else {
+              asyncTokenMap.set(token, {
+                resolve,
+                reject
+              });
+            }
           })
         }
       } else {
