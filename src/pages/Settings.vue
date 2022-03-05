@@ -119,7 +119,7 @@ function autoSwitchWallpaper(checked: boolean) {
 function fixedOnTray(checked: boolean) {
   updateSetting("fixedTray", checked)
     .then((res) => {
-      window.system.ipcRenderer.send("fixedTray", checked);
+      window.tray.fixedTray(checked);
     })
     .catch(() => {
       globalStore.settings.fixedTray = !globalStore.settings.fixedTray;

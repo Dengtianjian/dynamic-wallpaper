@@ -90,10 +90,10 @@ async function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaper
   }
 
   const first: TWallpaperItem = wallpaperStore.autoSwitchQueue[0];
-  first.fileUrl = attachment.genDownloadUrl(first.fileid);
+  first.fileUrl = attachment.genImageThumbUrl(first.fileid, window.screen.width, window.screen.height);
   if (!first) return autoSwitchWallpaper(enforce);
 
-  return setWallpaper(first.fileUrl).then(() => {
+  return setWallpaper(first.fileUrl, first.id).then(() => {
     wallpaperStore.autoSwitchQueue.shift();
     localStorage.setItem("lastTimeSwtiched", Date.now().toString());
 
@@ -140,12 +140,12 @@ function waitSet(): Promise<void> {
   if (setWallpaperPromise) return setWallpaperPromise;
   return Promise.resolve();
 }
-function setWallpaper(fileUrl: string): Promise<void> {
+function setWallpaper(fileUrl: string, id: string): Promise<void> {
   setWallpaperPromise = window.wallpaper
-    .set(fileUrl)
+    .wallpaperSet(fileUrl, id)
     .finally(() => {
       wallpaperStore.wallpaperSetting = false;
-    });
+    })
   return setWallpaperPromise;
 }
 

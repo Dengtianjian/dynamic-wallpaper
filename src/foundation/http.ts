@@ -82,5 +82,6 @@ export default {
   post,
   patch,
   put,
-  deleteRequest
+  deleteRequest,
+  generateQuery
 }

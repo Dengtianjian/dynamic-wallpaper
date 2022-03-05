@@ -39,6 +39,7 @@ function downloadFile(fileUrl, callback = null) {
   return new Promise((resolve, reject) => {
     useProtocol.get(fileUrl, (res) => {
       let total = bitToMb(res.headers['content-length']);
+      let extensionName = res.headers['content-type'].split("/")[1];
       let downloadedSize = 0;
       res.setEncoding("binary");
       let fileData = "";
@@ -61,39 +62,29 @@ function downloadFile(fileUrl, callback = null) {
             100,
           );
         }
-        resolve(fileData);
+        resolve({ data: fileData, size: total, extensionName });
       });
       res.on("error", reject)
     })
   })
 }
-function downloadImageToTemp(imageUrl, callback = null) {
-  return new Promise((resolve, reject) => {
-    downloadFile(imageUrl, callback).then(imageData => {
-      const extensionName = Path.extname(imageUrl);
-      const fileDirPath = Path.join(global.app.rootPath, "attachments", "temp");
-      const fileName = `wallpaper.${extensionName}`;
-      saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
-    });
-  });
-}
-function downloadImageToLocal(imageUrl, callback = null) {
-  return new Promise((resolve, reject) => {
-    downloadFile(imageUrl, callback).then(imageData => {
-      const extensionName = Path.extname(imageUrl);
-      const fileDirPath = Path.join(global.app.rootPath, "attachments", "local");
-      const fileName = `${Date.now()}.${extensionName}`;
-      saveFile(imageData, fileDirPath, fileName).then(() => { resolve(Path.join(fileDirPath, fileName)) }).catch(reject);
-    });
+function setWallpaper(wallpaperImageUrl, id, callback = null) {
+  return download(wallpaperImageUrl, id, callback).then(res => {
+    return set(res).then(() => true).catch(() => false);
   })
 }
-function setWallpaper(wallpaperImageUrl, callback = null) {
-  return downloadImageToTemp(wallpaperImageUrl, callback).then(res => {
-    return set(res);
+function download(wallpaperImageUrl, id, callback = null) {
+  return new Promise((resolve, reject) => {
+    const fileDirPath = Path.join(global.app.env.rootPath, "attachments", "wallpapers");
+    const fileName = `${id}.webp`;
+    const fullPath = Path.join(fileDirPath, fileName);
+    if (FS.existsSync(fullPath)) {
+      return resolve(fullPath);
+    }
+    downloadFile(wallpaperImageUrl, callback).then(({ data, size, extensionName }) => {
+      saveFile(data, fileDirPath, fileName).then(() => { resolve(fullPath) }).catch(reject);
+    });
   });
-}
-function download(wallpaperImageUrl, callback = null) {
-  return downloadImageToLocal(wallpaperImageUrl, callback);
 }
 function openLink(linkURL) {
   shell.openExternal(linkURL);
@@ -103,8 +94,6 @@ module.exports = {
   saveFile,
   bitToMb,
   downloadFile,
-  downloadImageToTemp,
-  downloadImageToLocal,
   setWallpaper,
   download,
   openLink

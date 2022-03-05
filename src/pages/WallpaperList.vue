@@ -70,6 +70,7 @@
       </ul>
     </n-spin>
   </main>
+  <d-fixed-menu :menu="fixedMenuOptions" @click="clickMenu"></d-fixed-menu>
 </template>
 
 <script lang="ts" setup>
@@ -80,11 +81,24 @@ import wallpaperApi from "../api/wallpaperApi";
 import attachment from "../foundation/attachment";
 import { TWallpaperItem } from "../types/wallpaperTypes";
 import DWallpaperItem from "../components/DWallpaperItem.vue";
-import download from "../foundation/download";
 import wallpaperService from "../service/wallpaperService";
 import wallpaperStore from "../store/wallpaperStore";
+import DFixedMenu from "../components/DFixedMenu.vue";
 const Router = useRouter();
 const NMessage = useMessage();
+
+const fixedMenuOptions = [
+  {
+    key: "refresh",
+    name: "刷新",
+    icon: "qianniu qianniu-refresh",
+  },
+  {
+    key: "toTop",
+    name: "回到顶部",
+    icon: "qianniu qianniu-packup",
+  },
+];
 
 const currentShowCategoriteKey = ref<string>("all");
 const categorites: {
@@ -119,11 +133,13 @@ function getWallapers(): void {
       }
       wallpaperPage++;
       data.forEach((dataItem) => {
-        dataItem.fileUrl = attachment.genDownloadUrl(dataItem.fileid);
+        dataItem.fileUrl = attachment.genImageThumbUrl(
+          dataItem.fileid,
+          window.screen.width
+        );
         dataItem.thumbUrl = attachment.genImageThumbUrl(
           dataItem.fileid,
-          480,
-          295
+          480
         );
         dataItem.downloading = false;
         wallpaperService.pushQueue(dataItem);
@@ -144,7 +160,7 @@ function setWallpaper(wallpaperItem: TWallpaperItem) {
   wallpaperListLoading.value = true;
 
   wallpaperService
-    .setWallpaper(wallpaperItem.fileUrl)
+    .setWallpaper(wallpaperItem.fileUrl, wallpaperItem.id)
     .then((res: any) => {
       NMessage.success("设置成功");
       wallpaperService.resetCycle();
@@ -163,10 +179,7 @@ function downloadWallpaper(wallpaperItem: TWallpaperItem) {
   // download.add(wallpaperItem);
   wallpaperItem.downloading = true;
   window.wallpaper
-    .download(wallpaperItem.fileUrl, (total, downloadedSize, progress) => {
-      download.updateProgress(wallpaperItem.id, progress);
-      console.log(total, downloadedSize, progress);
-    })
+    .downloadWallpaper(wallpaperItem.fileUrl, wallpaperItem.id)
     .then((res) => {
       NMessage.success("下载完成");
       new Notification("壁纸下载完成");
@@ -196,25 +209,6 @@ function wallpaperListScrolling(payload: UIEvent) {
   }, 150);
 }
 
-function switchSource(payload: MouseEvent) {
-  if (
-    wallpaperListLoading.value ||
-    wallpaperSetting ||
-    !(payload.target as HTMLElement).dataset
-  ) {
-    return;
-  }
-  let key: string | undefined = (payload.target as HTMLElement).dataset.key;
-  if (!key) return;
-
-  currentShowCategoriteKey.value = key;
-  wallpaperListLoading.value = false;
-  wallpaperPage = 1;
-  wallpaperLoadFinished = false;
-  wallpapers.value = [];
-
-  getWallapers();
-}
 function openLink(link: string) {
   window.wallpaper.openLink(link);
 }
@@ -229,6 +223,21 @@ function moveToTrash(wallpaperItem: TWallpaperItem, itemIndex: number) {
     .catch(() => {
       NMessage.error("移除失败，请稍后重试");
     });
+}
+
+function clickMenu(key: string) {
+  switch (key) {
+    case "refresh":
+      wallpaperListLoading.value = false;
+      wallpaperPage = 1;
+      wallpaperLoadFinished = false;
+      wallpapers.value = [];
+      getWallapers();
+      break;
+    case "toTop":
+      pageMainEl.value?.scrollTo(0, 0);
+      break;
+  }
 }
 
 onMounted(() => {

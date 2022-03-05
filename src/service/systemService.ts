@@ -16,7 +16,7 @@ export default {
           globalStore.settings.autoSwtichUnit = String(res.autoSwtichUnit);
           globalStore.settings.fixedTray = Boolean(Number(res.fixedTray));
           if (globalStore.settings?.fixedTray) {
-            window.system.ipcRenderer.send("fixedTray", true);
+            window.tray.fixedTray(true);
           }
 
           return true;

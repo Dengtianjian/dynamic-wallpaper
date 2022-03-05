@@ -54,20 +54,19 @@ const stopSwitch = ref<boolean>(false);
 
 function getWallpaper() {
   if (loading.value || imageLoading.value) return;
-  page = genRandomPage();
   loading.value = true;
   wallpaperApi
-    .getWallpapers(page, 1)
-    .then(({ pagination, wallpapers }) => {
-      total = pagination.total;
-      if (wallpapers.length === 0) {
-        return;
-      }
-
-      currentWallpaper.value = wallpapers[0];
-      currentWallpaper.value.fileUrl = attachment.genDownloadUrl(
-        wallpapers[0].fileid
+    .randomGetWallpapers(1)
+    .then((wallpapers) => {
+      if (wallpapers.length === 0) return;
+      const wallpaper = wallpapers[0];
+      wallpaper.fileUrl = attachment.genImageThumbUrl(
+        wallpapers[0].fileid,
+        window.innerWidth
       );
+
+      currentWallpaper.value = wallpaper;
+
       imageLoading.value = true;
     })
     .finally(() => {
@@ -114,8 +113,15 @@ function setScreenWallpaper() {
     return;
   }
   imageLoading.value = true;
+
   wallpaperService
-    .setWallpaper(currentWallpaper.value.fileUrl)
+    .setWallpaper(
+      attachment.genImageThumbUrl(
+        currentWallpaper.value.fileid,
+        window.screen.width
+      ),
+      currentWallpaper.value.id
+    )
     .then(() => {
       NMessage.success("设置成功");
     })
@@ -131,17 +137,20 @@ function downloadToLocal() {
     return;
   }
   imageLoading.value = true;
+
   window.wallpaper
-    .download(
-      currentWallpaper.value.fileUrl,
-      (total, downloadedSize, progress) => {}
+    .downloadWallpaper(
+      attachment.genImageThumbUrl(
+        currentWallpaper.value.fileid,
+        window.screen.width,
+      ),
+      currentWallpaper.value.id
     )
     .then((res) => {
       NMessage.success("下载完成");
       new Notification("壁纸下载完成");
     })
     .catch((err) => {
-      console.log(err);
       NMessage.error("下载失败");
     })
     .finally(() => {
