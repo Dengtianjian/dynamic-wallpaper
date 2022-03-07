@@ -5,8 +5,8 @@ name: CI
 
 on:
   push:
-    tags:
-      - "v*.*.*"
+    push: 
+      branches: [main]
 
 jobs:
   build:
