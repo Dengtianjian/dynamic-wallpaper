@@ -14,24 +14,35 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [windows-latest,macos-latest],
+        node-version: ["lts/*"]
     env:
       GH_TOKEN: ${{ secrets.GITHUBACTIONKEY }}
+      GITHUB_TOKEN: ${{ secrets.GITHUBACTIONKEY }}
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js lts/*
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
-          node-version: "lts/*"
+          node-version: ${{ matrix.node-version }}
           cache: "npm"
       # - run: npm install
       # - run: npm run vite:build
       # - run: npm run electron:build
-      - name: Release to Github
+      - name: Release windows edtion to Github
         uses: softprops/action-gh-release@v1
         if: ${{ matrix.os == 'windows-latest' }}
         with:
-          files: "**.exe"
+          files: "packages/**.exe"
+
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUBACTIONKEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./my-artifact.zip
+          asset_name: my-artifact.zip
+          asset_content_type: application/zip
