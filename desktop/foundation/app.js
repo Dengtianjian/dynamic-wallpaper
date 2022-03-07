@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, ipcRenderer, contextBridge } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const Path = require("path");
 
 module.exports.App = class {
@@ -19,10 +19,8 @@ module.exports.App = class {
     this.#singleInstance = singleInstance;
     this.mainWindowOptionsCallBack = mainWindowOptionsCallBack;
 
-    this.env = {
-      rootPath: Path.join(process.cwd(), "../"),
-      basePath: Path.join(__dirname, "../")
-    };
+    this.env.rootPath = process.cwd();
+    this.env.basePath = Path.join(__dirname, "../");
 
     global.app = this;
   }

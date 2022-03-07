@@ -15,9 +15,10 @@ const config = {
     {
       from: "desktop",
       to: "desktop",
-      filter: ["!attachments","!logs"]
+      filter: ["!attachments", "!logs"]
     },
-    "package.json"
+    "package.json",
+    "!attachments"
   ],
   win: {
     target: [{
@@ -25,7 +26,12 @@ const config = {
     }]
   },
   nsis: {
-    deleteAppDataOnUninstall: true
+    oneClick: false,
+    deleteAppDataOnUninstall: true,
+    allowToChangeInstallationDirectory: true,
+    createDesktopShortcut: true,
+    createStartMenuShortcut: true,
+    installerLanguages: "zh-CN"
   },
   publish: false
 }

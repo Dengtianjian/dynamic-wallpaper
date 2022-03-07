@@ -1,6 +1,6 @@
 const FS = require("fs");
 const Path = require("path");
-const logDirPath = Path.join(global.app.basePath, "electron", "logs");
+const logDirPath = Path.join(global.app.basePath, "logs");
 
 function genFileName() {
   const d = new Date();
