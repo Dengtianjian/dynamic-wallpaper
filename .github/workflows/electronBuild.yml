@@ -35,9 +35,9 @@ jobs:
       #     files: "package.json"
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUBACTIONKEY }}
-        if: ${{ matrix.os == 'windows-latest' }}
       - name: Deploy to CVM by SSH
         uses: easingthemes/ssh-deploy@v2.2.11
+        if: ${{ matrix.os == 'windows-latest' }}
         with: 
           # Private Key
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOYSSHKEY }}
