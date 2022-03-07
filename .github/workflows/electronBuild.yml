@@ -28,11 +28,31 @@ jobs:
       # - run: npm install
       # - run: npm run vite:build
       # - run: npm run electron:build
-      - name: Release to Github
-        uses: softprops/action-gh-release@v1
-        if: ${{ matrix.os == 'windows-latest' }}
-        with:
-          files: "package.json"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUBACTIONKEY }}
+      # - name: Release to Github
+      #   uses: softprops/action-gh-release@v1
+      #   if: ${{ matrix.os == 'windows-latest' }}
+      #   with:
+      #     files: "package.json"
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUBACTIONKEY }}
+      - name: Deploy to CVM by SSH
+        uses: easingthemes/ssh-deploy@v2.2.11
+        with: 
+          # Private Key
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOYSSHKEY }}
+          # Remote host
+          REMOTE_HOST: cooocc.com
+          # Remote user
+          REMOTE_USER: root
+          # Remote port
+          REMOTE_PORT: 22 # optional, default is 22
+          # Source directory
+          SOURCE: package.json # optional, default is 
+          # Target directory
+          TARGET: /datadisk/wallpaper # optional, default is /home/REMOTE_USER/
+          # Arguments to pass to rsync
+          ARGS: -rltgoDzvO # optional, default is -rltgoDzvO
+          # An array of folder to exclude
+          #EXCLUDE: # optional, default is 
+        
         
