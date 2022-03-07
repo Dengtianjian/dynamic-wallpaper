@@ -24,15 +24,17 @@ jobs:
         with:
           node-version: 17.4.0
           cache: "npm"
-      - run: npm ci
-      - run: npm run vite:build
-      - run: npm run electron:build
-        env:
-          GH_TOKEN: ${{ secrets.GITHUBACTIONKEY }}
-      - name: Release to Github
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: "package.zip"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUBACTIONKEY }}
+      - run: echo ${{ matrix.os }}
+      #- run: npm ci
+      #- run: npm run vite:build
+      #- run: npm run electron:build
+      #  env:
+      #    GH_TOKEN: ${{ secrets.GITHUBACTIONKEY }}
+      #- name: Release to Github
+      #  uses: softprops/action-gh-release@v1
+      #  if: startsWith(github.ref, 'refs/tags/')
+      #  with:
+      #    files: "package.zip"
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUBACTIONKEY }}
+        
