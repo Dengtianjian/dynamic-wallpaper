@@ -39,5 +39,5 @@ const config = {
 builder.build({
   config
 }).then(() => {
-  return zip(path.join(__dirname, "../../packages"), path.join(__dirname, "../../package.zip"));
+  // return zip(path.join(__dirname, "../../packages"), path.join(__dirname, "../../package.zip"));
 });
