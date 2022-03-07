@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: "lts/*"
           cache: "npm"
-      - run: npm i
+      - run: npm install
       - run: npm run vite:build
       - run: npm run electron:build
       - name: Release to Github
