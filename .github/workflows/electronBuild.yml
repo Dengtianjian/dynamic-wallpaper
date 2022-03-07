@@ -25,14 +25,14 @@ jobs:
         with:
           node-version: "lts/*"
           cache: "npm"
-      - run: npm install
-      - run: npm run vite:build
-      - run: npm run electron:build
+      # - run: npm install
+      # - run: npm run vite:build
+      # - run: npm run electron:build
       - name: Release to Github
         uses: softprops/action-gh-release@v1
         if: ${{ matrix.os == 'windows-latest' }}
         with:
-          files: "packages/*.exe"
+          files: "package.json"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUBACTIONKEY }}
         
