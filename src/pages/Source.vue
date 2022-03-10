@@ -30,6 +30,13 @@
       >
         <img src="../assets/thirdparty/unsplash_logo.png" />
       </li>
+      <li
+        class="source-item"
+        :class="{ 'source-item_selected': currentUsedSource === 'birdpaper' }"
+        @click="switchSource('birdpaper')"
+      >
+        <img src="../assets/thirdparty/birdpaper_logo.png" />
+      </li>
     </ul>
     <n-spin :show="wallpaperListLoading">
       <ul class="wallpaper-list">
@@ -110,9 +117,10 @@ import pexelsApi from "../api/thirdpart/pexelsApi";
 import unsplashApi from "../api/thirdpart/unsplashApi";
 import wallpaperApi from "../api/wallpaperApi";
 import attachment from "../foundation/attachment";
+import birdpaperApi from "../api/thirdpart/birdpaperApi";
 const NMessage = useMessage();
 
-const currentUsedSource = ref<string>("pexels");
+const currentUsedSource = ref<string>("birdpaper");
 
 const pageMainEl = ref<HTMLElement | null>(null);
 const wallpaperListLoading = ref<boolean>(false);
@@ -186,6 +194,36 @@ function getWallapers(): void {
             });
           })
           .then(resolve)
+          .catch(reject);
+        break;
+      case "birdpaper":
+        birdpaperApi
+          .news(wallpaperPage, wallpaperLoadLimit)
+          .then(({ list }) => {
+            resolve(
+              list.map((wallpaperItem) => {
+                return {
+                  author: "",
+                  authorAvatar: "",
+                  createdAt: "",
+                  deletedAt: "",
+                  description: "",
+                  fileid: "",
+                  fileUrl: wallpaperItem.url,
+                  thumbUrl: wallpaperItem.url,
+                  id: wallpaperItem.id,
+                  source: "Birdpaper",
+                  tags: wallpaperItem.tag,
+                  updatedAt: "",
+                  uploadedBy: "小鸟壁纸",
+                  downloading: false,
+                  sourceUrl: "",
+                  sourceId: wallpaperItem.id,
+                  collecting: false,
+                };
+              })
+            );
+          })
           .catch(reject);
         break;
       default:

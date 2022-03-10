@@ -15,6 +15,9 @@ export default {
   bing: {
     url: "https://cn.bing.com/"
   },
+  birdpaper: {
+    url: "http://wp.birdpaper.com.cn/"
+  },
   api: {
     url: "https://wallpaper.isdtj.com"
   }

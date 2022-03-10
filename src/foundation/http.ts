@@ -74,6 +74,9 @@ function put<T>(url: string, query: Record<string, any> = {}, body: BodyInit & R
 function deleteRequest<T>(url: string, query: Record<string, any> = {}, body: BodyInit & Record<string, any>, headers: Record<string, any> = {}) {
   return request<T>(url, "DELETE", query, body, headers);
 }
+function generateUrl(baseUrl: string, uri: string = "", query: Record<string | number, any> = {}): string {
+  return `${baseUrl}/${uri}?${generateQuery(query)}`;
+}
 
 
 export default {
@@ -83,5 +86,6 @@ export default {
   patch,
   put,
   deleteRequest,
-  generateQuery
+  generateQuery,
+  generateUrl
 }
