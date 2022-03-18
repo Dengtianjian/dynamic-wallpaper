@@ -37,6 +37,15 @@
       >
         <img src="../assets/thirdparty/birdpaper_logo.png" />
       </li>
+      <li
+        class="source-item"
+        :class="{
+          'source-item_selected': currentUsedSource === 'wallpapersHome',
+        }"
+        @click="switchSource('wallpapersHome')"
+      >
+        <img src="../assets/thirdparty/wallpapershome_logo.jpg" />
+      </li>
     </ul>
     <n-spin :show="wallpaperListLoading">
       <ul class="wallpaper-list">
@@ -69,12 +78,12 @@
                   浏览器打开
                 </n-tooltip>
               </li>
-              <li>
+              <li v-if="!wallpaperItem.crawlUrl">
                 <n-tooltip>
                   <template #trigger>
                     <div>
                       <i
-                        class="qianniu qianniu-add"
+                        class="shoutao st-add"
                         @click.stop="collect(wallpaperItem)"
                         v-show="
                           !wallpaperItem.collecting &&
@@ -98,6 +107,35 @@
                   收集
                 </n-tooltip>
               </li>
+              <li v-else>
+                <n-tooltip>
+                  <template #trigger>
+                    <div>
+                      <i
+                        class="shoutao st-roundadd"
+                        @click.stop="collect(wallpaperItem)"
+                        v-show="
+                          !wallpaperItem.collecting &&
+                          !wallpaperItem.downloading
+                        "
+                      ></i>
+                      <n-spin
+                        v-show="
+                          wallpaperItem.collecting || wallpaperItem.downloading
+                        "
+                        :size="14"
+                      >
+                        <i
+                          class="qianniu qianniu-add"
+                          @click.stop="collect(wallpaperItem)"
+                          v-show="!wallpaperItem.collecting"
+                        ></i
+                      ></n-spin>
+                    </div>
+                  </template>
+                  抓取并且采集
+                </n-tooltip>
+              </li>
             </ul>
           </section>
         </d-wallpaper-item>
@@ -111,8 +149,6 @@ import { useMessage, NTooltip } from "naive-ui";
 import { onMounted, ref } from "vue";
 import { TExternalWallpaper, TWallpaperItem } from "../types/wallpaperTypes";
 import DWallpaperItem from "../components/DWallpaperItem.vue";
-import wallpaperService from "../service/wallpaperService";
-import wallpaperStore from "../store/wallpaperStore";
 import pexelsApi from "../api/thirdpart/pexelsApi";
 import unsplashApi from "../api/thirdpart/unsplashApi";
 import wallpaperApi from "../api/wallpaperApi";
@@ -120,7 +156,7 @@ import attachment from "../foundation/attachment";
 import birdpaperApi from "../api/thirdpart/birdpaperApi";
 const NMessage = useMessage();
 
-const currentUsedSource = ref<string>("birdpaper");
+const currentUsedSource = ref<string>("wallpapersHome");
 
 const pageMainEl = ref<HTMLElement | null>(null);
 const wallpaperListLoading = ref<boolean>(false);
@@ -226,6 +262,36 @@ function getWallapers(): void {
           })
           .catch(reject);
         break;
+      case "wallpapersHome":
+        wallpaperApi
+          .getWallpaperHomeList(wallpaperPage, wallpaperLoadLimit)
+          .then((res) => {
+            return res.map((item) => {
+              return {
+                author: "",
+                authorAvatar: "",
+                createdAt: "",
+                deletedAt: "",
+                description: "",
+                fileid: "",
+                fileUrl: "",
+                thumbUrl: item.cover,
+                id: item.id,
+                source: "Wallpapers Home",
+                tags: "",
+                updatedAt: "",
+                uploadedBy: "Wallpapers Home",
+                downloading: false,
+                sourceUrl: item.link,
+                sourceId: item.id,
+                collecting: false,
+                crawlUrl: item.link,
+              };
+            });
+          })
+          .then(resolve)
+          .catch(reject);
+        break;
       default:
         resolve([]);
     }
@@ -285,6 +351,14 @@ function wallpaperListScrolling(payload: UIEvent) {
 }
 
 function switchSource(sourceKey: string) {
+  switch (sourceKey) {
+    case "wallpapersHome":
+      wallpaperLoadLimit = 12;
+      break;
+    default:
+      wallpaperLoadLimit = 28;
+      break;
+  }
   currentUsedSource.value = sourceKey;
   wallpaperListLoading.value = false;
   wallpaperPage = 1;
@@ -298,7 +372,7 @@ function openLink(link: string) {
 }
 
 onMounted(() => {
-  getWallapers();
+  switchSource("wallpapersHome");
 });
 </script>
 

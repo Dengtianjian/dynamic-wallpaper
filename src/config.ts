@@ -18,6 +18,9 @@ export default {
   birdpaper: {
     url: "http://wp.birdpaper.com.cn/"
   },
+  wallpaperHome: {
+    url: "https://wallpapershome.com/"
+  },
   api: {
     url: "https://wallpaper.isdtj.com"
   }
