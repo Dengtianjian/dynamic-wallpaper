@@ -135,7 +135,7 @@ function getWallapers(): void {
       data.forEach((dataItem) => {
         dataItem.fileUrl = attachment.genImageThumbUrl(
           dataItem.fileid,
-          window.screen.width
+          window.screen.availWidth
         );
         dataItem.thumbUrl = attachment.genImageThumbUrl(
           dataItem.fileid,
@@ -144,6 +144,7 @@ function getWallapers(): void {
         dataItem.downloading = false;
         wallpaperService.pushQueue(dataItem);
       });
+
       wallpapers.value.push(...data);
     })
     .finally(() => {
