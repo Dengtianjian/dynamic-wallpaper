@@ -54,7 +54,7 @@ export default {
       count: limit
     })).then(res => res.data.data)
   },
-  getListByCategory(categoryId: string, page: number = 1, limit: number = 10) {
+  getListByCategory(categoryId: string | number, page: number = 1, limit: number = 10) {
     return http.get<{
       data: TResponse
     }>(http.generateUrl(config.birdpaper.url, "intf/GetListByCategory", {

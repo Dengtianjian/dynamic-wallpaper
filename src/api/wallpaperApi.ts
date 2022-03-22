@@ -68,5 +68,10 @@ export default {
       page,
       perPage
     });
+  },
+  crawlWallpapersHome(url: string) {
+    return request.post("thirpart/wallpaperhome", {
+      url
+    });
   }
 }

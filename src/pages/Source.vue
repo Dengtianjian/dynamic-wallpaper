@@ -113,7 +113,7 @@
                     <div>
                       <i
                         class="shoutao st-roundadd"
-                        @click.stop="collect(wallpaperItem)"
+                        @click.stop="collectAndCrawl(wallpaperItem)"
                         v-show="
                           !wallpaperItem.collecting &&
                           !wallpaperItem.downloading
@@ -127,7 +127,7 @@
                       >
                         <i
                           class="qianniu qianniu-add"
-                          @click.stop="collect(wallpaperItem)"
+                          @click.stop="collectAndCrawl(wallpaperItem)"
                           v-show="!wallpaperItem.collecting"
                         ></i
                       ></n-spin>
@@ -156,7 +156,7 @@ import attachment from "../foundation/attachment";
 import birdpaperApi from "../api/thirdpart/birdpaperApi";
 const NMessage = useMessage();
 
-const currentUsedSource = ref<string>("wallpapersHome");
+const currentUsedSource = ref<string>("birdpaper");
 
 const pageMainEl = ref<HTMLElement | null>(null);
 const wallpaperListLoading = ref<boolean>(false);
@@ -234,7 +234,7 @@ function getWallapers(): void {
         break;
       case "birdpaper":
         birdpaperApi
-          .news(wallpaperPage, wallpaperLoadLimit)
+          .getListByCategory(9, wallpaperPage, wallpaperLoadLimit)
           .then(({ list }) => {
             resolve(
               list.map((wallpaperItem) => {
@@ -246,7 +246,9 @@ function getWallapers(): void {
                   description: "",
                   fileid: "",
                   fileUrl: wallpaperItem.url,
-                  thumbUrl: wallpaperItem.url,
+                  thumbUrl:
+                    wallpaperItem.url +
+                    "?x-oss-process=image/resize,m_fill,h_200,w_302/format,webp",
                   id: wallpaperItem.id,
                   source: "Birdpaper",
                   tags: wallpaperItem.tag,
@@ -277,7 +279,7 @@ function getWallapers(): void {
                 fileUrl: "",
                 thumbUrl: item.cover,
                 id: item.id,
-                source: "Wallpapers Home",
+                source: "WallpapersHome",
                 tags: "",
                 updatedAt: "",
                 uploadedBy: "Wallpapers Home",
@@ -333,6 +335,12 @@ function collect(wallpaperItem: TExternalWallpaper): Promise<TWallpaperItem> {
       wallpaperItem.collecting = false;
     });
 }
+function collectAndCrawl(wallpaperItem: TExternalWallpaper) {
+  switch (wallpaperItem.source) {
+    case "wallpapersHome":
+      break;
+  }
+}
 
 let scrollHandler: any | number = null;
 function wallpaperListScrolling(payload: UIEvent) {
@@ -372,7 +380,7 @@ function openLink(link: string) {
 }
 
 onMounted(() => {
-  switchSource("wallpapersHome");
+  switchSource("birdpaper");
 });
 </script>
 
