@@ -64,7 +64,13 @@ export default {
     });
   },
   getWallpaperHomeList(page: number = 1, perPage: number = 10) {
-    return request.get<TWallpaperHomeWallpaper[]>("thirdparty/wallpaperhome", {
+    return request.get<{
+      list: TWallpaperHomeWallpaper[],
+      pagination: {
+        page: number,
+        limit: number
+      }
+    }>("thirdparty/wallpaperhome", {
       page,
       perPage
     });

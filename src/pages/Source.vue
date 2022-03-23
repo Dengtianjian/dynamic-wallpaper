@@ -267,8 +267,10 @@ function getWallapers(): void {
       case "wallpapersHome":
         wallpaperApi
           .getWallpaperHomeList(wallpaperPage, wallpaperLoadLimit)
-          .then((res) => {
-            return res.map((item) => {
+          .then(({ list, pagination }) => {
+            wallpaperPage = pagination.page;
+            wallpaperLoadLimit = pagination.limit;
+            return list.map((item) => {
               return {
                 author: "",
                 authorAvatar: "",
@@ -361,7 +363,7 @@ function wallpaperListScrolling(payload: UIEvent) {
 function switchSource(sourceKey: string) {
   switch (sourceKey) {
     case "wallpapersHome":
-      wallpaperLoadLimit = 12;
+      wallpaperLoadLimit = 24;
       break;
     default:
       wallpaperLoadLimit = 28;
