@@ -13,7 +13,7 @@ export type TWallpaperItem = {
   updatedAt: string,
   uploadedBy: string,
   downloading: boolean,
-  crawlUrl?: string
+  crawlUrl: string
 };
 
 export type TExternalWallpaper = {

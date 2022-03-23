@@ -76,8 +76,8 @@ export default {
     });
   },
   crawlWallpapersHome(url: string) {
-    return request.post("thirpart/wallpaperhome", {
-      url
+    return request.get("thirdparty/wallpaperhome/recordCollect", {
+      targetUrl: url
     });
   }
 }
