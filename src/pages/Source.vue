@@ -341,14 +341,16 @@ function collectAndCrawl(wallpaperItem: TExternalWallpaper) {
   console.log(wallpaperItem);
   switch (wallpaperItem.source) {
     case "WallpapersHome":
-      const loading = NMessage.loading("");
-      wallpaperApi
-        .crawlWallpapersHome(wallpaperItem.crawlUrl)
-        .then(() => {
-          NMessage.success("添加在采集队列成功");
-        })
-        .catch(() => NMessage.error("添加到队列失败"))
-        .finally(loading.destroy);
+      if (wallpaperItem.crawlUrl) {
+        const loading = NMessage.loading("");
+        wallpaperApi
+          .crawlWallpapersHome(wallpaperItem.crawlUrl)
+          .then(() => {
+            NMessage.success("添加在采集队列成功");
+          })
+          .catch(() => NMessage.error("添加到队列失败"))
+          .finally(loading.destroy);
+      }
       break;
   }
 }
