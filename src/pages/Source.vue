@@ -367,23 +367,25 @@ function switchCategory(e: MouseEvent) {
     wallpaperPage = 1;
     wallpaperLoadFinished = false;
     wallpapers.value = [];
-    
+
     getWallapers();
   }
 }
-function reload() {
+async function reload(sourceKey: string) {
   wallpaperListLoading.value = false;
   wallpaperPage = 1;
   wallpaperLoadFinished = false;
   wallpapers.value = [];
   currentSelectedCategoryId.value = "";
+  categories.splice(0, categories.length);
+
+  await getCategories(sourceKey);
 
   getWallapers();
 }
 async function switchSource(sourceKey: string) {
   currentSelectedCategoryId.value = "";
 
-  await getCategories(sourceKey);
   switch (sourceKey) {
     case "wallpapersHome":
       wallpaperLoadLimit = 24;
@@ -394,7 +396,7 @@ async function switchSource(sourceKey: string) {
   }
   currentUsedSource.value = sourceKey;
 
-  reload();
+  reload(sourceKey);
 }
 function openLink(link: string) {
   window.wallpaper.openLink(link);
