@@ -1,79 +1,53 @@
 <template>
   <main class="page-main" @scroll="wallpaperListScrolling" ref="pageMainEl">
     <ul class="source-select">
-      <li
-        class="source-item"
-        :class="{ 'source-item_selected': currentUsedSource === 'pexels' }"
-        @click="switchSource('pexels')"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32px"
-          height="32px"
-          viewBox="0 0 32 32"
-        >
-          <path
-            d="M2 0h28a2 2 0 0 1 2 2v28a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2z"
-            fill="#05A081"
-          ></path>
+      <li class="source-item" :class="{ 'source-item_selected': currentUsedSource === 'pexels' }"
+        @click="switchSource('pexels')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 0 32 32">
+          <path d="M2 0h28a2 2 0 0 1 2 2v28a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2z" fill="#05A081"></path>
           <path
             d="M13 21h3.863v-3.752h1.167a3.124 3.124 0 1 0 0-6.248H13v10zm5.863 2H11V9h7.03a5.124 5.124 0 0 1 .833 10.18V23z"
-            fill="#fff"
-          ></path>
+            fill="#fff"></path>
         </svg>
         Pexels
       </li>
-      <li
-        class="source-item"
-        :class="{ 'source-item_selected': currentUsedSource === 'unsplash' }"
-        @click="switchSource('unsplash')"
-      >
+      <li class="source-item" :class="{ 'source-item_selected': currentUsedSource === 'unsplash' }"
+        @click="switchSource('unsplash')">
         <img src="../assets/thirdparty/unsplash_logo.png" />
       </li>
-      <li
-        class="source-item"
-        :class="{ 'source-item_selected': currentUsedSource === 'birdpaper' }"
-        @click="switchSource('birdpaper')"
-      >
+      <li class="source-item" :class="{ 'source-item_selected': currentUsedSource === 'birdpaper' }"
+        @click="switchSource('birdpaper')">
         <img src="../assets/thirdparty/birdpaper_logo.png" />
       </li>
-      <li
-        class="source-item"
-        :class="{
-          'source-item_selected': currentUsedSource === 'wallpapersHome',
-        }"
-        @click="switchSource('wallpapersHome')"
-      >
+      <li class="source-item" :class="{
+        'source-item_selected': currentUsedSource === 'wallpapersHome',
+      }" @click="switchSource('wallpapersHome')">
         <img src="../assets/thirdparty/wallpapershome_logo.jpg" />
+      </li>
+    </ul>
+    <ul class="wallpaper-categories" @click="switchCategory">
+      <li v-for="categoryItem in categories" :key="categoryItem.id"
+        :class="{ active: currentSelectedCategoryId === categoryItem.id }" :data-id="categoryItem.id">
+        {{ categoryItem.name }}
       </li>
     </ul>
     <n-spin :show="wallpaperListLoading">
       <ul class="wallpaper-list">
-        <d-wallpaper-item
-          :data="wallpaperItem"
-          v-for="(wallpaperItem, itemIndex) in wallpapers"
-          :key="wallpaperItem.id"
-        >
+        <d-wallpaper-item :data="wallpaperItem" v-for="(wallpaperItem, itemIndex) in wallpapers"
+          :key="wallpaperItem.id">
           <section @click.stop>
             <div class="wallpaper-title">{{ wallpaperItem.description }}</div>
             <div class="wallpaper-author">
               来自 {{ wallpaperItem.source }} 的
-              <img
-                :src="wallpaperItem.authorAvatar"
-                :alt="wallpaperItem.author"
-                class="wallpaper-author_avatar"
-                v-if="wallpaperItem.authorAvatar"
-              />
+              <img :src="wallpaperItem.authorAvatar" :alt="wallpaperItem.author" class="wallpaper-author_avatar"
+                v-if="wallpaperItem.authorAvatar" />
               {{ wallpaperItem.author }}
             </div>
             <ul class="wallpaper-operations">
               <li>
                 <n-tooltip>
                   <template #trigger>
-                    <i
-                      class="shoutao st-link"
-                      @click.stop="openLink(wallpaperItem.sourceUrl)"
-                    ></i>
+                    <i class="shoutao st-link" @click.stop="openLink(wallpaperItem.sourceUrl)"></i>
                   </template>
                   浏览器打开
                 </n-tooltip>
@@ -82,26 +56,16 @@
                 <n-tooltip>
                   <template #trigger>
                     <div>
-                      <i
-                        class="shoutao st-add"
-                        @click.stop="collect(wallpaperItem)"
-                        v-show="
-                          !wallpaperItem.collecting &&
-                          !wallpaperItem.downloading
-                        "
-                      ></i>
-                      <n-spin
-                        v-show="
-                          wallpaperItem.collecting || wallpaperItem.downloading
-                        "
-                        :size="14"
-                      >
-                        <i
-                          class="qianniu qianniu-add"
-                          @click.stop="collect(wallpaperItem)"
-                          v-show="!wallpaperItem.collecting"
-                        ></i
-                      ></n-spin>
+                      <i class="shoutao st-add" @click.stop="collect(wallpaperItem)" v-show="
+                        !wallpaperItem.collecting &&
+                        !wallpaperItem.downloading
+                      "></i>
+                      <n-spin v-show="
+                        wallpaperItem.collecting || wallpaperItem.downloading
+                      " :size="14">
+                        <i class="qianniu qianniu-add" @click.stop="collect(wallpaperItem)"
+                          v-show="!wallpaperItem.collecting"></i>
+                      </n-spin>
                     </div>
                   </template>
                   收集
@@ -111,26 +75,16 @@
                 <n-tooltip>
                   <template #trigger>
                     <div>
-                      <i
-                        class="shoutao st-roundadd"
-                        @click.stop="collectAndCrawl(wallpaperItem)"
-                        v-show="
-                          !wallpaperItem.collecting &&
-                          !wallpaperItem.downloading
-                        "
-                      ></i>
-                      <n-spin
-                        v-show="
-                          wallpaperItem.collecting || wallpaperItem.downloading
-                        "
-                        :size="14"
-                      >
-                        <i
-                          class="qianniu qianniu-add"
-                          @click.stop="collectAndCrawl(wallpaperItem)"
-                          v-show="!wallpaperItem.collecting"
-                        ></i
-                      ></n-spin>
+                      <i class="shoutao st-roundadd" @click.stop="collectAndCrawl(wallpaperItem)" v-show="
+                        !wallpaperItem.collecting &&
+                        !wallpaperItem.downloading
+                      "></i>
+                      <n-spin v-show="
+                        wallpaperItem.collecting || wallpaperItem.downloading
+                      " :size="14">
+                        <i class="qianniu qianniu-add" @click.stop="collectAndCrawl(wallpaperItem)"
+                          v-show="!wallpaperItem.collecting"></i>
+                      </n-spin>
                     </div>
                   </template>
                   抓取并且采集
@@ -146,8 +100,8 @@
 
 <script lang="ts" setup>
 import { useMessage, NTooltip } from "naive-ui";
-import { onMounted, ref } from "vue";
-import { TExternalWallpaper, TWallpaperItem } from "../types/wallpaperTypes";
+import { onMounted, reactive, ref } from "vue";
+import { TExternalWallpaper, TWallpaperItem, TCategory } from "../types/wallpaperTypes";
 import DWallpaperItem from "../components/DWallpaperItem.vue";
 import pexelsApi from "../api/thirdpart/pexelsApi";
 import unsplashApi from "../api/thirdpart/unsplashApi";
@@ -164,8 +118,10 @@ let wallpaperPage = 1;
 let wallpaperLoadLimit = 28;
 let wallpaperLoadFinished = false;
 
+const categories = reactive<TCategory[]>([]);
 const wallpapers = ref<TExternalWallpaper[]>([]);
 
+const currentSelectedCategoryId = ref<string>("");
 function getWallapers(): void {
   if (wallpaperListLoading.value || wallpaperLoadFinished) {
     return;
@@ -234,7 +190,7 @@ function getWallapers(): void {
         break;
       case "birdpaper":
         birdpaperApi
-          .getListByCategory(9, wallpaperPage, wallpaperLoadLimit)
+          .getListByCategory(currentSelectedCategoryId.value, wallpaperPage, wallpaperLoadLimit)
           .then(({ list }) => {
             resolve(
               list.map((wallpaperItem) => {
@@ -313,6 +269,28 @@ function getWallapers(): void {
     });
 }
 
+async function getCategories(sourceKey: string) {
+  if (sourceKey === currentUsedSource.value) {
+    if (categories.length > 0) return;
+  }
+  if (sourceKey !== currentUsedSource.value) {
+    categories.splice(0, categories.length);
+  }
+  switch (sourceKey) {
+    case "birdpaper":
+      await birdpaperApi.getCategory().then(res => {
+        categories.push(...res.map(item => ({
+          name: item.show_name,
+          id: item.old_id
+        })));
+        if (!currentSelectedCategoryId.value) {
+          currentSelectedCategoryId.value = categories[0].id;
+        }
+      });
+      break;
+  }
+}
+
 function collect(wallpaperItem: TExternalWallpaper): Promise<TWallpaperItem> {
   if (wallpaperItem.collecting) return Promise.reject(false);
   wallpaperItem.collecting = true;
@@ -371,7 +349,15 @@ function wallpaperListScrolling(payload: UIEvent) {
   }, 150);
 }
 
-function switchSource(sourceKey: string) {
+function switchCategory(e: MouseEvent) {
+  const target = e.target as HTMLLIElement;
+  if (target.dataset?.id) {
+    currentSelectedCategoryId.value = target.dataset.id;
+    switchSource(currentUsedSource.value);
+  }
+}
+async function switchSource(sourceKey: string) {
+  await getCategories(sourceKey);
   switch (sourceKey) {
     case "wallpapersHome":
       wallpaperLoadLimit = 24;
@@ -404,24 +390,53 @@ onMounted(() => {
   overflow-y: auto;
   box-sizing: border-box;
 }
+
+/* 分类 */
+.wallpaper-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 0 20px;
+  font-size: 14px;
+  user-select: none;
+}
+
+.wallpaper-categories li {
+  padding: 3px 8px;
+  border-radius: calc(var(--radius-angle) / 2);
+}
+
+.wallpaper-categories li:hover {
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.wallpaper-categories li.active {
+  color: white;
+  background-color: var(--primary-color);
+}
+
 /** 壁纸列表 */
 .wallpaper-list {
   display: grid;
   grid-template-columns: repeat(4, calc(25% - 15px));
   gap: 20px;
-  margin: 0 20px;
+  margin: 20px 20px 0;
   box-sizing: border-box;
 }
+
 @media screen and (min-width: 1400px) {
   .wallpaper-list {
     grid-template-columns: repeat(5, calc(20% - 15px));
   }
 }
+
 @media screen and (min-width: 2000px) {
   .wallpaper-list {
     grid-template-columns: repeat(6, calc(20.2vw - 15px));
   }
 }
+
 .wallpaper-title {
   width: 100%;
   line-height: 20px;
@@ -429,6 +444,7 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 /** 图片操作 */
 .wallpaper-operations {
   display: flex;
@@ -436,16 +452,20 @@ onMounted(() => {
   align-items: center;
   gap: 0 3px;
 }
+
 .wallpaper-operations li {
   padding: 0 5px;
   cursor: pointer;
 }
+
 .wallpaper-operations li i {
   font-size: 18px;
 }
+
 .wallpaper-operations li:hover {
   color: var(--primary-color);
 }
+
 /** 图片作者 */
 .wallpaper-author {
   display: flex;
@@ -454,6 +474,7 @@ onMounted(() => {
   /* margin: 5px 0; */
   font-size: 12px;
 }
+
 .wallpaper-author_avatar {
   width: 20px;
   height: 20px;
@@ -474,6 +495,7 @@ onMounted(() => {
   background-color: white;
   border-top: 1px solid #eee;
 }
+
 .wallpaper-download-list_placeholder {
   height: 30px;
   width: 100%;
@@ -490,13 +512,16 @@ onMounted(() => {
   margin-bottom: 20px;
   background-color: #fafafa;
 }
+
 .source-select img {
   height: 30px;
 }
+
 .source-select svg {
   width: 30px;
   height: 30px;
 }
+
 .source-select .source-item {
   display: flex;
   align-items: center;
@@ -504,6 +529,7 @@ onMounted(() => {
   padding: 10px;
   cursor: pointer;
 }
+
 .source-select .source-item_selected {
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
   border-radius: calc(var(--radius-angle) / 2);
