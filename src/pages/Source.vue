@@ -106,7 +106,6 @@ import DWallpaperItem from "../components/DWallpaperItem.vue";
 import pexelsApi from "../api/thirdpart/pexelsApi";
 import unsplashApi from "../api/thirdpart/unsplashApi";
 import wallpaperApi from "../api/wallpaperApi";
-import attachment from "../foundation/attachment";
 import birdpaperApi from "../api/thirdpart/birdpaperApi";
 const NMessage = useMessage();
 
@@ -222,7 +221,7 @@ function getWallapers(): void {
         break;
       case "wallpapersHome":
         wallpaperApi
-          .getWallpaperHomeList(wallpaperPage, wallpaperLoadLimit)
+          .getWallpaperHomeList(currentSelectedCategoryId.value, wallpaperPage, wallpaperLoadLimit)
           .then(({ list, pagination }) => {
             wallpaperPage = pagination.page;
             wallpaperLoadLimit = pagination.limit;
@@ -282,6 +281,17 @@ async function getCategories(sourceKey: string) {
         categories.push(...res.map(item => ({
           name: item.show_name,
           id: item.old_id
+        })));
+        if (!currentSelectedCategoryId.value) {
+          currentSelectedCategoryId.value = categories[0].id;
+        }
+      });
+      break;
+    case "wallpapersHome":
+      await wallpaperApi.getWallpaperHomeCategories().then(res => {
+        categories.push(...res.map(item => ({
+          name: item.name,
+          id: item.link
         })));
         if (!currentSelectedCategoryId.value) {
           currentSelectedCategoryId.value = categories[0].id;
@@ -353,10 +363,26 @@ function switchCategory(e: MouseEvent) {
   const target = e.target as HTMLLIElement;
   if (target.dataset?.id) {
     currentSelectedCategoryId.value = target.dataset.id;
-    switchSource(currentUsedSource.value);
+    wallpaperListLoading.value = false;
+    wallpaperPage = 1;
+    wallpaperLoadFinished = false;
+    wallpapers.value = [];
+    
+    getWallapers();
   }
 }
+function reload() {
+  wallpaperListLoading.value = false;
+  wallpaperPage = 1;
+  wallpaperLoadFinished = false;
+  wallpapers.value = [];
+  currentSelectedCategoryId.value = "";
+
+  getWallapers();
+}
 async function switchSource(sourceKey: string) {
+  currentSelectedCategoryId.value = "";
+
   await getCategories(sourceKey);
   switch (sourceKey) {
     case "wallpapersHome":
@@ -367,19 +393,17 @@ async function switchSource(sourceKey: string) {
       break;
   }
   currentUsedSource.value = sourceKey;
-  wallpaperListLoading.value = false;
-  wallpaperPage = 1;
-  wallpaperLoadFinished = false;
-  wallpapers.value = [];
 
-  getWallapers();
+  reload();
 }
 function openLink(link: string) {
   window.wallpaper.openLink(link);
 }
 
 onMounted(() => {
-  switchSource("birdpaper");
+  getCategories("birdpaper").then(() => {
+    getWallapers();
+  });
 });
 </script>
 

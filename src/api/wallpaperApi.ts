@@ -63,7 +63,7 @@ export default {
       sourceUrl
     });
   },
-  getWallpaperHomeList(page: number = 1, perPage: number = 10) {
+  getWallpaperHomeList(categoryId: string, page: number = 1, perPage: number = 10) {
     return request.get<{
       list: TWallpaperHomeWallpaper[],
       pagination: {
@@ -72,12 +72,19 @@ export default {
       }
     }>("thirdparty/wallpaperhome", {
       page,
-      perPage
+      perPage,
+      categoryId
     });
   },
   crawlWallpapersHome(url: string) {
     return request.get("thirdparty/wallpaperhome/recordCollect", {
       targetUrl: url
     });
+  },
+  getWallpaperHomeCategories() {
+    return request.get<{
+      name: string,
+      link: string
+    }[]>("thirdparty/wallpaperhome/categories");
   }
 }
