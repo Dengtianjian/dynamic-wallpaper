@@ -37,6 +37,15 @@
       >
         <img src="../assets/thirdparty/birdpaper_logo.png" />
       </li>
+      <li
+        class="source-item"
+        :class="{
+          'source-item_selected': currentUsedSource === 'wallpapersHome',
+        }"
+        @click="switchSource('wallpapersHome')"
+      >
+        <img src="../assets/thirdparty/wallpapershome_logo.jpg" />
+      </li>
     </ul>
     <n-spin :show="wallpaperListLoading">
       <ul class="wallpaper-list">
@@ -69,12 +78,12 @@
                   浏览器打开
                 </n-tooltip>
               </li>
-              <li>
+              <li v-if="!wallpaperItem.crawlUrl">
                 <n-tooltip>
                   <template #trigger>
                     <div>
                       <i
-                        class="qianniu qianniu-add"
+                        class="shoutao st-add"
                         @click.stop="collect(wallpaperItem)"
                         v-show="
                           !wallpaperItem.collecting &&
@@ -98,6 +107,35 @@
                   收集
                 </n-tooltip>
               </li>
+              <li v-else>
+                <n-tooltip>
+                  <template #trigger>
+                    <div>
+                      <i
+                        class="shoutao st-roundadd"
+                        @click.stop="collectAndCrawl(wallpaperItem)"
+                        v-show="
+                          !wallpaperItem.collecting &&
+                          !wallpaperItem.downloading
+                        "
+                      ></i>
+                      <n-spin
+                        v-show="
+                          wallpaperItem.collecting || wallpaperItem.downloading
+                        "
+                        :size="14"
+                      >
+                        <i
+                          class="qianniu qianniu-add"
+                          @click.stop="collectAndCrawl(wallpaperItem)"
+                          v-show="!wallpaperItem.collecting"
+                        ></i
+                      ></n-spin>
+                    </div>
+                  </template>
+                  抓取并且采集
+                </n-tooltip>
+              </li>
             </ul>
           </section>
         </d-wallpaper-item>
@@ -111,8 +149,6 @@ import { useMessage, NTooltip } from "naive-ui";
 import { onMounted, ref } from "vue";
 import { TExternalWallpaper, TWallpaperItem } from "../types/wallpaperTypes";
 import DWallpaperItem from "../components/DWallpaperItem.vue";
-import wallpaperService from "../service/wallpaperService";
-import wallpaperStore from "../store/wallpaperStore";
 import pexelsApi from "../api/thirdpart/pexelsApi";
 import unsplashApi from "../api/thirdpart/unsplashApi";
 import wallpaperApi from "../api/wallpaperApi";
@@ -198,7 +234,7 @@ function getWallapers(): void {
         break;
       case "birdpaper":
         birdpaperApi
-          .news(wallpaperPage, wallpaperLoadLimit)
+          .getListByCategory(9, wallpaperPage, wallpaperLoadLimit)
           .then(({ list }) => {
             resolve(
               list.map((wallpaperItem) => {
@@ -210,7 +246,9 @@ function getWallapers(): void {
                   description: "",
                   fileid: "",
                   fileUrl: wallpaperItem.url,
-                  thumbUrl: wallpaperItem.url,
+                  thumbUrl:
+                    wallpaperItem.url +
+                    "?x-oss-process=image/resize,m_fill,h_200,w_302/format,webp",
                   id: wallpaperItem.id,
                   source: "Birdpaper",
                   tags: wallpaperItem.tag,
@@ -224,6 +262,38 @@ function getWallapers(): void {
               })
             );
           })
+          .catch(reject);
+        break;
+      case "wallpapersHome":
+        wallpaperApi
+          .getWallpaperHomeList(wallpaperPage, wallpaperLoadLimit)
+          .then(({ list, pagination }) => {
+            wallpaperPage = pagination.page;
+            wallpaperLoadLimit = pagination.limit;
+            return list.map((item) => {
+              return {
+                author: "",
+                authorAvatar: "",
+                createdAt: "",
+                deletedAt: "",
+                description: "",
+                fileid: "",
+                fileUrl: "",
+                thumbUrl: item.cover,
+                id: item.id,
+                source: "WallpapersHome",
+                tags: "",
+                updatedAt: "",
+                uploadedBy: "Wallpapers Home",
+                downloading: false,
+                sourceUrl: item.link,
+                sourceId: item.id,
+                collecting: false,
+                crawlUrl: item.link,
+              };
+            });
+          })
+          .then(resolve)
           .catch(reject);
         break;
       default:
@@ -267,6 +337,23 @@ function collect(wallpaperItem: TExternalWallpaper): Promise<TWallpaperItem> {
       wallpaperItem.collecting = false;
     });
 }
+function collectAndCrawl(wallpaperItem: TExternalWallpaper) {
+  console.log(wallpaperItem);
+  switch (wallpaperItem.source) {
+    case "WallpapersHome":
+      if (wallpaperItem.crawlUrl) {
+        const loading = NMessage.loading("");
+        wallpaperApi
+          .crawlWallpapersHome(wallpaperItem.crawlUrl)
+          .then(() => {
+            NMessage.success("添加在采集队列成功");
+          })
+          .catch(() => NMessage.error("添加到队列失败"))
+          .finally(loading.destroy);
+      }
+      break;
+  }
+}
 
 let scrollHandler: any | number = null;
 function wallpaperListScrolling(payload: UIEvent) {
@@ -285,6 +372,14 @@ function wallpaperListScrolling(payload: UIEvent) {
 }
 
 function switchSource(sourceKey: string) {
+  switch (sourceKey) {
+    case "wallpapersHome":
+      wallpaperLoadLimit = 24;
+      break;
+    default:
+      wallpaperLoadLimit = 28;
+      break;
+  }
   currentUsedSource.value = sourceKey;
   wallpaperListLoading.value = false;
   wallpaperPage = 1;
@@ -298,7 +393,7 @@ function openLink(link: string) {
 }
 
 onMounted(() => {
-  getWallapers();
+  switchSource("birdpaper");
 });
 </script>
 

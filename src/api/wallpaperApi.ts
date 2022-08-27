@@ -2,6 +2,13 @@ import http from "../foundation/http"
 import { TWallpaperItem } from "../types/wallpaperTypes";
 import request from "./request"
 
+type TWallpaperHomeWallpaper = {
+  link: string,
+  cover: string,
+  keywords: string[],
+  id: string,
+}
+
 export default {
   getWallpapers(page: number = 1, perPage: number = 10) {
     return request.get<{
@@ -54,6 +61,23 @@ export default {
       fileUrl,
       source,
       sourceUrl
+    });
+  },
+  getWallpaperHomeList(page: number = 1, perPage: number = 10) {
+    return request.get<{
+      list: TWallpaperHomeWallpaper[],
+      pagination: {
+        page: number,
+        limit: number
+      }
+    }>("thirdparty/wallpaperhome", {
+      page,
+      perPage
+    });
+  },
+  crawlWallpapersHome(url: string) {
+    return request.get("thirdparty/wallpaperhome/recordCollect", {
+      targetUrl: url
     });
   }
 }
