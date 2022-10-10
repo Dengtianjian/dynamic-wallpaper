@@ -24,7 +24,7 @@ type TCategoryTag = {
 }
 type TCategory = {
   category: string,
-  shwo_name: string,
+  show_name: string,
   icon: string,
   position: string,
   hot_tag: TCategoryTag[],

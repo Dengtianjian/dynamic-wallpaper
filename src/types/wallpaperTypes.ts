@@ -28,3 +28,8 @@ export type TWallpaperDownloadItem = {
     downloading: boolean
   }
 } & TWallpaperItem;
+
+export type TCategory = {
+  id: string,
+  name: string
+}
