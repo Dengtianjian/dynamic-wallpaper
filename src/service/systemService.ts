@@ -21,7 +21,13 @@ export default {
 
           return true;
         }).then(res).catch(rej);
-      });
+      }).then(async () => {
+        window.system.init().then(res => {
+          globalStore.windowParams.width = res.width;
+          globalStore.windowParams.height = res.height;
+        });
+        return true;
+      })
       return initPromise;
     }
   }

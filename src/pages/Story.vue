@@ -1,24 +1,12 @@
 <template>
-  <img
-    :src="currentWallpaper?.fileUrl"
-    class="wallpaper-image"
-    @load="imageLoaded"
-  />
+  <img :src="currentWallpaper?.fileUrl" class="wallpaper-image" @load="imageLoaded" />
   <section class="wallpaper">
     <n-popover trigger="hover" :show-arrow="false" :raw="true">
       <template #trigger>
         <ul class="wallpaper-operations">
           <li v-show="imageLoading || loading"><n-spin :size="14" /></li>
-          <li
-            class="qianniu qianniu-suspend"
-            @click="stopPlay"
-            v-show="!stopSwitch"
-          ></li>
-          <li
-            class="qianniu qianniu-play"
-            @click="continuePlay"
-            v-show="stopSwitch"
-          ></li>
+          <li class="qianniu qianniu-suspend" @click="stopPlay" v-show="!stopSwitch"></li>
+          <li class="qianniu qianniu-play" @click="continuePlay" v-show="stopSwitch"></li>
           <li class="shoutao st-down" @click="downloadToLocal"></li>
           <li class="qianniu qianniu-setup" @click="setScreenWallpaper"></li>
           <li class="qianniu qianniu-browse"></li>
@@ -42,6 +30,7 @@ import { onMounted, onUnmounted, ref } from "vue";
 import wallpaperApi from "../api/wallpaperApi";
 import attachment from "../foundation/attachment";
 import wallpaperService from "../service/wallpaperService";
+import globalStore from "../store/globalStore";
 import { TWallpaperItem } from "../types/wallpaperTypes";
 const NMessage = useMessage();
 let page: number = 1;
@@ -118,7 +107,7 @@ function setScreenWallpaper() {
     .setWallpaper(
       attachment.genImageThumbUrl(
         currentWallpaper.value.fileid,
-        window.screen.width
+        globalStore.windowParams.width
       ),
       currentWallpaper.value.id
     )
@@ -142,7 +131,7 @@ function downloadToLocal() {
     .downloadWallpaper(
       attachment.genImageThumbUrl(
         currentWallpaper.value.fileid,
-        window.screen.width,
+        globalStore.windowParams.width
       ),
       currentWallpaper.value.id
     )
@@ -173,6 +162,7 @@ onUnmounted(() => {
   height: calc(100vh - 41px);
   object-fit: cover;
 }
+
 .wallpaper {
   position: fixed;
   bottom: 60px;
@@ -182,20 +172,24 @@ onUnmounted(() => {
   opacity: 0.5;
   transition: opacity 0.2s ease-in-out;
 }
+
 .wallpaper:hover {
   opacity: 1;
 }
+
 .wallpaper-operations {
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
 .wallpaper-operations li {
   padding: 6px 14px;
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: var(--radius-angle);
 }
+
 .wallpaper-details {
   margin-bottom: 10px;
   min-width: 250px;
@@ -205,6 +199,7 @@ onUnmounted(() => {
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: var(--radius-angle);
 }
+
 .wallpaper-copyright {
   margin-top: 4px;
   font-size: 14px;

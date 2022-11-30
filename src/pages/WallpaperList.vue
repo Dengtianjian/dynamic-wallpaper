@@ -2,11 +2,8 @@
   <main class="page-main" @scroll="wallpaperListScrolling" ref="pageMainEl">
     <n-spin :show="wallpaperListLoading">
       <ul class="wallpaper-list">
-        <d-wallpaper-item
-          :data="wallpaperItem"
-          v-for="(wallpaperItem, itemIndex) in wallpapers"
-          :key="wallpaperItem.id"
-        >
+        <d-wallpaper-item :data="wallpaperItem" v-for="(wallpaperItem, itemIndex) in wallpapers"
+          :key="wallpaperItem.id">
           <section @click.stop>
             <div class="wallpaper-title">{{ wallpaperItem.description }}</div>
             <div class="wallpaper-author">
@@ -23,10 +20,7 @@
               <li>
                 <n-tooltip>
                   <template #trigger>
-                    <i
-                      class="shoutao st-link"
-                      @click.stop="openLink(wallpaperItem.fileUrl)"
-                    ></i>
+                    <i class="shoutao st-link" @click.stop="openLink(wallpaperItem.fileUrl)"></i>
                   </template>
                   浏览器打开
                 </n-tooltip>
@@ -34,10 +28,7 @@
               <li>
                 <n-tooltip>
                   <template #trigger>
-                    <i
-                      class="shoutao st-check"
-                      @click.stop="setWallpaper(wallpaperItem)"
-                    ></i>
+                    <i class="shoutao st-check" @click.stop="setWallpaper(wallpaperItem)"></i>
                   </template>
                   设置为桌面壁纸
                 </n-tooltip>
@@ -45,10 +36,7 @@
               <li>
                 <n-tooltip>
                   <template #trigger>
-                    <i
-                      class="shoutao st-down"
-                      @click.stop="downloadWallpaper(wallpaperItem)"
-                    ></i>
+                    <i class="shoutao st-down" @click.stop="downloadWallpaper(wallpaperItem)"></i>
                   </template>
                   下载到本地
                 </n-tooltip>
@@ -56,10 +44,7 @@
               <li>
                 <n-tooltip>
                   <template #trigger>
-                    <i
-                      class="qianniu qianniu-trash"
-                      @click.stop="moveToTrash(wallpaperItem, itemIndex)"
-                    ></i>
+                    <i class="qianniu qianniu-trash" @click.stop="moveToTrash(wallpaperItem, itemIndex)"></i>
                   </template>
                   移至回收站
                 </n-tooltip>
@@ -84,6 +69,7 @@ import DWallpaperItem from "../components/DWallpaperItem.vue";
 import wallpaperService from "../service/wallpaperService";
 import wallpaperStore from "../store/wallpaperStore";
 import DFixedMenu from "../components/DFixedMenu.vue";
+import globalStore from "../store/globalStore";
 const Router = useRouter();
 const NMessage = useMessage();
 
@@ -105,11 +91,11 @@ const categorites: {
   label: string;
   key: string;
 }[] = [
-  {
-    label: "全部",
-    key: "all",
-  },
-];
+    {
+      label: "全部",
+      key: "all",
+    },
+  ];
 const pageMainEl = ref<HTMLElement | null>(null);
 const wallpaperListLoading = ref<boolean>(false);
 let wallpaperSetting = false;
@@ -135,7 +121,7 @@ function getWallapers(): void {
       data.forEach((dataItem) => {
         dataItem.fileUrl = attachment.genImageThumbUrl(
           dataItem.fileid,
-          window.screen.availWidth
+          globalStore.windowParams.width
         );
         dataItem.thumbUrl = attachment.genImageThumbUrl(dataItem.fileid, 480);
         dataItem.downloading = false;
@@ -250,6 +236,7 @@ onMounted(() => {
   overflow-y: auto;
   box-sizing: border-box;
 }
+
 /** 壁纸列表 */
 .wallpaper-list {
   display: grid;
@@ -258,16 +245,19 @@ onMounted(() => {
   margin: 0 20px;
   box-sizing: border-box;
 }
+
 @media screen and (min-width: 1400px) {
   .wallpaper-list {
     grid-template-columns: repeat(5, calc(20% - 15px));
   }
 }
+
 @media screen and (min-width: 2000px) {
   .wallpaper-list {
     grid-template-columns: repeat(6, calc(20.2vw - 15px));
   }
 }
+
 .wallpaper-title {
   width: 100%;
   line-height: 20px;
@@ -275,6 +265,7 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 /** 图片操作 */
 .wallpaper-operations {
   display: flex;
@@ -282,16 +273,20 @@ onMounted(() => {
   align-items: center;
   gap: 0 3px;
 }
+
 .wallpaper-operations li {
   padding: 0 5px;
   cursor: pointer;
 }
+
 .wallpaper-operations li i {
   font-size: 18px;
 }
+
 .wallpaper-operations li:hover {
   color: var(--primary-color);
 }
+
 /** 图片作者 */
 .wallpaper-author {
   display: flex;
@@ -300,6 +295,7 @@ onMounted(() => {
   /* margin: 5px 0; */
   font-size: 12px;
 }
+
 .wallpaper-author_avatar {
   width: 20px;
   height: 20px;
@@ -320,6 +316,7 @@ onMounted(() => {
   background-color: white;
   border-top: 1px solid #eee;
 }
+
 .wallpaper-download-list_placeholder {
   height: 30px;
   width: 100%;

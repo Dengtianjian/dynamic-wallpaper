@@ -7,6 +7,10 @@ export default reactive<{
     autoSwtichInterval: number,
     autoSwtichUnit: string,
     fixedTray: boolean,
+  },
+  windowParams: {
+    width: number,
+    height: number
   }
 }>({
   settings: {
@@ -15,5 +19,9 @@ export default reactive<{
     autoSwtichInterval: 0,
     autoSwtichUnit: "random",
     fixedTray: true
+  },
+  windowParams: {
+    width: window.innerWidth,
+    height: window.innerHeight,
   }
 })

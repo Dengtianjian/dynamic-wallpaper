@@ -10,4 +10,5 @@ new RenderApp()
   .expose("wallpaper", "downloadWallpaper")
   .expose("wallpaper", "openLink")
   .expose("pro")
+  .expose("system", "init")
   .start();

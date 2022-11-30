@@ -11,7 +11,8 @@ interface Window {
   },
   system: {
     ipcRenderer: any,
-    autoStart: (yes: boolean) => void
+    autoStart: (yes: boolean) => void,
+    init: () => Promise<{ width: number, height: number }>
   },
   ipcEmit(channelName: string, ...args: any[]): void
 }

@@ -90,7 +90,7 @@ async function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaper
   }
 
   const first: TWallpaperItem = wallpaperStore.autoSwitchQueue[0];
-  first.fileUrl = attachment.genImageThumbUrl(first.fileid, window.screen.width, window.screen.height);
+  first.fileUrl = attachment.genImageThumbUrl(first.fileid, globalStore.windowParams.width, globalStore.windowParams.height);
   if (!first) return autoSwitchWallpaper(enforce);
 
   return setWallpaper(first.fileUrl, first.id).then(() => {
