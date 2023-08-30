@@ -13,3 +13,4 @@ electron/logs
 electron/attachments
 attachments
 pnpm-lock.yaml
+build

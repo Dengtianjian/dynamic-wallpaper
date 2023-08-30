@@ -14,7 +14,8 @@
     "electron:start": "electron .",
     "electron:dev": "wait-on tcp:3000 && electron .",
     "electron": "concurrently -k \"npm start\" \"npm run electron:dev\"",
-    "electron:build": "node desktop/foundation/build.js"
+    "electron:build": "node desktop/foundation/build.js",
+    "electron:icons": "electron-icon-builder --input=./desktop/assets/icon.png --output=build --flatten"
   },
   "devDependencies": {
     "@types/electron": "^1.6.10",
