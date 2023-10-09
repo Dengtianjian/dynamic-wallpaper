@@ -315,7 +315,9 @@ function collectAndCrawl(wallpaperItem: TExternalWallpaper) {
   switch (wallpaperItem.source) {
     case "WallpapersHome":
       if (wallpaperItem.crawlUrl) {
-        const loading = NMessage.loading("");
+        const loading = NMessage.loading("", {
+          duration: 0
+        });
         wallpaperApi
           .crawlWallpapersHome(wallpaperItem.crawlUrl)
           .then(() => {
