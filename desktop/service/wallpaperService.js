@@ -75,7 +75,7 @@ function setWallpaper(wallpaperImageUrl, id, callback = null) {
 }
 function download(wallpaperImageUrl, id, callback = null) {
   return new Promise((resolve, reject) => {
-    const fileDirPath = Path.join(global.app.env.rootPath, "attachments", "wallpapers");
+    const fileDirPath = Path.join(Path.dirname(process.execPath), "attachments", "wallpapers");
     const fileName = `${id}.webp`;
     const fullPath = Path.join(fileDirPath, fileName);
     if (FS.existsSync(fullPath)) {

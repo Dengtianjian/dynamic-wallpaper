@@ -1,4 +1,4 @@
-const { Tray, Menu } = require("electron");
+const { Tray, Menu, nativeImage } = require("electron");
 const Path = require("path");
 
 let appIns = null;
@@ -21,7 +21,14 @@ module.exports = function (ins) {
 let applicationTray = null;
 function fixedTray() {
   if (!applicationTray) {
-    applicationTray = new Tray(Path.join(appIns.env.basePath, "assets", "icon.png"));
+    let icon = nativeImage.createFromPath(Path.join(appIns.env.basePath, "assets", "icon.png"));
+    if (process.platform === "darwin" || process.platform === "linux") {
+      icon = icon.resize({
+        width: 16,
+        height: 16
+      });
+    }
+    applicationTray = new Tray(icon);
     const contextMenu = Menu.buildFromTemplate([
       {
         label: "退出",

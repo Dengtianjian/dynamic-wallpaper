@@ -1,21 +1,22 @@
 import config from "../config";
 import http from "./http";
+import { version } from "../../package.json";
 
 export default {
   genDownloadUrl(fileId: string) {
-    return `${config.api.url}/downloadAttachment?fileId=${escape(fileId)}`;
+    return `${config.api.url}/attachments/${fileId}/download?v=${version}`;
   },
   genImageThumbUrl(fileId: string, width: number = -1, height: number = -1) {
     const querys: Record<string, string> = {
-      fileId: escape(fileId)
+      version
     };
     if (width > 0) {
-      querys['width'] = width.toString();
+      querys['w'] = width.toString();
     }
     if (height > 0) {
-      querys['height'] = height.toString();
+      querys['h'] = height.toString();
     }
     const query: string = http.generateQuery(querys);
-    return `${config.api.url}/thumbnail?${query}`;
+    return `${config.api.url}/attachments/${fileId}/preview?${query}`;
   }
 }
