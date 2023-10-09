@@ -5,16 +5,6 @@
         <d-wallpaper-item :data="wallpaperItem" v-for="(wallpaperItem, itemIndex) in wallpapers" :key="wallpaperItem.id">
           <section @click.stop>
             <div class="wallpaper-title">{{ wallpaperItem.description }}</div>
-            <div class="wallpaper-author">
-              来自 {{ wallpaperItem.source }} 的
-              <!-- <img
-                :src="wallpaperItem.authorAvatar"
-                :alt="wallpaperItem.author"
-                class="wallpaper-author_avatar"
-                v-if="wallpaperItem.authorAvatar"
-              /> -->
-              {{ wallpaperItem.author }}
-            </div>
             <ul class="wallpaper-operations">
               <li>
                 <n-tooltip>
@@ -248,6 +238,7 @@ onMounted(() => {
 .wallpaper-list>li {
   flex-shrink: 0;
   width: calc(25% - 15px);
+  height: 20.9vh;
 }
 
 .wallpaper-title {

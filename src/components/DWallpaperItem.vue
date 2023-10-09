@@ -37,10 +37,9 @@ defineProps({
 <style scoped>
 .wallpaper-item {
   position: relative;
-  height: 20.9vh;
-  /* width: 212px; */
   overflow: hidden;
 }
+
 .wallpaper-cover {
   width: 100%;
   height: 100%;
@@ -48,6 +47,7 @@ defineProps({
   vertical-align: bottom;
   transition: transform 0.15s ease-in-out;
 }
+
 .wallpaper-info {
   position: absolute;
   bottom: -100%;
@@ -60,15 +60,18 @@ defineProps({
   box-sizing: border-box;
   transition: bottom 0.15s ease-in-out;
 }
+
 .wallpaper-item:hover .wallpaper-info {
   bottom: 0;
 }
+
 .wallpaper-title {
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 /** 图片作者 */
 .wallpaper-author {
   display: flex;
@@ -77,6 +80,7 @@ defineProps({
   margin: 5px 0;
   font-size: 12px;
 }
+
 .wallpaper-author_avatar {
   width: 20px;
   height: 20px;

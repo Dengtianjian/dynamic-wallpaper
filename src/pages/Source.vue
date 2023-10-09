@@ -35,65 +35,57 @@
         {{ categoryItem.name }}
       </li>
     </ul>
-    <n-spin :show="wallpaperListLoading">
-      <ul class="wallpaper-list">
-        <d-wallpaper-item :data="wallpaperItem" v-for="(wallpaperItem, itemIndex) in wallpapers" :key="wallpaperItem.id">
-          <section @click.stop>
-            <div class="wallpaper-title">{{ wallpaperItem.description }}</div>
-            <div class="wallpaper-author">
-              来自 {{ wallpaperItem.source }} 的
-              <img :src="wallpaperItem.authorAvatar" :alt="wallpaperItem.author" class="wallpaper-author_avatar"
-                v-if="wallpaperItem.authorAvatar" />
-              {{ wallpaperItem.author }}
-            </div>
-            <ul class="wallpaper-operations">
-              <li>
-                <n-tooltip>
-                  <template #trigger>
-                    <i class="shoutao st-link" @click.stop="openLink(wallpaperItem.sourceUrl)"></i>
-                  </template>
-                  浏览器打开
-                </n-tooltip>
-              </li>
-              <li v-if="!wallpaperItem.crawlUrl">
-                <n-tooltip>
-                  <template #trigger>
-                    <div>
-                      <i class="shoutao st-add" @click.stop="collect(wallpaperItem)" v-show="!wallpaperItem.collecting &&
-                        !wallpaperItem.downloading
-                        "></i>
-                      <n-spin v-show="wallpaperItem.collecting || wallpaperItem.downloading
-                        " :size="14">
-                        <i class="qianniu qianniu-add" @click.stop="collect(wallpaperItem)"
-                          v-show="!wallpaperItem.collecting"></i>
-                      </n-spin>
-                    </div>
-                  </template>
-                  收集
-                </n-tooltip>
-              </li>
-              <li v-else>
-                <n-tooltip>
-                  <template #trigger>
-                    <div>
-                      <i class="shoutao st-roundadd" @click.stop="collectAndCrawl(wallpaperItem)" v-show="!wallpaperItem.collecting &&
-                        !wallpaperItem.downloading
-                        "></i>
-                      <n-spin v-show="wallpaperItem.collecting || wallpaperItem.downloading
-                        " :size="14">
-                        <i class="qianniu qianniu-add" @click.stop="collectAndCrawl(wallpaperItem)"
-                          v-show="!wallpaperItem.collecting"></i>
-                      </n-spin>
-                    </div>
-                  </template>
-                  抓取并且采集
-                </n-tooltip>
-              </li>
-            </ul>
-          </section>
-        </d-wallpaper-item>
-      </ul>
-    </n-spin>
+    <ul class="wallpaper-list">
+      <d-wallpaper-item :data="wallpaperItem" v-for="(wallpaperItem, itemIndex) in wallpapers" :key="wallpaperItem.id">
+        <section @click.stop>
+          <div class="wallpaper-title">{{ wallpaperItem.description }}</div>
+          <ul class="wallpaper-operations">
+            <li>
+              <n-tooltip>
+                <template #trigger>
+                  <i class="shoutao st-link" @click.stop="openLink(wallpaperItem.sourceUrl)"></i>
+                </template>
+                浏览器打开
+              </n-tooltip>
+            </li>
+            <li v-if="!wallpaperItem.crawlUrl">
+              <n-tooltip>
+                <template #trigger>
+                  <div>
+                    <i class="shoutao st-add" @click.stop="collect(wallpaperItem)" v-show="!wallpaperItem.collecting &&
+                      !wallpaperItem.downloading
+                      "></i>
+                    <n-spin v-show="wallpaperItem.collecting || wallpaperItem.downloading
+                      " :size="14">
+                      <i class="qianniu qianniu-add" @click.stop="collect(wallpaperItem)"
+                        v-show="!wallpaperItem.collecting"></i>
+                    </n-spin>
+                  </div>
+                </template>
+                收集
+              </n-tooltip>
+            </li>
+            <li v-else>
+              <n-tooltip>
+                <template #trigger>
+                  <div>
+                    <i class="shoutao st-roundadd" @click.stop="collectAndCrawl(wallpaperItem)" v-show="!wallpaperItem.collecting &&
+                      !wallpaperItem.downloading
+                      "></i>
+                    <n-spin v-show="wallpaperItem.collecting || wallpaperItem.downloading
+                      " :size="14">
+                      <i class="qianniu qianniu-add" @click.stop="collectAndCrawl(wallpaperItem)"
+                        v-show="!wallpaperItem.collecting"></i>
+                    </n-spin>
+                  </div>
+                </template>
+                抓取并且采集
+              </n-tooltip>
+            </li>
+          </ul>
+        </section>
+      </d-wallpaper-item>
+    </ul>
     <n-space style="margin-top:20px;" justify="center">
       <n-pagination :item-count="wallpaperTotal" :page="wallpaperPage" :page-size="wallpaperLoadLimit"
         @update-page="getWallapers"></n-pagination>
@@ -134,6 +126,9 @@ function getWallapers(page: number = wallpaperPage.value): void {
 
   wallpaperPage.value = page;
   wallpaperListLoading.value = true;
+  const L = NMessage.loading("加载中", {
+    duration: 0
+  });
   new Promise<TExternalWallpaper[]>((resolve, reject) => {
     switch (currentUsedSource.value) {
       case "birdpaper":
@@ -148,7 +143,7 @@ function getWallapers(page: number = wallpaperPage.value): void {
                   authorAvatar: "",
                   createdAt: "",
                   deletedAt: "",
-                  description: "",
+                  description: wallpaperItem.tag,
                   fileid: "",
                   fileUrl: wallpaperItem.url,
                   thumbUrl:
@@ -241,6 +236,7 @@ function getWallapers(page: number = wallpaperPage.value): void {
     })
     .finally(() => {
       wallpaperListLoading.value = false;
+      L.destroy();
     });
 }
 
@@ -447,6 +443,8 @@ onMounted(() => {
 .wallpaper-list>li {
   flex-shrink: 0;
   width: calc(25% - 15px);
+  height: 33.3%;
+  border-radius: 8px;
 }
 
 /* @media screen and (min-width: 1400px) {
