@@ -22,6 +22,7 @@ export default {
     url: "https://wallpapershome.com/"
   },
   api: {
-    url: "https://wallpaper.isdtj.com"
+    url: "http://192.168.31.195:9094"
+    // url: "https://wallpaper.isdtj.com"
   }
 }

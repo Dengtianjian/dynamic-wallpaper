@@ -68,7 +68,8 @@ export default {
       list: TWallpaperHomeWallpaper[],
       pagination: {
         page: number,
-        limit: number
+        limit: number,
+        total: number
       }
     }>("thirdparty/wallpaperhome", {
       page,

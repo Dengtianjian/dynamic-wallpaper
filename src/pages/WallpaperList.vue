@@ -2,8 +2,7 @@
   <main class="page-main" @scroll="wallpaperListScrolling" ref="pageMainEl">
     <n-spin :show="wallpaperListLoading">
       <ul class="wallpaper-list">
-        <d-wallpaper-item :data="wallpaperItem" v-for="(wallpaperItem, itemIndex) in wallpapers"
-          :key="wallpaperItem.id">
+        <d-wallpaper-item :data="wallpaperItem" v-for="(wallpaperItem, itemIndex) in wallpapers" :key="wallpaperItem.id">
           <section @click.stop>
             <div class="wallpaper-title">{{ wallpaperItem.description }}</div>
             <div class="wallpaper-author">
@@ -239,23 +238,16 @@ onMounted(() => {
 
 /** 壁纸列表 */
 .wallpaper-list {
-  display: grid;
-  grid-template-columns: repeat(4, calc(25% - 15px));
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   margin: 0 20px;
   box-sizing: border-box;
 }
 
-@media screen and (min-width: 1400px) {
-  .wallpaper-list {
-    grid-template-columns: repeat(5, calc(20% - 15px));
-  }
-}
-
-@media screen and (min-width: 2000px) {
-  .wallpaper-list {
-    grid-template-columns: repeat(6, calc(20.2vw - 15px));
-  }
+.wallpaper-list>li {
+  flex-shrink: 0;
+  width: calc(25% - 15px);
 }
 
 .wallpaper-title {
