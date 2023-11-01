@@ -6,7 +6,7 @@ export default {
   genDownloadUrl(fileId: string) {
     return `${config.api.url}/attachments/${fileId}/download?v=${version}`;
   },
-  genImageThumbUrl(fileId: string, width: number = -1, height: number = -1) {
+  genImageThumbUrl(fileId: string, width: number = -1, height: number = -1, quality: number = 75) {
     const querys: Record<string, string> = {
       version
     };
@@ -15,6 +15,9 @@ export default {
     }
     if (height > 0) {
       querys['h'] = height.toString();
+    }
+    if (quality > 0) {
+      querys['q'] = quality.toString();
     }
     const query: string = http.generateQuery(querys);
     return `${config.api.url}/attachments/${fileId}/preview?${query}`;
