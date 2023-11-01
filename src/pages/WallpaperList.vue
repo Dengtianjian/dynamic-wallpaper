@@ -112,7 +112,7 @@ function getWallapers(): void {
           dataItem.fileid,
           globalStore.windowParams.width
         );
-        dataItem.thumbUrl = attachment.genImageThumbUrl(dataItem.fileid, 480);
+        dataItem.thumbUrl = attachment.genImageThumbUrl(dataItem.fileid, 480, undefined, 55);
         dataItem.downloading = false;
         wallpaperService.pushQueue(dataItem);
       });

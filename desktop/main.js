@@ -1,15 +1,17 @@
 const { App } = require("./foundation/app");
+const { app, globalShortcut } = require("electron");
 const tray = require("./modules/tray");
 const systemService = require("./service/systemService");
 const wallpaperService = require("./service/wallpaperService");
 
 let maxWidth = 0;
 let maxHeight = 0;
+let primaryDisplay = null;
 
-new App(true, () => {
+const Ins = new App(true, () => {
   const { screen } = require("electron");
   const Displays = screen.getAllDisplays();
-  const primaryDisplay = screen.getPrimaryDisplay();
+  primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
 
   maxWidth = width;
@@ -22,6 +24,22 @@ new App(true, () => {
     }
   });
 
+  app.on("window-all-closed", () => {
+    if (process.platform !== 'darwin') {
+      Ins.quit(true);
+    }
+  });
+  app.on("activate", function () {
+    Ins.showMainWindow();
+  });
+
+  globalShortcut.register("CommandOrControl+q", () => {
+    Ins.quit(true);
+  });
+  app.on('will-quit', () => {
+    globalShortcut.unregisterAll()
+  })
+
   return {
     width: Math.ceil(width * 0.8),
     height: Math.ceil(height * 0.8),
@@ -30,6 +48,7 @@ new App(true, () => {
     minHeight: Math.ceil(height * 0.6),
     minWidth: Math.ceil(width * 0.6),
   }
+
 })
   .before(tray)
   .on("init", function () {
