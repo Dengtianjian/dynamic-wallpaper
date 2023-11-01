@@ -38,10 +38,12 @@ function fixedTray() {
         }
       }
     ]);
-    applicationTray.setContextMenu(contextMenu);
     applicationTray.setToolTip("wallpaper");
     applicationTray.on("click", () => {
       appIns.showMainWindow();
+    });
+    applicationTray.on("right-click", (e) => {
+      contextMenu.popup();
     });
   }
 }
