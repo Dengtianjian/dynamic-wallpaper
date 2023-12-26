@@ -87,7 +87,7 @@
       </d-wallpaper-item>
     </ul>
     <n-space style="margin-top:20px;" justify="center">
-      <n-pagination :item-count="wallpaperTotal" :page="wallpaperPage" :page-size="wallpaperLoadLimit"
+      <n-pagination :item-count="wallpaperTotal" :page="wallpaperPage" :page-size="wallpaperLoadLimit" show-quick-jumper
         @update-page="getWallapers"></n-pagination>
     </n-space>
   </main>
