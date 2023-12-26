@@ -110,7 +110,9 @@ function getWallapers(): void {
       data.forEach((dataItem) => {
         dataItem.fileUrl = attachment.genImageThumbUrl(
           dataItem.fileid,
-          globalStore.windowParams.width
+          globalStore.windowParams.width,
+          undefined,
+          200
         );
         dataItem.thumbUrl = attachment.genImageThumbUrl(dataItem.fileid, 480, undefined, 55);
         dataItem.downloading = false;
