@@ -1,6 +1,6 @@
 {
   "name": "dynamic-wallpaper",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "desktop/main.js",
   "author": {
     "name": "DTJ"
