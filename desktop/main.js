@@ -25,6 +25,7 @@ const Ins = new App(true, () => {
   });
 
   app.on("window-all-closed", () => {
+    globalShortcut.unregister("CommandOrControl+q");
     if (process.platform !== 'darwin') {
       Ins.quit(true);
     }
@@ -33,9 +34,15 @@ const Ins = new App(true, () => {
     Ins.showMainWindow();
   });
 
-  globalShortcut.register("CommandOrControl+q", () => {
-    Ins.quit(true);
+  app.on("browser-window-blur",()=>{
+    globalShortcut.unregister("CommandOrControl+q");
   });
+  app.on("browser-window-focus", () => {
+    globalShortcut.register("CommandOrControl+q", () => {
+      Ins.quit(true);
+    });
+  });
+
   app.on('will-quit', () => {
     globalShortcut.unregisterAll()
   })
