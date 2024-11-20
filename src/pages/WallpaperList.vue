@@ -53,7 +53,6 @@ import { useMessage, NTooltip } from "naive-ui";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import wallpaperApi from "../api/WallpapersApi";
-import attachment from "../foundation/attachment";
 import { TWallpaperItem } from "../types/wallpaperTypes";
 import DWallpaperItem from "../components/DWallpaperItem.vue";
 import wallpaperService from "../service/wallpaperService";

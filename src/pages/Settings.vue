@@ -1,16 +1,19 @@
 <template>
   <n-form class="setting-form" label-placement="left">
     <n-form-item label="开机自启动">
-      <n-checkbox v-model:checked="globalStore.settings.autoStart" @update-checked="autoStartProgram" :checked-value="true"
-      :unchecked-value="false"></n-checkbox>
+      <n-checkbox v-model:checked="globalStore.settings.autoStart" @update-checked="autoStartProgram"
+        :checked-value="true" :unchecked-value="false"></n-checkbox>
     </n-form-item>
     <n-form-item label="固定在任务栏">
       <n-checkbox @update:checked="fixedOnTray" v-model:checked="globalStore.settings.fixedTray" :checked-value="true"
         :unchecked-value="false"></n-checkbox>
     </n-form-item>
     <n-form-item label="自动切换桌面壁纸">
-      <n-checkbox v-model:checked="globalStore.settings.autoSwitch" @update:checked="autoSwitchWallpaper" :checked-value="true"
-      :unchecked-value="false"></n-checkbox>
+      <r-space column-gap="10px" align="center">
+        <n-checkbox v-model:checked="globalStore.settings.autoSwitch" @update:checked="autoSwitchWallpaper"
+          :checked-value="true" :unchecked-value="false"></n-checkbox>
+        <n-button size="small" @click="wallpaperService.autoSwitchWallpaper(true)">换一张</n-button>
+      </r-space>
     </n-form-item>
     <n-form-item label="自动切换壁纸间隔时长单位">
       <n-select v-model:value="globalStore.settings.autoSwtichUnit" :options="durationUnitOptions"
@@ -21,7 +24,7 @@
         v-model:value="globalStore.settings.autoSwtichInterval" @update:value="updateAutoSwitchInterval">
       </n-input-number><span style="margin-left: 10px; font-size: 14px">{{
         selectedDurationUnitTxt
-        }}</span>
+      }}</span>
     </n-form-item>
   </n-form>
 </template>
@@ -40,6 +43,8 @@ import { computed } from "vue";
 import globalStore from "../store/globalStore";
 import systemApi from "../api/SettingsApi";
 import wallpaperService from "../service/wallpaperService";
+import RSpace from "../ruyijs/Vue/components/Base/RSpace.vue"
+
 const NMessage = useMessage();
 
 const durationUnits: Record<string, string> = {
@@ -89,7 +94,7 @@ function updateSetting(key: string, value: any) {
 }
 function autoStartProgram(checked: boolean) {
   updateSetting("autoStart", checked).then((res) => {
-    if(window.system){
+    if (window.system) {
       window.system.autoStart(checked);
     }
   });

@@ -51,7 +51,6 @@ import {
 } from "naive-ui";
 import { reactive, ref } from "vue";
 import WallpapersApi from "../api/WallpapersApi";
-import attachment from "../foundation/attachment";
 import RNaiveUpload from "../ruyijs/Vue/components/Naive/RNaiveUpload.vue";
 import FilesApi from "../api/FilesApi";
 

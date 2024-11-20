@@ -28,7 +28,6 @@
 import { NPopover, useMessage } from "naive-ui";
 import { onMounted, onUnmounted, ref } from "vue";
 import wallpaperApi from "../api/WallpapersApi";
-import attachment from "../foundation/attachment";
 import wallpaperService from "../service/wallpaperService";
 import globalStore from "../store/globalStore";
 import { TWallpaperItem } from "../types/wallpaperTypes";
@@ -48,13 +47,8 @@ function getWallpaper() {
     .randomGetWallpapers(1)
     .then((wallpapers) => {
       if (wallpapers.length === 0) return;
-      const wallpaper = wallpapers[0];
-      wallpaper.fileUrl = attachment.genImageThumbUrl(
-        wallpapers[0].fileid,
-        window.innerWidth
-      );
 
-      currentWallpaper.value = wallpaper;
+      currentWallpaper.value = wallpapers[0];
 
       imageLoading.value = true;
     })
@@ -105,10 +99,7 @@ function setScreenWallpaper() {
 
   wallpaperService
     .setWallpaper(
-      attachment.genImageThumbUrl(
-        currentWallpaper.value.fileid,
-        globalStore.windowParams.width
-      ),
+      currentWallpaper.value.downloadURL,
       currentWallpaper.value.id
     )
     .then(() => {
@@ -129,10 +120,7 @@ function downloadToLocal() {
 
   window.wallpaper
     .downloadWallpaper(
-      attachment.genImageThumbUrl(
-        currentWallpaper.value.fileid,
-        globalStore.windowParams.width
-      ),
+      currentWallpaper.value.downloadURL,
       currentWallpaper.value.id
     )
     .then((res) => {

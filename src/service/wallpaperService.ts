@@ -1,5 +1,4 @@
 import wallpaperApi from "../api/WallpapersApi";
-import attachment from "../foundation/attachment";
 import globalStore from "../store/globalStore";
 import wallpaperStore from "../store/wallpaperStore";
 import { TWallpaperItem } from "../types/wallpaperTypes";
@@ -91,10 +90,9 @@ async function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaper
   }
 
   const first: TWallpaperItem = wallpaperStore.autoSwitchQueue[0];
-  first.fileUrl = attachment.genImageThumbUrl(first.fileid, globalStore.windowParams.width, globalStore.windowParams.height);
   if (!first) return autoSwitchWallpaper(enforce);
 
-  return setWallpaper(first.fileUrl, first.id).then(() => {
+  return setWallpaper(first.downloadURL, first.id).then(() => {
     wallpaperStore.autoSwitchQueue.shift();
     localStorage.setItem("lastTimeSwtiched", Date.now().toString());
 
@@ -123,6 +121,8 @@ async function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaper
         break;
     }
 
+    console.log(nextTime);
+    
     autoSwtichHandler = setTimeout(() => {
       clearTimeout(autoSwtichHandler as NodeJS.Timeout);
       autoSwtichHandler = null;
