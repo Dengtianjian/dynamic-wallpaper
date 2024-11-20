@@ -43,13 +43,23 @@ const Ins = new App(true, () => {
   });
 
   app.on('window-all-closed', () => {
-    // if (process.platform !== 'darwin') {
-    //   Ins.quit(true);
-    // }
-    Ins.quit(true);
+    globalShortcut.unregister("CommandOrControl+q");
+    if (process.platform !== 'darwin') {
+      Ins.quit(true);
+    }
+    // Ins.quit(true);
   });
   app.on("activate", function () {
     Ins.showMainWindow();
+  });
+
+  app.on("browser-window-blur", () => {
+    globalShortcut.unregister("CommandOrControl+q");
+  });
+  app.on("browser-window-focus", () => {
+    globalShortcut.register("CommandOrControl+q", () => {
+      Ins.quit(true);
+    });
   });
 
   globalShortcut.register("CommandOrControl+q", () => {

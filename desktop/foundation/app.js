@@ -127,6 +127,13 @@ module.exports.App = class {
       this.mainWindow.loadURL('http://localhost:3000');
     }
 
+    this.mainWindow.on("close", (e) => {
+      if (this.forceQuit === false) {
+        e.preventDefault();
+        this.mainWindow.hide();
+      }
+    });
+
     // if (process.env.mode !== "production") {
     //   this.mainWindow.webContents.openDevTools();
     // }
@@ -176,18 +183,14 @@ module.exports.App = class {
     return this;
   }
   forceQuit = false;
-  close() {
-    BrowserWindow.getAllWindows().forEach(item => {
-      item.destroy();
-    });
-    this.mainWindow = null;
-  }
+  // close() {
+  //   BrowserWindow.getAllWindows().forEach(item => {
+  //     item.destroy();
+  //   });
+  //   this.mainWindow = null;
+  // }
   quit(forceQuit = true) {
     this.forceQuit = forceQuit;
-    app.quit();
-  }
-  exit() {
-    this.close();
     app.quit();
   }
 }
