@@ -15,17 +15,20 @@ export default {
           globalStore.settings.autoSwtichInterval = Number(Number(res.autoSwtichInterval));
           globalStore.settings.autoSwtichUnit = String(res.autoSwtichUnit);
           globalStore.settings.fixedTray = Boolean(Number(res.fixedTray));
-          if (globalStore.settings?.fixedTray) {
+          if (globalStore.settings?.fixedTray && window.tray) {
             window.tray.fixedTray(true);
           }
 
           return true;
         }).then(res).catch(rej);
       }).then(async () => {
-        window.system.init().then(res => {
-          globalStore.windowParams.width = res.width;
-          globalStore.windowParams.height = res.height;
-        });
+        if (window.system) {
+          window.system.init().then(res => {
+            globalStore.windowParams.width = res.width;
+            globalStore.windowParams.height = res.height;
+          });
+        }
+
         return true;
       })
       return initPromise;

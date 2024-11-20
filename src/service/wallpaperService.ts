@@ -1,4 +1,4 @@
-import wallpaperApi from "../api/wallpaperApi";
+import wallpaperApi from "../api/WallpapersApi";
 import attachment from "../foundation/attachment";
 import globalStore from "../store/globalStore";
 import wallpaperStore from "../store/wallpaperStore";
@@ -70,6 +70,7 @@ function switchWallpaper(enforce: boolean = false) {
   setTimeout(autoSwitchWallpaper, nextTime);
 }
 async function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaperItem | null> {
+  if (!window.wallpaper) return Promise.reject(false);
   if (wallpaperStore.wallpaperSetting) {
     return waitSet().then(() => {
       return autoSwitchWallpaper(enforce);

@@ -27,7 +27,7 @@
 <script lang="ts" setup>
 import { NPopover, useMessage } from "naive-ui";
 import { onMounted, onUnmounted, ref } from "vue";
-import wallpaperApi from "../api/wallpaperApi";
+import wallpaperApi from "../api/WallpapersApi";
 import attachment from "../foundation/attachment";
 import wallpaperService from "../service/wallpaperService";
 import globalStore from "../store/globalStore";

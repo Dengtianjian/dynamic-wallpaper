@@ -19,11 +19,11 @@
         @click="switchSource('birdpaper')">
         <img src="../assets/thirdparty/birdpaper_logo.png" />
       </li>
-      <li class="source-item" :class="{
+      <!-- <li class="source-item" :class="{
         'source-item_selected': currentUsedSource === 'wallpapersHome',
       }" @click="switchSource('wallpapersHome')">
         <img src="../assets/thirdparty/wallpapershome_logo.jpg" />
-      </li>
+      </li> -->
       <li class="source-item" :class="{ 'source-item_selected': currentUsedSource === '10wallpaper' }"
         @click="switchSource('10wallpaper')">
         <img src="../assets/thirdparty/10wallpaper_logo.png" />
@@ -100,9 +100,9 @@ import { TExternalWallpaper, TWallpaperItem, TCategory } from "../types/wallpape
 import DWallpaperItem from "../components/DWallpaperItem.vue";
 import pexelsApi from "../api/thirdpart/pexelsApi";
 import unsplashApi from "../api/thirdpart/unsplashApi";
-import wallpaperApi from "../api/wallpaperApi";
+import wallpaperApi from "../api/WallpapersApi";
 import birdpaperApi from "../api/thirdpart/birdpaperApi";
-import tenWallpaperApi, { TCategory as TTenWallpaperCategory } from "../api/thirdpart/tenWallpaperApi";
+import TenWallpaperApi, { TCategory as TTenWallpaperCategory } from "../api/thirdpart/TenWallpaperApi";
 const NMessage = useMessage();
 
 const currentUsedSource = ref<string>("birdpaper");
@@ -144,9 +144,9 @@ function getWallapers(page: number = wallpaperPage.value): void {
                   createdAt: "",
                   deletedAt: "",
                   description: wallpaperItem.tag,
-                  fileid: "",
-                  fileUrl: wallpaperItem.url,
-                  thumbUrl:
+                  fileKey: "",
+                  downloadURL: wallpaperItem.url,
+                  previewURL:
                     wallpaperItem.url +
                     "?x-oss-process=image/resize,m_fill,h_200,w_302/format,webp",
                   id: wallpaperItem.id,
@@ -176,9 +176,9 @@ function getWallapers(page: number = wallpaperPage.value): void {
                 createdAt: "",
                 deletedAt: "",
                 description: "",
-                fileid: "",
-                fileUrl: "",
-                thumbUrl: item.cover,
+                fileKey: "",
+                downloadURL: "",
+                previewURL: item.cover,
                 id: item.id,
                 source: "WallpapersHome",
                 tags: "",
@@ -196,7 +196,7 @@ function getWallapers(page: number = wallpaperPage.value): void {
           .catch(reject);
         break;
       case "10wallpaper":
-        tenWallpaperApi.wallpapers(`https://10wallpaper.com/cn/List_wallpapers/page/${page}`).then(res => {
+        TenWallpaperApi.wallpapers(`https://10wallpaper.com/cn/List_wallpapers/page/${page}`).then(res => {
           wallpaperTotal.value = res.pagination.total;
           return res.list.map((item) => {
             return {
@@ -205,9 +205,9 @@ function getWallapers(page: number = wallpaperPage.value): void {
               createdAt: "",
               deletedAt: "",
               description: "",
-              fileid: "",
-              fileUrl: "",
-              thumbUrl: item.cover,
+              fileKey: "",
+              downloadURL: "",
+              previewURL: item.cover,
               id: item.link,
               source: "10wallpaper",
               tags: "",
@@ -295,7 +295,7 @@ function collect(wallpaperItem: TExternalWallpaper): Promise<TWallpaperItem> {
       wallpaperItem.sourceId,
       wallpaperItem.author,
       wallpaperItem.description,
-      wallpaperItem.fileUrl,
+      wallpaperItem.downloadURL,
       wallpaperItem.source,
       wallpaperItem.sourceUrl
     )
@@ -330,7 +330,7 @@ function collectAndCrawl(wallpaperItem: TExternalWallpaper) {
     case "10wallpaper":
       if (wallpaperItem.crawlUrl) {
         const loading = NMessage.loading("");
-        tenWallpaperApi
+        TenWallpaperApi
           .crawl(wallpaperItem.crawlUrl)
           .then(() => {
             NMessage.success("添加在采集队列成功");
@@ -552,10 +552,11 @@ onMounted(() => {
   column-gap: 5px;
   padding: 10px;
   cursor: pointer;
+  background-color: #f0f0f0;
+  border-radius: calc(var(--radius-angle) / 2);
 }
 
 .source-select .source-item_selected {
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-  border-radius: calc(var(--radius-angle) / 2);
 }
 </style>

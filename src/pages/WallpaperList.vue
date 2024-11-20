@@ -2,14 +2,15 @@
   <main class="page-main" @scroll="wallpaperListScrolling" ref="pageMainEl">
     <n-spin :show="wallpaperListLoading">
       <ul class="wallpaper-list">
-        <d-wallpaper-item :data="wallpaperItem" v-for="(wallpaperItem, itemIndex) in wallpapers" :key="wallpaperItem.id">
+        <d-wallpaper-item :data="wallpaperItem" v-for="(wallpaperItem, itemIndex) in wallpapers"
+          :key="wallpaperItem.id">
           <section @click.stop>
             <div class="wallpaper-title">{{ wallpaperItem.description }}</div>
             <ul class="wallpaper-operations">
               <li>
                 <n-tooltip>
                   <template #trigger>
-                    <i class="shoutao st-link" @click.stop="openLink(wallpaperItem.fileUrl)"></i>
+                    <i class="shoutao st-link" @click.stop="openLink(wallpaperItem.previewURL)"></i>
                   </template>
                   浏览器打开
                 </n-tooltip>
@@ -51,7 +52,7 @@
 import { useMessage, NTooltip } from "naive-ui";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import wallpaperApi from "../api/wallpaperApi";
+import wallpaperApi from "../api/WallpapersApi";
 import attachment from "../foundation/attachment";
 import { TWallpaperItem } from "../types/wallpaperTypes";
 import DWallpaperItem from "../components/DWallpaperItem.vue";
@@ -101,20 +102,13 @@ function getWallapers(): void {
   wallpaperListLoading.value = true;
   wallpaperApi
     .getWallpapers(wallpaperPage, wallpaperLoadLimit)
-    .then(({ pagination, wallpapers: data }) => {
+    .then(({ pagination, list: data }) => {
       if (data.length < wallpaperLoadLimit) {
         wallpaperLoadFinished = true;
         if (data.length === 0) return;
       }
       wallpaperPage++;
       data.forEach((dataItem) => {
-        dataItem.fileUrl = attachment.genImageThumbUrl(
-          dataItem.fileid,
-          globalStore.windowParams.width,
-          undefined,
-          200
-        );
-        dataItem.thumbUrl = attachment.genImageThumbUrl(dataItem.fileid, 480, undefined, 55);
         dataItem.downloading = false;
         wallpaperService.pushQueue(dataItem);
       });
@@ -135,7 +129,7 @@ function setWallpaper(wallpaperItem: TWallpaperItem) {
   wallpaperListLoading.value = true;
 
   wallpaperService
-    .setWallpaper(wallpaperItem.fileUrl, wallpaperItem.id)
+    .setWallpaper(wallpaperItem.downloadURL, wallpaperItem.id)
     .then((res: any) => {
       NMessage.success("设置成功");
       wallpaperService.resetCycle();
@@ -154,7 +148,7 @@ function downloadWallpaper(wallpaperItem: TWallpaperItem) {
   // download.add(wallpaperItem);
   wallpaperItem.downloading = true;
   window.wallpaper
-    .downloadWallpaper(wallpaperItem.fileUrl, wallpaperItem.id)
+    .downloadWallpaper(wallpaperItem.downloadURL, wallpaperItem.id)
     .then((res) => {
       NMessage.success("下载完成");
       new Notification("壁纸下载完成");
@@ -190,7 +184,7 @@ function openLink(link: string) {
 
 function moveToTrash(wallpaperItem: TWallpaperItem, itemIndex: number) {
   wallpaperApi
-    .removeToTrash(wallpaperItem.id)
+    .deleteWallpaper(wallpaperItem.id)
     .then((res) => {
       wallpapers.value.splice(itemIndex, 1);
       NMessage.success("移除成功");

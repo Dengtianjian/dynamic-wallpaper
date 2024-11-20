@@ -1,3 +1,4 @@
+import { RequestService } from "../../service/RequestService"
 import request from "../request"
 export type TCategory = {
   key: string,
@@ -15,26 +16,28 @@ export type TWallpaper = {
   cover: string
 }
 
-export default {
+export class TenWallpaperApi extends RequestService {
   categories() {
-    return request.get<TCategory[]>("thirdparty/10wallpaper/categories");
-  },
+    return this.get<TCategory[]>("categories");
+  }
   albums() {
-    return request.get<TAlbum[]>("thirdparty/10wallpaper/albums");
-  },
+    return this.get<TAlbum[]>("albums");
+  }
   wallpapers(targetURL: string) {
-    return request.get<{
+    return this.get<{
       list: TWallpaper[],
       pagination: {
         total: number,
       }
-    }>("thirdparty/10wallpaper/wallpapers", {
+    }>("wallpapers", {
       targetURL
     });
-  },
+  }
   crawl(targetURL: string) {
-    return request.get<boolean>("thirdparty/10wallpaper/wallpapers/crawl", {
+    return this.get<boolean>("wallpapers/crawl", {
       targetURL
     });
   }
 }
+
+export default new TenWallpaperApi("wallpapers/thirdparty/10wallpaper");

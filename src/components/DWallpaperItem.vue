@@ -1,6 +1,6 @@
 <template>
   <li class="wallpaper-item">
-    <img :src="data.thumbUrl" alt="" class="wallpaper-cover" />
+    <img :src="data.previewURL" alt="" class="wallpaper-cover" />
 
     <section class="wallpaper-info" @click.stop>
       <slot />

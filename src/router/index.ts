@@ -6,17 +6,17 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/', component: Home, children: [
       {
-        path: "/", component: () => import("PAGES/Story.vue"),
+        path: "/", component: () => import("PAGES/WallpaperList.vue"),
         meta: {
           keepAlive: true
         }
       },
-      {
-        path: "/list", component: () => import("PAGES/WallpaperList.vue"),
-        meta: {
-          keepAlive: true
-        }
-      },
+      // {
+      //   path: "/list", component: () => import("PAGES/WallpaperList.vue"),
+      //   meta: {
+      //     keepAlive: true
+      //   }
+      // },
       {
         path: "/downloadList", component: () => import("PAGES/DownloadList.vue"),
         meta: {

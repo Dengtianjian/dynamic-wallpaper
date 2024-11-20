@@ -28,25 +28,20 @@ const navigators: Array<{
   uri: string;
 }> = [
   {
-    label: "故事",
-    key: "story",
-    uri: "/",
-  },
-  {
     label: "壁纸",
     key: "wallpapers",
-    uri: "/list",
+    uri: "/",
   },
   {
     label: "来源",
     key: "source",
     uri: "/source",
   },
-  {
-    label: "下载列表",
-    key: "downloadList",
-    uri: "downloadList",
-  },
+  // {
+  //   label: "下载列表",
+  //   key: "downloadList",
+  //   uri: "downloadList",
+  // },
   {
     label: "发布",
     key: "publish",
@@ -57,11 +52,11 @@ const navigators: Array<{
     key: "settings",
     uri: "settings",
   },
-  {
-    label: "本地",
-    key: "local",
-    uri: "local",
-  },
+  // {
+  //   label: "本地",
+  //   key: "local",
+  //   uri: "local",
+  // },
 ];
 </script>
 

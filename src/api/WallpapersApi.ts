@@ -1,6 +1,5 @@
-import http from "../foundation/http"
+import { RequestService } from "../service/RequestService";
 import { TWallpaperItem } from "../types/wallpaperTypes";
-import request from "./request"
 
 type TWallpaperHomeWallpaper = {
   link: string,
@@ -9,52 +8,45 @@ type TWallpaperHomeWallpaper = {
   id: string,
 }
 
-export default {
+export class WallpapersApi extends RequestService {
   getWallpapers(page: number = 1, perPage: number = 10) {
-    return request.get<{
+    return this.get<{
       pagination: {
         page: number,
         perPage: number,
         total: number
       },
-      wallpapers: TWallpaperItem[]
-    }>("wallpapers", {
+      list: TWallpaperItem[]
+    }>(null, {
       page,
       perPage
     });
-  },
-  uploadWallpaper(file: File) {
-    return request.upload<{
-      path: string,
-      fileId: string,
-      fileName: string
-    }>("attachment", undefined, file);
-  },
-  saveWallpaper(description: string, fileid: string, tags: string, source: string, author: string, privacy: string = "public") {
-    return request.post("wallpaper/publish", {
+  }
+  saveWallpaper(description: string, fileKey: string, tags: string, source: string, author: string, privacy: string = "public") {
+    return this.post("publish", {
       description,
-      fileid,
+      fileKey,
       tags,
       source,
       author,
       privacy
     });
-  },
-  removeToTrash(wallpaperId: string) {
-    return request.patch("wallpaper/" + wallpaperId, {});
-  },
+  }
+  deleteWallpaper(wallpaperId: string) {
+    return this.delete(wallpaperId);
+  }
   randomGetWallpapers(count: number) {
-    return request.get<TWallpaperItem[]>("wallpaper/random", {
+    return this.get<TWallpaperItem[]>("random", {
       count
     });
-  },
+  }
   collect(sourceId: string,
     author: string,
     description: string,
     fileUrl: string,
     source: string,
     sourceUrl: string): Promise<TWallpaperItem> {
-    return request.post<TWallpaperItem>("wallpapers/recordCollect", {
+    return this.post<TWallpaperItem>("recordCollect", {
       sourceId,
       author,
       description,
@@ -62,9 +54,9 @@ export default {
       source,
       sourceUrl
     });
-  },
+  }
   getWallpaperHomeList(categoryId: string, page: number = 1, perPage: number = 10) {
-    return request.get<{
+    return this.get<{
       list: TWallpaperHomeWallpaper[],
       pagination: {
         page: number,
@@ -76,16 +68,18 @@ export default {
       perPage,
       categoryId
     });
-  },
+  }
   crawlWallpapersHome(url: string) {
-    return request.get("thirdparty/wallpaperhome/recordCollect", {
+    return this.get("thirdparty/wallpaperhome/recordCollect", {
       targetUrl: url
     });
-  },
+  }
   getWallpaperHomeCategories() {
-    return request.get<{
+    return this.get<{
       name: string,
       link: string
     }[]>("thirdparty/wallpaperhome/categories");
   }
 }
+
+export default new WallpapersApi("wallpapers");
