@@ -14,3 +14,9 @@ electron/attachments
 attachments
 pnpm-lock.yaml
 build
+
+desktop/crashs
+desktop/log
+desktop/icons
+desktop_old
+package-lock.json

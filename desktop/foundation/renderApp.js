@@ -1,5 +1,5 @@
 const { App } = require("./app");
-const { ipcRenderer, contextBridge } = require("electron");
+const { ipcRenderer, contextBridge } = require("electron/main");
 
 const asyncTokenMap = new Map();
 

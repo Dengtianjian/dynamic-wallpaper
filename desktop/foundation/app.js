@@ -1,5 +1,8 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, Menu, nativeImage, dialog, Tray } = require("electron");
 const Path = require("path");
+const FS = require("fs");
+
+let applicationTray = null;
 
 module.exports.App = class {
   #singleInstance = true;
@@ -20,6 +23,7 @@ module.exports.App = class {
     this.mainWindowOptionsCallBack = mainWindowOptionsCallBack;
 
     this.env.rootPath = process.cwd();
+    this.env.desktopPath = "desktop";
     this.env.basePath = Path.join(__dirname, "../");
 
     global.app = this;
@@ -35,6 +39,11 @@ module.exports.App = class {
     } else {
       fn(this);
     }
+  }
+  listen(callback) {
+    callback(this);
+
+    return this;
   }
   on(channel, listener) {
     ipcMain.on(channel, (event, token, ...args) => {
@@ -60,39 +69,72 @@ module.exports.App = class {
 
     return this;
   }
+  dispatch(eventName, data) {
+    this.mainWindow.webContents.send(eventName, data);
+
+    return this;
+  }
   createWindow(windowId, options = {}) {
     Object.assign(options, {
+      title: "壁纸",
+      icon: Path.join(__dirname, "../", "icons", "icon.ico"),
+      titleBarStyle: process.platform === 'darwin' ? 'hidden' : "default",
       webPreferences: {
-        preload: Path.join(this.env.basePath, "render.js")
+        // contextIsolation: false,
+        sandbox: false,
+        preload: Path.join(__dirname, '../render.js'),
+        webSecurity: false
       }
     });
 
     const winIns = new BrowserWindow(options);
+
     this.windows.set(windowId, winIns);
 
     return winIns;
   }
-  async #createMainWindow() {
+  async createMainWindow(preloadFilePath = null, title = "Electron", icon = null, options = {}) {
     if (this.mainWindow) return;
 
-    const options = {};
     if (this.mainWindowOptionsCallBack) {
       Object.assign(options, await this.mainWindowOptionsCallBack());
     }
 
+    if (preloadFilePath) {
+      if (options['webPreferences']) {
+        options['webPreferences']['preload'] = preloadFilePath;
+      } else {
+        options['webPreferences'] = {
+          preload: Path.join(__dirname, 'preload.js')
+        }
+      }
+    }
+
+    if (title) {
+      options['title'] = title;
+    }
+    if (icon) {
+      options['icon'] = icon;
+    } else {
+      options['icon'] = Path.join(__dirname, "../", "icons", "icon.ico");
+    }
+
     this.mainWindow = this.createWindow("main", options);
 
-    this.mainWindow.on("close", (e) => {
-      if (this.forceQuit === false) {
-        e.preventDefault();
-        this.mainWindow.hide();
-      }
-    });
-
     if (app.isPackaged) {
-      this.mainWindow.loadFile("index.html");
+      this.mainWindow.loadFile(Path.join(__dirname, "../../", "dist", "web", "index.html"));
     } else {
-      this.mainWindow.loadURL("http://localhost:3000");
+      this.mainWindow.loadURL('http://localhost:3000');
+    }
+
+    // if (process.env.mode !== "production") {
+    //   this.mainWindow.webContents.openDevTools();
+    // }
+    // this.mainWindow.webContents.openDevTools();
+
+    this.mainWindow.setAutoHideMenuBar(true);
+    if (process.platform !== 'darwin') {
+      this.mainWindow.removeMenu();
     }
 
     return this;
@@ -103,10 +145,10 @@ module.exports.App = class {
         this.mainWindow.show();
       }
     } else {
-      this.#createMainWindow();
+      this.createMainWindow();
     }
   }
-  start() {
+  start(callback = null) {
     if (this.#singleInstance) {
       const getTheLock = app.requestSingleInstanceLock();
 
@@ -122,13 +164,30 @@ module.exports.App = class {
       });
     }
 
-    this.readyWait = app.whenReady().then(this.#createMainWindow.bind(this));
+    if (app.isPackaged) {
+      Menu.setApplicationMenu(null);
+    }
 
+    this.readyWait = app.whenReady().then(() => {
+      this.createMainWindow();
+
+      callback && callback(this);
+    });
     return this;
   }
   forceQuit = false;
+  close() {
+    BrowserWindow.getAllWindows().forEach(item => {
+      item.destroy();
+    });
+    this.mainWindow = null;
+  }
   quit(forceQuit = true) {
     this.forceQuit = forceQuit;
+    app.quit();
+  }
+  exit() {
+    this.close();
     app.quit();
   }
 }

@@ -1,4 +1,4 @@
-const { Tray, Menu, nativeImage } = require("electron");
+const { Tray, Menu, nativeImage, app } = require("electron");
 const Path = require("path");
 
 let appIns = null;
@@ -21,7 +21,7 @@ module.exports = function (ins) {
 let applicationTray = null;
 function fixedTray() {
   if (!applicationTray) {
-    let icon = nativeImage.createFromPath(Path.join(appIns.env.basePath, "assets", "icon.png"));
+    let icon = nativeImage.createFromPath(Path.join(appIns.env.basePath, "icons", "512x512.png"));
     if (process.platform === "darwin" || process.platform === "linux") {
       icon = icon.resize({
         width: 16,
@@ -38,7 +38,6 @@ function fixedTray() {
         }
       }
     ]);
-    applicationTray.setToolTip("wallpaper");
     applicationTray.on("click", () => {
       appIns.showMainWindow();
     });
