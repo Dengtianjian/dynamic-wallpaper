@@ -1,42 +1,27 @@
 <template>
   <n-form class="setting-form" label-placement="left">
     <n-form-item label="开机自启动">
-      <n-checkbox
-        v-model:checked="globalStore.settings.autoStart"
-        @update-checked="autoStartProgram"
-      ></n-checkbox>
+      <n-checkbox v-model:checked="globalStore.settings.autoStart" @update-checked="autoStartProgram" :checked-value="true"
+      :unchecked-value="false"></n-checkbox>
     </n-form-item>
     <n-form-item label="固定在任务栏">
-      <n-checkbox
-        @update:checked="fixedOnTray"
-        v-model:checked="globalStore.settings.fixedTray"
-      ></n-checkbox>
+      <n-checkbox @update:checked="fixedOnTray" v-model:checked="globalStore.settings.fixedTray" :checked-value="true"
+        :unchecked-value="false"></n-checkbox>
     </n-form-item>
     <n-form-item label="自动切换桌面壁纸">
-      <n-checkbox
-        v-model:checked="globalStore.settings.autoSwitch"
-        @update:checked="autoSwitchWallpaper"
-      ></n-checkbox>
+      <n-checkbox v-model:checked="globalStore.settings.autoSwitch" @update:checked="autoSwitchWallpaper" :checked-value="true"
+      :unchecked-value="false"></n-checkbox>
     </n-form-item>
     <n-form-item label="自动切换壁纸间隔时长单位">
-      <n-select
-        v-model:value="globalStore.settings.autoSwtichUnit"
-        :options="durationUnitOptions"
-        @update:value="updateAutoSwitchUnit"
-      />
+      <n-select v-model:value="globalStore.settings.autoSwtichUnit" :options="durationUnitOptions"
+        @update:value="updateAutoSwitchUnit" />
     </n-form-item>
     <n-form-item label="自动切换壁纸间隔时长">
-      <n-input-number
-        placeholder="请输入间隔时长"
-        min="1"
-        v-if="globalStore.settings.autoSwtichUnit !== 'random'"
-        v-model:value="globalStore.settings.autoSwtichInterval"
-        @update:value="updateAutoSwitchInterval"
-      >
-      </n-input-number
-      ><span style="margin-left: 10px; font-size: 14px">{{
+      <n-input-number placeholder="请输入间隔时长" min="1" v-if="globalStore.settings.autoSwtichUnit !== 'random'"
+        v-model:value="globalStore.settings.autoSwtichInterval" @update:value="updateAutoSwitchInterval">
+      </n-input-number><span style="margin-left: 10px; font-size: 14px">{{
         selectedDurationUnitTxt
-      }}</span>
+        }}</span>
     </n-form-item>
   </n-form>
 </template>
@@ -53,7 +38,7 @@ import {
 } from "naive-ui";
 import { computed } from "vue";
 import globalStore from "../store/globalStore";
-import systemApi from "../api/settingApi";
+import systemApi from "../api/SettingsApi";
 import wallpaperService from "../service/wallpaperService";
 const NMessage = useMessage();
 
@@ -104,7 +89,9 @@ function updateSetting(key: string, value: any) {
 }
 function autoStartProgram(checked: boolean) {
   updateSetting("autoStart", checked).then((res) => {
-    window.system.autoStart(checked);
+    if(window.system){
+      window.system.autoStart(checked);
+    }
   });
 }
 function autoSwitchWallpaper(checked: boolean) {
@@ -119,7 +106,9 @@ function autoSwitchWallpaper(checked: boolean) {
 function fixedOnTray(checked: boolean) {
   updateSetting("fixedTray", checked)
     .then((res) => {
-      window.tray.fixedTray(checked);
+      if (window.tray) {
+        window.tray.fixedTray(checked);
+      }
     })
     .catch(() => {
       globalStore.settings.fixedTray = !globalStore.settings.fixedTray;

@@ -1,4 +1,4 @@
-import settingApi from "../api/settingApi";
+import settingApi from "../api/SettingsApi";
 import globalStore from "../store/globalStore";
 
 let initPromise: Promise<boolean> | null = null;
