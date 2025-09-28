@@ -24,7 +24,10 @@
         v-model:value="globalStore.settings.autoSwtichInterval" @update:value="updateAutoSwitchInterval">
       </n-input-number><span style="margin-left: 10px; font-size: 14px">{{
         selectedDurationUnitTxt
-      }}</span>
+        }}</span>
+    </n-form-item>
+    <n-form-item label="自动切换队列">
+      <n-button @click="resetSwitchWapperList">重置</n-button>
     </n-form-item>
   </n-form>
 </template>
@@ -44,6 +47,7 @@ import globalStore from "../store/globalStore";
 import systemApi from "../api/SettingsApi";
 import wallpaperService from "../service/wallpaperService";
 import RSpace from "../ruyijs/Vue/components/Base/RSpace.vue"
+import wallpaperStore from "../store/wallpaperStore";
 
 const NMessage = useMessage();
 
@@ -138,6 +142,12 @@ function updateAutoSwitchInterval(interval: any) {
     .catch(() => {
       globalStore.settings.autoSwtichInterval = oldV;
     });
+}
+
+function resetSwitchWapperList() {
+  wallpaperStore.autoSwitchQueue.splice(0, wallpaperStore.autoSwitchQueue.length);
+  wallpaperService.resetCycle();
+  NMessage.success("重置成功");
 }
 </script>
 

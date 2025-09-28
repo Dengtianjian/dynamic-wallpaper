@@ -28,7 +28,7 @@ function resetCycle() {
   clearTimeout(autoSwtichHandler as NodeJS.Timeout);
   autoSwtichHandler = null;
   localStorage.setItem("lastTimeSwtiched", Date.now().toString());
-  switchWallpaper();
+  switchWallpaper(true);
 }
 function switchWallpaper(enforce: boolean = false) {
   if (wallpaperStore.wallpaperSetting) {
@@ -75,6 +75,7 @@ async function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaper
       return autoSwitchWallpaper(enforce);
     });
   }
+
   if (enforce) {
     clearTimeout(autoSwtichHandler as NodeJS.Timeout);
     autoSwtichHandler = null;
@@ -88,7 +89,7 @@ async function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaper
     }).catch(() => false);
     if (getResult === false) return Promise.reject();
   }
-
+  
   const first: TWallpaperItem = wallpaperStore.autoSwitchQueue[0];
   if (!first) return autoSwitchWallpaper(enforce);
 
@@ -121,15 +122,13 @@ async function autoSwitchWallpaper(enforce: boolean = false): Promise<TWallpaper
         break;
     }
 
-    console.log(nextTime);
-    
     autoSwtichHandler = setTimeout(() => {
       clearTimeout(autoSwtichHandler as NodeJS.Timeout);
       autoSwtichHandler = null;
       autoSwitchWallpaper();
     }, nextTime);
     return first;
-  }).catch(err => {
+  }).catch(() => {
     return null;
   })
 }
